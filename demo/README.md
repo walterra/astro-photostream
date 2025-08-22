@@ -53,10 +53,17 @@ This command will:
 
 #### For Local Development
 
-If you're developing or testing with a local version of astro-photo-stream:
+**⚠️ Current Status:** The astro-photo-stream integration is currently in development and has several build issues that need to be resolved before it can be used locally.
+
+When the integration is ready, the installation process will be:
 
 ```bash
-# Install from local package
+# First, build the main package (from parent directory)
+cd ../
+pnpm build
+
+# Then install from local package
+cd demo/
 pnpm add ../
 # or
 npm install ../
@@ -72,10 +79,12 @@ import photoStream from 'astro-photo-stream';
 export default defineConfig({
   integrations: [
     tailwind(),
-    photoStream()
+    photoStream({})  // Pass empty object for default options
   ]
 });
 ```
+
+**Note:** The main package currently has build errors that need to be fixed first.
 
 ### Step 2: Configure Content Collections
 

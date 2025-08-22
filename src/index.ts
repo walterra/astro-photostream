@@ -1,4 +1,4 @@
-import { defineIntegration, createResolver, addVirtualImports } from 'astro-integration-kit';
+import { defineIntegration, createResolver, addVirtualImports, addVitePlugin } from 'astro-integration-kit';
 import { integrationOptionsSchema, type IntegrationOptions } from './types.js';
 
 /**
@@ -15,13 +15,8 @@ export default defineIntegration({
     
     return {
       hooks: {
-        'astro:config:setup': async ({ 
-          updateConfig, 
-          injectRoute, 
-          addVitePlugin,
-          command,
-          logger
-        }) => {
+        'astro:config:setup': async (params) => {
+          const { updateConfig, injectRoute, command, logger } = params;
           if (!options.enabled) {
             logger.info('Astro Photo Stream integration is disabled');
             return;
@@ -30,15 +25,18 @@ export default defineIntegration({
           logger.info('Setting up Astro Photo Stream integration...');
           
           // Add virtual imports for configuration
-          addVirtualImports({
-            'virtual:astro-photo-stream/config': `
-              export const config = ${JSON.stringify(options, null, 2)};
-            `,
-            'virtual:astro-photo-stream/utils': `
-              export { generatePhotoMetadata } from '${resolve('./utils/metadata.js')}';
-              export { processPhotoCollection } from '${resolve('./utils/collection.js')}';
-              export { createPhotoRoutes } from '${resolve('./utils/routing.js')}';
-            `
+          addVirtualImports(params, {
+            name: 'astro-photo-stream',
+            imports: {
+              'virtual:astro-photo-stream/config': `
+                export const config = ${JSON.stringify(options, null, 2)};
+              `,
+              'virtual:astro-photo-stream/utils': `
+                export { generatePhotoMetadata } from '${resolve('./utils/metadata.js')}';
+                export { processPhotoCollection } from '${resolve('./utils/collection.js')}';
+                export { createPhotoRoutes } from '${resolve('./utils/routing.js')}';
+              `
+            }
           });
           
           // Inject photo gallery routes
@@ -85,16 +83,18 @@ export default defineIntegration({
           });
           
           // Add Vite plugin for photo processing during build
-          addVitePlugin({
-            name: 'astro-photo-stream-processor',
-            configResolved(config) {
-              if (config.command === 'build') {
-                logger.info('Photo processing will run during build');
-              }
-            },
-            buildStart() {
-              if (options.ai.enabled && !options.ai.apiKey) {
-                logger.warn('AI metadata generation is enabled but no API key provided');
+          addVitePlugin(params, {
+            plugin: {
+              name: 'astro-photo-stream-processor',
+              configResolved(config: any) {
+                if (config.command === 'build') {
+                  logger.info('Photo processing will run during build');
+                }
+              },
+              buildStart() {
+                if (options.ai.enabled && !options.ai.apiKey) {
+                  logger.warn('AI metadata generation is enabled but no API key provided');
+                }
               }
             }
           });

@@ -23,7 +23,8 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/global.d.ts"
   ],
   "exclude": [
     "node_modules",

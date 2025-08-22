@@ -18,12 +18,12 @@ export async function getAllPhotos(options?: {
   const { includeDrafts = false, sortBy = 'date', sortOrder = 'desc', limit } = options || {};
   
   // Get photos from content collection
-  const allPhotos = await getCollection('photos', ({ data }) => {
+  const allPhotos = await getCollection('photos', ({ data }: { data: any }) => {
     return includeDrafts || !data.draft;
   });
 
   // Convert to PhotoMetadata format
-  const photos: PhotoMetadata[] = allPhotos.map(photo => ({
+  const photos: PhotoMetadata[] = allPhotos.map((photo: any) => ({
     id: photo.slug,
     title: photo.data.title,
     description: photo.data.description,

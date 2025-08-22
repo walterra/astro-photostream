@@ -15,6 +15,7 @@
   "dependencies": {
     "@astrojs/tailwind": "^5.1.2",
     "astro": "^5.13.2",
+    "astro-photo-stream": "link:..",
     "tailwindcss": "^3.4.1"
   },
   "devDependencies": {

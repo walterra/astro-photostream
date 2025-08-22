@@ -1,4 +1,4 @@
-import { z } from 'astro:content';
+import { z } from 'zod';
 
 /**
  * Content collection schema for photo entries - aligned with reference implementation

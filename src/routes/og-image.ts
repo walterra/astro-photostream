@@ -4,12 +4,11 @@
  * Based on reference implementation patterns
  */
 import { getEntry } from 'astro:content';
-import { getConfig } from 'virtual:astro-photo-stream/config';
+import { config } from 'virtual:astro-photo-stream/config';
 import sharp from 'sharp';
 import type { APIContext } from 'astro';
 
-// Get configuration
-const config = getConfig();
+// Configuration is imported directly
 
 export async function GET(context: APIContext) {
   try {
@@ -29,7 +28,7 @@ export async function GET(context: APIContext) {
     // Generate OG image using photo and metadata
     const ogImage = await generateOGImage(photo, config);
 
-    return new Response(ogImage, {
+    return new Response(ogImage as BodyInit, {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
@@ -42,7 +41,7 @@ export async function GET(context: APIContext) {
     // Return a simple error image
     const errorImage = await generateErrorImage();
     
-    return new Response(errorImage, {
+    return new Response(errorImage as BodyInit, {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=3600', // Cache error for 1 hour
