@@ -1,0 +1,133 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About - Astro Photo Stream Demo">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="prose prose-lg max-w-none">
+      <h1 class="text-4xl font-bold text-gray-900 mb-8">About This Demo</h1>
+      
+      <p class="text-xl text-gray-600 mb-8">
+        This demo site showcases the capabilities of the <strong>astro-photo-stream</strong> integration, 
+        demonstrating how easy it is to create professional photo galleries with Astro.
+      </p>
+
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">What You're Seeing</h2>
+      
+      <ul class="space-y-3 mb-8">
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-blue-600 text-sm">✓</span>
+          </span>
+          <span><strong>Zero-config setup</strong> - The photo gallery works out of the box with minimal configuration</span>
+        </li>
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-blue-600 text-sm">✓</span>
+          </span>
+          <span><strong>Responsive design</strong> - Galleries adapt perfectly to mobile, tablet, and desktop screens</span>
+        </li>
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-blue-600 text-sm">✓</span>
+          </span>
+          <span><strong>EXIF metadata extraction</strong> - Camera settings, GPS coordinates, and timestamps are automatically processed</span>
+        </li>
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-blue-600 text-sm">✓</span>
+          </span>
+          <span><strong>Tag-based navigation</strong> - Photos are automatically organized by tags for easy discovery</span>
+        </li>
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-blue-600 text-sm">✓</span>
+          </span>
+          <span><strong>SEO optimization</strong> - Dynamic OpenGraph images and structured data for better search visibility</span>
+        </li>
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-blue-600 text-sm">✓</span>
+          </span>
+          <span><strong>Performance optimized</strong> - Static generation, lazy loading, and image optimization</span>
+        </li>
+      </ul>
+
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">AI Features (When Enabled)</h2>
+      
+      <p class="mb-4">
+        When AI metadata generation is enabled with an API key, the integration can:
+      </p>
+      
+      <ul class="space-y-3 mb-8">
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-green-600 text-sm">AI</span>
+          </span>
+          <span>Generate compelling titles and descriptions automatically</span>
+        </li>
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-green-600 text-sm">AI</span>
+          </span>
+          <span>Suggest relevant tags based on image content</span>
+        </li>
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-green-600 text-sm">AI</span>
+          </span>
+          <span>Resolve GPS coordinates to readable location names</span>
+        </li>
+        <li class="flex items-start">
+          <span class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
+            <span class="text-green-600 text-sm">AI</span>
+          </span>
+          <span>Maintain consistent voice and style across your photo collection</span>
+        </li>
+      </ul>
+
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Technical Implementation</h2>
+      
+      <p class="mb-4">
+        This demo site uses:
+      </p>
+      
+      <ul class="space-y-2 mb-8">
+        <li><strong>Astro 5.x</strong> - The modern web framework for content-focused sites</li>
+        <li><strong>Tailwind CSS</strong> - For rapid UI development and responsive design</li>
+        <li><strong>Content Collections</strong> - Astro's type-safe content management system</li>
+        <li><strong>Static Site Generation</strong> - Pre-rendered pages for optimal performance</li>
+        <li><strong>TypeScript</strong> - Full type safety throughout the application</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Get Started</h2>
+      
+      <p class="mb-4">
+        Ready to add a photo gallery to your Astro site? It's as simple as:
+      </p>
+      
+      <div class="bg-gray-900 rounded-lg p-6 mb-8">
+        <pre class="text-green-400"><code>npx astro add astro-photo-stream</code></pre>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a 
+          href="https://github.com/walterra/astro-photostream" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors text-center"
+        >
+          View on GitHub
+        </a>
+        <a 
+          href="https://github.com/walterra/astro-photostream#quick-start" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="border-2 border-gray-900 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 hover:text-white transition-colors text-center"
+        >
+          Read Documentation
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
