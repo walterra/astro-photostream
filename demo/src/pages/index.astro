@@ -2,34 +2,220 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Plain Astro Project">
+<Layout title="Plain Astro Demo Project">
   <!-- Hero Section -->
   <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
       <div class="text-center">
         <h1 class="text-4xl md:text-6xl font-bold mb-6">
-          🚀 Plain Astro Project
+          📸 Plain Astro Demo Project
         </h1>
         <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
-          A clean, minimal Astro site ready for your next integration. 
-          Perfect starting point for building amazing web experiences.
+          A clean, minimal Astro.js project with Tailwind CSS, ready for integrations. 
+          Perfect starting point before adding <strong>astro-photo-stream</strong>.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <a 
-            href="/about" 
+            href="#installation" 
             class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
-            Learn More
+            Add Photo Gallery
           </a>
           <a 
-            href="https://astro.build" 
+            href="https://github.com/walterra/astro-photostream" 
             target="_blank"
             rel="noopener noreferrer"
             class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
           >
-            Astro Docs
+            View on GitHub
           </a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What's Included Section -->
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          What's Included
+        </h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          This plain Astro project includes the essentials and is ready for your integrations.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="text-center p-6">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">⚡</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Astro 5.x</h3>
+          <p class="text-gray-600">Modern static site framework</p>
+        </div>
+
+        <div class="text-center p-6">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">🎨</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Tailwind CSS</h3>
+          <p class="text-gray-600">Utility-first CSS framework</p>
+        </div>
+
+        <div class="text-center p-6">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">📱</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Responsive Design</h3>
+          <p class="text-gray-600">Mobile-first layout</p>
+        </div>
+
+        <div class="text-center p-6">
+          <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">🚀</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Development Ready</h3>
+          <p class="text-gray-600">Hot reload and TypeScript support</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Installation Instructions Section -->
+  <section id="installation" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          Adding astro-photo-stream Integration
+        </h2>
+        <p class="text-xl text-gray-600">
+          Transform this plain Astro project into a sophisticated photo gallery with AI-powered features
+        </p>
+      </div>
+
+      <div class="max-w-4xl mx-auto space-y-12">
+        
+        <!-- Step 1 -->
+        <div class="bg-white rounded-lg p-8 shadow-sm">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+              1
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold mb-3">Install the Integration</h3>
+              <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                <pre class="text-green-400 text-sm overflow-x-auto"><code>npx astro add astro-photo-stream</code></pre>
+              </div>
+              <p class="text-gray-600">
+                This command will install the package, update your astro.config.mjs automatically, and set up the necessary configuration.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white rounded-lg p-8 shadow-sm">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+              2
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold mb-3">Configure Content Collections</h3>
+              <p class="text-gray-600 mb-3">Update your <code class="bg-gray-100 px-2 py-1 rounded text-sm">src/content/config.ts</code> file:</p>
+              <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`import { defineCollection } from 'astro:content';
+import { photoSchema } from 'astro-photo-stream/schema';
+
+const photos = defineCollection({
+  type: 'content',
+  schema: photoSchema
+});
+
+export const collections = { photos };`}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white rounded-lg p-8 shadow-sm">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+              3
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold mb-3">Add Your Photos</h3>
+              <p class="text-gray-600 mb-3">Create the photos content directory structure:</p>
+              <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`src/content/photos/
+├── sunset-beach.md
+├── sunset-beach.jpg
+├── mountain-hike.md
+└── mountain-hike.jpg`}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-white rounded-lg p-8 shadow-sm">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+              4
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold mb-3">Create Photo Entries</h3>
+              <p class="text-gray-600 mb-3">Example photo entry (<code class="bg-gray-100 px-2 py-1 rounded text-sm">src/content/photos/sunset-beach.md</code>):</p>
+              <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`---
+title: "Golden Hour at the Beach"
+description: "Stunning sunset over the Pacific Ocean"
+coverImage:
+  src: "./sunset-beach.jpg"
+  alt: "Golden sunset over ocean waves"
+tags: ["sunset", "beach", "golden-hour"]
+publishDate: 2024-08-15
+location:
+  name: "Malibu Beach, California"
+  latitude: 34.0259
+  longitude: -118.7798
+draft: false
+---
+
+A perfect evening capturing the golden hour at Malibu Beach.`}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="bg-white rounded-lg p-8 shadow-sm">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+              ✓
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold mb-3">Access Your Photo Gallery</h3>
+              <p class="text-gray-600 mb-4">After installation, your photo gallery will be available at:</p>
+              <div class="space-y-2">
+                <div class="flex items-center space-x-2">
+                  <span class="text-blue-600 font-mono text-sm">/photos</span>
+                  <span class="text-gray-500">- Main Gallery</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="text-blue-600 font-mono text-sm">/photos/[photo-slug]</span>
+                  <span class="text-gray-500">- Individual Photos</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="text-blue-600 font-mono text-sm">/photos/tags/[tag-name]</span>
+                  <span class="text-gray-500">- Tag Filtering</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -39,102 +225,60 @@ import Layout from '../layouts/Layout.astro';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Ready for Enhancement
+          What You Get After Adding astro-photo-stream
         </h2>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-          This plain Astro project includes the essentials and is ready for your integrations.
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          The integration will automatically add powerful photo gallery features to your site
         </p>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">⚡</span>
+            <span class="text-2xl">🤖</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Lightning Fast</h3>
-          <p class="text-gray-600">Static site generation with optimal performance</p>
+          <h3 class="text-xl font-semibold mb-2">AI-Powered Metadata</h3>
+          <p class="text-gray-600">Automatic titles, descriptions, and tags using Claude API</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">🎨</span>
+            <span class="text-2xl">📍</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Styled with Tailwind</h3>
-          <p class="text-gray-600">Modern utility-first CSS framework included</p>
+          <h3 class="text-xl font-semibold mb-2">Smart Geolocation</h3>
+          <p class="text-gray-600">Location name resolution with privacy-focused options</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">🔧</span>
+            <span class="text-2xl">📱</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Integration Ready</h3>
-          <p class="text-gray-600">Clean slate for adding your favorite integrations</p>
+          <h3 class="text-xl font-semibold mb-2">Responsive Galleries</h3>
+          <p class="text-gray-600">2/3/4 column layouts that work on all devices</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">📱</span>
+            <span class="text-2xl">⚡</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Responsive</h3>
-          <p class="text-gray-600">Mobile-first design that works on all devices</p>
+          <h3 class="text-xl font-semibold mb-2">Performance First</h3>
+          <p class="text-gray-600">Static generation with lazy loading and optimization</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">💡</span>
+            <span class="text-2xl">🏷️</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Developer Friendly</h3>
-          <p class="text-gray-600">TypeScript support and modern development tools</p>
+          <h3 class="text-xl font-semibold mb-2">Tag System</h3>
+          <p class="text-gray-600">Automatic tag-based filtering and navigation</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">🌟</span>
+            <span class="text-2xl">🔍</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Minimal & Clean</h3>
-          <p class="text-gray-600">No unnecessary bloat, just the essentials</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Next Steps Section -->
-  <section class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          What's Next?
-        </h2>
-        <p class="text-xl text-gray-600">
-          This project is ready for you to add amazing features
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="bg-white rounded-lg p-8 shadow-sm">
-          <h3 class="text-xl font-semibold mb-4">Add Integrations</h3>
-          <p class="text-gray-600 mb-4">
-            Enhance your site with Astro's rich ecosystem of integrations:
-          </p>
-          <ul class="text-sm text-gray-600 space-y-2">
-            <li>• Content Management (MDX, Contentful, Sanity)</li>
-            <li>• UI Frameworks (React, Vue, Svelte)</li>
-            <li>• Styling (Sass, PostCSS, UnoCSS)</li>
-            <li>• Performance (Image optimization, Sitemap)</li>
-          </ul>
-        </div>
-
-        <div class="bg-white rounded-lg p-8 shadow-sm">
-          <h3 class="text-xl font-semibold mb-4">Customize & Build</h3>
-          <p class="text-gray-600 mb-4">
-            Start building your unique web experience:
-          </p>
-          <ul class="text-sm text-gray-600 space-y-2">
-            <li>• Add your content and pages</li>
-            <li>• Customize the design and layout</li>
-            <li>• Set up your preferred deployment</li>
-            <li>• Configure SEO and analytics</li>
-          </ul>
+          <h3 class="text-xl font-semibold mb-2">SEO Optimized</h3>
+          <p class="text-gray-600">Dynamic OpenGraph images and structured data</p>
         </div>
       </div>
     </div>
