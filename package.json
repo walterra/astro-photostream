@@ -55,6 +55,10 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "astro-photo-stream": "./dist/scripts/photo-metadata-generator.js",
+    "photo-metadata-generator": "./dist/scripts/photo-metadata-generator.js"
+  },
   "files": [
     "dist",
     "README.md",
