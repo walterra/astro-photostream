@@ -1,0 +1,116 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// Get all published photos
+const photos = await getCollection('photos');
+const publishedPhotos = photos
+  .filter(photo => !photo.data.draft)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+---
+
+<Layout title="Photo Gallery - Astro Photo Stream Demo">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        Photo Gallery
+      </h1>
+      <p class="text-xl text-gray-600">
+        Explore our collection of {publishedPhotos.length} stunning photographs
+      </p>
+    </div>
+
+    <!-- Photo Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {publishedPhotos.map((photo) => (
+        <article class="group">
+          <a 
+            href={`/photos/${photo.slug}`}
+            class="block relative aspect-square overflow-hidden rounded-lg bg-gray-200 hover:scale-105 transition-transform duration-300"
+          >
+            <img 
+              src={photo.data.coverImage.src}
+              alt={photo.data.coverImage.alt}
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="absolute bottom-0 left-0 right-0 p-4">
+                <h3 class="text-white font-semibold text-lg mb-1 line-clamp-2">
+                  {photo.data.title}
+                </h3>
+                {photo.data.location?.name && (
+                  <p class="text-white/80 text-sm">
+                    📍 {photo.data.location.name}
+                  </p>
+                )}
+              </div>
+            </div>
+          </a>
+
+          <!-- Photo metadata below image -->
+          <div class="mt-4 space-y-2">
+            <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <a href={`/photos/${photo.slug}`}>
+                {photo.data.title}
+              </a>
+            </h3>
+            
+            {photo.data.description && (
+              <p class="text-gray-600 text-sm line-clamp-2">
+                {photo.data.description}
+              </p>
+            )}
+
+            <!-- Tags -->
+            {photo.data.tags && photo.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-1">
+                {photo.data.tags.slice(0, 3).map((tag) => (
+                  <span class="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors">
+                    {tag}
+                  </span>
+                ))}
+                {photo.data.tags.length > 3 && (
+                  <span class="inline-block px-2 py-1 text-xs text-gray-500">
+                    +{photo.data.tags.length - 3} more
+                  </span>
+                )}
+              </div>
+            )}
+
+            <!-- Camera info -->
+            {photo.data.camera && (
+              <p class="text-gray-500 text-sm">
+                📷 {photo.data.camera}
+              </p>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Empty state -->
+    {publishedPhotos.length === 0 && (
+      <div class="text-center py-16">
+        <div class="max-w-md mx-auto">
+          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-gray-400 text-2xl">📸</span>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">No photos yet</h3>
+          <p class="text-gray-600 mb-4">
+            Photos will appear here once you add them to your content collection.
+          </p>
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

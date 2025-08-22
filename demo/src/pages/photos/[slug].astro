@@ -1,0 +1,185 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const photos = await getCollection('photos');
+  return photos.map((photo) => ({
+    params: { slug: photo.slug },
+    props: { photo }
+  }));
+}
+
+type Props = {
+  photo: CollectionEntry<'photos'>;
+};
+
+const { photo } = Astro.props;
+const { Content } = await photo.render();
+
+// Get all photos for navigation
+const allPhotos = await getCollection('photos');
+const publishedPhotos = allPhotos
+  .filter(p => !p.data.draft)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+
+const currentIndex = publishedPhotos.findIndex(p => p.slug === photo.slug);
+const prevPhoto = currentIndex > 0 ? publishedPhotos[currentIndex - 1] : null;
+const nextPhoto = currentIndex < publishedPhotos.length - 1 ? publishedPhotos[currentIndex + 1] : null;
+---
+
+<Layout title={`${photo.data.title} - Photo Gallery`} description={photo.data.description}>
+  <article class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Back to gallery link -->
+    <nav class="mb-8">
+      <a 
+        href="/photos" 
+        class="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+      >
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Gallery
+      </a>
+    </nav>
+
+    <!-- Main photo -->
+    <div class="mb-8">
+      <div class="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+        <img 
+          src={photo.data.coverImage.src}
+          alt={photo.data.coverImage.alt}
+          class="w-full h-full object-contain"
+        />
+      </div>
+    </div>
+
+    <!-- Photo metadata -->
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Main content -->
+      <div class="md:col-span-2">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+          {photo.data.title}
+        </h1>
+
+        {photo.data.description && (
+          <p class="text-xl text-gray-600 mb-6">
+            {photo.data.description}
+          </p>
+        )}
+
+        <!-- Photo story/content -->
+        <div class="prose prose-lg max-w-none">
+          <Content />
+        </div>
+
+        <!-- Tags -->
+        {photo.data.tags && photo.data.tags.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Tags</h3>
+            <div class="flex flex-wrap gap-2">
+              {photo.data.tags.map((tag) => (
+                <span class="inline-block px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- Sidebar with metadata -->
+      <div class="space-y-6">
+        <!-- Publication info -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Photo Details</h3>
+          
+          <dl class="space-y-3">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Published</dt>
+              <dd class="text-sm text-gray-900">
+                {new Date(photo.data.publishDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </dd>
+            </div>
+
+            {photo.data.location?.name && (
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Location</dt>
+                <dd class="text-sm text-gray-900">
+                  📍 {photo.data.location.name}
+                </dd>
+              </div>
+            )}
+
+            {photo.data.camera && (
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Camera</dt>
+                <dd class="text-sm text-gray-900">
+                  📷 {photo.data.camera}
+                </dd>
+              </div>
+            )}
+
+            {photo.data.lens && (
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Lens</dt>
+                <dd class="text-sm text-gray-900">
+                  {photo.data.lens}
+                </dd>
+              </div>
+            )}
+
+            {photo.data.settings && (
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Settings</dt>
+                <dd class="text-sm text-gray-900 space-y-1">
+                  {photo.data.settings.aperture && <div>f/{photo.data.settings.aperture.replace('f/', '')}</div>}
+                  {photo.data.settings.shutter && <div>{photo.data.settings.shutter}</div>}
+                  {photo.data.settings.iso && <div>{photo.data.settings.iso}</div>}
+                  {photo.data.settings.focalLength && <div>{photo.data.settings.focalLength}</div>}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+
+        <!-- Navigation -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Navigation</h3>
+          
+          <div class="space-y-3">
+            {prevPhoto && (
+              <a 
+                href={`/photos/${prevPhoto.slug}`}
+                class="block p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"
+              >
+                <div class="text-sm text-gray-500 mb-1">← Previous</div>
+                <div class="font-medium text-gray-900 text-sm">{prevPhoto.data.title}</div>
+              </a>
+            )}
+
+            {nextPhoto && (
+              <a 
+                href={`/photos/${nextPhoto.slug}`}
+                class="block p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"
+              >
+                <div class="text-sm text-gray-500 mb-1">Next →</div>
+                <div class="font-medium text-gray-900 text-sm">{nextPhoto.data.title}</div>
+              </a>
+            )}
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="text-sm text-gray-500">
+              Photo {currentIndex + 1} of {publishedPhotos.length}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>

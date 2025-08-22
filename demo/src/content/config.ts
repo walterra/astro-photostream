@@ -23,7 +23,7 @@ const photoSchema = z.object({
     longitude: z.number().optional()
   }).optional(),
   tags: z.array(z.string()),
-  publishDate: z.date(),
+  publishDate: z.coerce.date(),
   draft: z.boolean()
 });
 
