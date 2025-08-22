@@ -104,12 +104,36 @@ import Layout from '../layouts/Layout.astro';
             </div>
             <div class="flex-1">
               <h3 class="text-xl font-semibold mb-3">Install the Integration</h3>
+              
+              <h4 class="text-lg font-medium mb-2 text-gray-800">For Published Package (Recommended)</h4>
               <div class="bg-gray-900 rounded-lg p-4 mb-4">
                 <pre class="text-green-400 text-sm overflow-x-auto"><code>npx astro add astro-photo-stream</code></pre>
               </div>
-              <p class="text-gray-600">
+              <p class="text-gray-600 mb-4">
                 This command will install the package, update your astro.config.mjs automatically, and set up the necessary configuration.
               </p>
+
+              <h4 class="text-lg font-medium mb-2 text-gray-800">For Local Development</h4>
+              <p class="text-gray-600 mb-2 text-sm">If you're developing or testing with a local version:</p>
+              <div class="bg-gray-900 rounded-lg p-4 mb-3">
+                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`# Install from local package
+pnpm add ../
+# or
+npm install ../`}</code></pre>
+              </div>
+              <p class="text-gray-600 mb-2 text-sm">Then manually add to your <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">astro.config.mjs</code>:</p>
+              <div class="bg-gray-900 rounded-lg p-4">
+                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import photoStream from 'astro-photo-stream';
+
+export default defineConfig({
+  integrations: [
+    tailwind(),
+    photoStream()
+  ]
+});`}</code></pre>
+              </div>
             </div>
           </div>
         </div>

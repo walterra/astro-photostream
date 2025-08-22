@@ -40,6 +40,8 @@ Transform this plain Astro project into a sophisticated photo gallery with AI-po
 
 ### Step 1: Install the Integration
 
+#### For Published Package (Recommended)
+
 ```bash
 npx astro add astro-photo-stream
 ```
@@ -48,6 +50,32 @@ This command will:
 - Install the `astro-photo-stream` package
 - Update your `astro.config.mjs` automatically
 - Set up the necessary configuration
+
+#### For Local Development
+
+If you're developing or testing with a local version of astro-photo-stream:
+
+```bash
+# Install from local package
+pnpm add ../
+# or
+npm install ../
+```
+
+Then manually add to your `astro.config.mjs`:
+
+```js
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import photoStream from 'astro-photo-stream';
+
+export default defineConfig({
+  integrations: [
+    tailwind(),
+    photoStream()
+  ]
+});
+```
 
 ### Step 2: Configure Content Collections
 
