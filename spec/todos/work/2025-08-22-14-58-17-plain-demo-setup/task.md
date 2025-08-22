@@ -1,0 +1,45 @@
+# Update demo to plain Astro project and add setup instructions
+
+**Status:** In Progress
+**Created:** 2025-08-22T14:58:17Z
+**Started:** 2025-08-22T14:58:17Z
+**Agent PID:** 6815
+
+## Original Todo
+
+At the moment the ./demo is more like a fully set up demo page. I want it to be a plain astrojs project in the state right before someone would add astro-photostream. Update the demo project accordingly. Then update demo/README.md with instructions on how to add astro-photostream.
+
+## Description
+
+Transform the current ./demo project from a fully functional photo gallery into a "plain Astro project" ready for someone to add astro-photo-stream. The current demo manually implements photo stream functionality with custom components, sample content, and a photo fetch script. Need to remove all photo-specific functionality while maintaining basic Astro + Tailwind setup, then create clear installation instructions.
+
+## Success Criteria
+
+- [ ] **Functional**: Demo project runs as a clean Astro site without photo functionality
+- [ ] **Functional**: All photo-related content, components, and routes are removed  
+- [ ] **Functional**: Project maintains basic Astro + Tailwind setup only
+- [ ] **Functional**: Homepage shows a simple welcome page suitable for demonstrating integration addition
+- [ ] **Quality**: Project builds without errors (`pnpm build`)
+- [ ] **Quality**: Development server runs without errors (`pnpm dev`)
+- [ ] **Quality**: TypeScript checks pass (`pnpm check`)
+- [ ] **User validation**: Demo README.md contains clear step-by-step instructions for adding astro-photo-stream
+- [ ] **User validation**: Instructions include package installation, content collection setup, and basic usage
+- [ ] **User validation**: User can follow README instructions to successfully add photo functionality
+- [ ] **Documentation**: demo/README.md reflects the new plain project state and integration steps
+
+## Implementation Plan
+
+- [ ] Remove photo content and assets (src/content/photos/, src/assets/photos/)
+- [ ] Move photo fetch script to main root package (scripts/fetch-photos.ts -> ../scripts/)
+- [ ] Remove photo-specific pages (src/pages/photos.astro, src/pages/photos/[slug].astro)
+- [ ] Simplify content collection config (src/content/config.ts - remove photo schema)
+- [ ] Update homepage (src/pages/index.astro - remove photo gallery sections)
+- [ ] Clean up package.json (remove astro-photo-stream dependency and fetch-photos script)
+- [ ] Update astro.config.mjs (remove commented astro-photo-stream integration)
+- [ ] Create new demo/README.md with installation instructions for astro-photo-stream
+- [ ] Automated test: Run `pnpm build` to ensure project builds cleanly
+- [ ] Automated test: Run `pnpm dev` to verify development server starts
+- [ ] Automated test: Run `pnpm check` to verify TypeScript passes
+- [ ] User test: Verify homepage loads and shows clean Astro site
+- [ ] User test: Verify no photo-related routes exist (/photos should 404)
+- [ ] User test: Follow README instructions to add astro-photo-stream integration

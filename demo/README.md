@@ -1,90 +1,206 @@
-# Astro Photo Stream Demo
+# Plain Astro Demo Project
 
-This is a demo site showcasing the capabilities of the **astro-photo-stream** integration.
+A clean, minimal Astro.js project with Tailwind CSS, ready for integrations and customization. This serves as a starting point before adding specialized integrations like `astro-photo-stream`.
 
-## 🚀 Features Demonstrated
+## What's Included
 
-- **Zero-config setup** - Works out of the box with minimal configuration
-- **Responsive photo galleries** - 2/3/4 column layouts that adapt to all screen sizes
-- **EXIF metadata extraction** - Camera settings, GPS coordinates, and timestamps
-- **Tag-based navigation** - Automatic organization and filtering by photo tags
-- **SEO optimization** - Dynamic OpenGraph images and structured data
-- **Performance optimization** - Static generation, lazy loading, and image optimization
+- ⚡ **Astro 5.x** - Modern static site framework
+- 🎨 **Tailwind CSS** - Utility-first CSS framework
+- 📱 **Responsive Design** - Mobile-first layout
+- 🚀 **Development Ready** - Hot reload and TypeScript support
 
-## 🛠️ Running the Demo
+## Getting Started
 
-1. **Install dependencies:**
+### Prerequisites
+
+- Node.js 18+ and pnpm (recommended) or npm
+
+### Installation
+
+1. **Clone or copy this demo project**
+2. **Install dependencies:**
    ```bash
+   pnpm install
+   # or
    npm install
    ```
 
-2. **Start the development server:**
+3. **Start the development server:**
    ```bash
+   pnpm dev
+   # or
    npm run dev
    ```
 
-3. **Build for production:**
-   ```bash
-   npm run build
-   ```
+4. **Open your browser:** Visit `http://localhost:4321`
 
-## 📁 Demo Content
+## Adding astro-photo-stream Integration
 
-The demo includes sample photos showcasing various photography genres:
+Transform this plain Astro project into a sophisticated photo gallery with AI-powered features:
 
-- 🏔️ **Landscape Photography** - Mountain vistas and natural scenes
-- 🌊 **Seascape Photography** - Ocean waves and coastal views  
-- 🌲 **Nature Photography** - Forest paths and wilderness scenes
-- 🏙️ **Urban Photography** - City skylines and architecture
-- ⭐ **Astrophotography** - Night sky and star photography
-- 🍂 **Seasonal Photography** - Autumn colors and reflections
+### Step 1: Install the Integration
 
-## 🔧 Configuration
-
-The demo uses a comprehensive configuration showcasing all available features:
-
-```js
-photoStream({
-  photos: {
-    directory: 'src/content/photos',
-    formats: ['jpg', 'jpeg', 'png', 'webp'],
-    maxWidth: 1920,
-    maxHeight: 1080,
-    quality: 85
-  },
-  gallery: {
-    itemsPerPage: 12,
-    gridCols: {
-      mobile: 2,
-      tablet: 3,
-      desktop: 4
-    },
-    enableMap: true,
-    enableTags: true
-  },
-  seo: {
-    generateOpenGraph: true,
-    siteName: 'Astro Photo Stream Demo'
-  }
-})
+```bash
+npx astro add astro-photo-stream
 ```
 
-## 🌐 Routes
+This command will:
+- Install the `astro-photo-stream` package
+- Update your `astro.config.mjs` automatically
+- Set up the necessary configuration
 
-The integration automatically creates these routes:
+### Step 2: Configure Content Collections
 
-- `/` - Homepage with feature overview
-- `/about` - About page explaining the demo
-- `/photos` - Main photo gallery (paginated)
-- `/photos/[slug]` - Individual photo pages
-- `/photos/tags/[tag]` - Tag-based filtering
+Update your `src/content/config.ts` file:
 
-## 🔗 Links
+```ts
+import { defineCollection } from 'astro:content';
+import { photoSchema } from 'astro-photo-stream/schema';
 
-- [GitHub Repository](https://github.com/walterra/astro-photostream)
-- [Documentation](https://github.com/walterra/astro-photostream#readme)
-- [Astro Integration Directory](https://astro.build/integrations)
+const photos = defineCollection({
+  type: 'content',
+  schema: photoSchema
+});
 
-## 📄 License
+export const collections = { photos };
+```
 
-MIT License - see the main repository for details.
+### Step 3: Add Your Photos
+
+Create the photos content directory structure:
+
+```
+src/content/photos/
+├── sunset-beach.md
+├── sunset-beach.jpg
+├── mountain-hike.md
+└── mountain-hike.jpg
+```
+
+### Step 4: Create Photo Entries
+
+Example photo entry (`src/content/photos/sunset-beach.md`):
+
+```markdown
+---
+title: "Golden Hour at the Beach"
+description: "Stunning sunset over the Pacific Ocean"
+coverImage:
+  src: "./sunset-beach.jpg"
+  alt: "Golden sunset over ocean waves"
+tags: ["sunset", "beach", "golden-hour"]
+publishDate: 2024-08-15
+location:
+  name: "Malibu Beach, California"
+  latitude: 34.0259
+  longitude: -118.7798
+draft: false
+---
+
+A perfect evening capturing the golden hour at Malibu Beach.
+```
+
+### Step 5: Advanced Configuration (Optional)
+
+For AI-powered metadata and geolocation features, add to your `astro.config.mjs`:
+
+```js
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import photoStream from 'astro-photo-stream';
+
+export default defineConfig({
+  integrations: [
+    tailwind(),
+    photoStream({
+      ai: {
+        enabled: true,
+        provider: 'claude',
+        apiKey: process.env.ANTHROPIC_API_KEY
+      },
+      geolocation: {
+        enabled: true,
+        privacy: {
+          enabled: true,
+          radius: 1000  // Blur location within 1km
+        }
+      },
+      gallery: {
+        itemsPerPage: 20,
+        enableTags: true,
+        enableMap: true
+      }
+    })
+  ]
+});
+```
+
+### Step 6: Environment Variables (Optional)
+
+For full AI and geolocation features, create a `.env` file:
+
+```bash
+ANTHROPIC_API_KEY=your_claude_api_key_here
+OPENCAGE_API_KEY=your_opencage_api_key_here
+GEOAPIFY_API_KEY=your_geoapify_api_key_here
+```
+
+### Step 7: Access Your Photo Gallery
+
+After installation, your photo gallery will be available at:
+
+- **Main Gallery:** `/photos`
+- **Individual Photos:** `/photos/[photo-slug]`
+- **Tag Filtering:** `/photos/tags/[tag-name]`
+
+## Available Commands
+
+```bash
+# Development
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm preview      # Preview production build
+pnpm check        # Run Astro type checking
+
+# After adding astro-photo-stream
+pnpm photo-meta   # Generate AI metadata for photos (if configured)
+```
+
+## What Changes After Adding astro-photo-stream?
+
+The integration will automatically:
+
+1. **Add photo routes** (`/photos`, `/photos/[slug]`, etc.)
+2. **Inject photo components** (PhotoGrid, PhotoCard, etc.)
+3. **Enable content collections** with comprehensive photo schema
+4. **Provide AI metadata generation** (if configured)
+5. **Add geolocation features** with privacy controls
+6. **Include interactive maps** and OpenGraph image generation
+
+## Learn More
+
+- **Astro Documentation:** [astro.build](https://astro.build)
+- **astro-photo-stream:** [GitHub Repository](https://github.com/walterra/astro-photostream)
+- **Tailwind CSS:** [tailwindcss.com](https://tailwindcss.com)
+
+## Project Structure
+
+```
+/
+├── public/              # Static assets
+├── src/
+│   ├── components/      # Reusable components
+│   ├── layouts/         # Page layouts
+│   ├── pages/           # Route pages
+│   │   ├── index.astro  # Homepage
+│   │   └── about.astro  # About page
+│   └── content/         # Content collections
+│       └── config.ts    # Content schema config
+├── astro.config.mjs     # Astro configuration
+├── package.json         # Dependencies
+└── tailwind.config.mjs  # Tailwind configuration
+```
+
+---
+
+This demo provides a clean foundation for building with Astro. Add integrations and customize as needed for your specific use case!

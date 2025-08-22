@@ -88,3 +88,9 @@ jspm_packages/
 # Temporary folders
 tmp/
 temp/
+
+# Demo photos should not be added to the repo
+demo/src/assets/photos/
+
+# Demo auto-generated markdown files should not be added to the repo
+demo/src/content/photos

@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { exifr } from 'exifr';
+import exifr from 'exifr';
 import sharp from 'sharp';
 import type { PhotoMetadata, IntegrationOptions } from '../types.js';
 

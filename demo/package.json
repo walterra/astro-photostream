@@ -1,27 +1,25 @@
 {
-  "name": "astro-photo-stream-demo",
+  "name": "plain-astro-demo",
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Demo site showcasing astro-photo-stream integration features",
+  "description": "A plain Astro project ready for integrations",
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev", 
+    "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro",
-    "fetch-photos": "tsx scripts/fetch-photos.ts"
+    "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.13.2",
-    "astro-photo-stream": "file:../",
     "@astrojs/tailwind": "^5.1.2",
-    "tailwindcss": "^3.4.1",
-    "@tailwindcss/typography": "^0.5.10"
+    "astro": "^5.13.2",
+    "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.4",
     "@types/node": "^20.11.0",
-    "tsx": "^4.7.0"
+    "typescript": "^5.9.2"
   }
 }

@@ -1,42 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
-
-// Get recent photos for the hero section
-const photos = await getCollection('photos');
-const recentPhotos = photos
-  .filter(photo => !photo.data.draft)
-  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
-  .slice(0, 6);
 ---
 
-<Layout title="Astro Photo Stream Demo">
+<Layout title="Plain Astro Project">
   <!-- Hero Section -->
   <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
       <div class="text-center">
         <h1 class="text-4xl md:text-6xl font-bold mb-6">
-          📸 Astro Photo Stream
+          🚀 Plain Astro Project
         </h1>
         <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
-          Transform your photos into beautiful, SEO-optimized galleries with 
-          <strong>AI-powered metadata</strong>, <strong>geolocation features</strong>, 
-          and <strong>responsive design</strong>.
+          A clean, minimal Astro site ready for your next integration. 
+          Perfect starting point for building amazing web experiences.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <a 
-            href="/photos" 
+            href="/about" 
             class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
-            View Photo Gallery
+            Learn More
           </a>
           <a 
-            href="https://github.com/walterra/astro-photostream" 
+            href="https://astro.build" 
             target="_blank"
             rel="noopener noreferrer"
             class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
           >
-            View on GitHub
+            Astro Docs
           </a>
         </div>
       </div>
@@ -48,146 +39,103 @@ const recentPhotos = photos
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Powerful Features
+          Ready for Enhancement
         </h2>
         <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-          Everything you need to create professional photo galleries with minimal configuration.
+          This plain Astro project includes the essentials and is ready for your integrations.
         </p>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">🤖</span>
+            <span class="text-2xl">⚡</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">AI-Powered Metadata</h3>
-          <p class="text-gray-600">Automatic titles, descriptions, and tags using Claude or OpenAI</p>
+          <h3 class="text-xl font-semibold mb-2">Lightning Fast</h3>
+          <p class="text-gray-600">Static site generation with optimal performance</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">📍</span>
+            <span class="text-2xl">🎨</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Smart Geolocation</h3>
-          <p class="text-gray-600">Location name resolution with privacy-focused blur/offset options</p>
+          <h3 class="text-xl font-semibold mb-2">Styled with Tailwind</h3>
+          <p class="text-gray-600">Modern utility-first CSS framework included</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">📱</span>
+            <span class="text-2xl">🔧</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Responsive Design</h3>
-          <p class="text-gray-600">2/3/4 column layouts that work perfectly on all devices</p>
+          <h3 class="text-xl font-semibold mb-2">Integration Ready</h3>
+          <p class="text-gray-600">Clean slate for adding your favorite integrations</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">⚡</span>
+            <span class="text-2xl">📱</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Performance First</h3>
-          <p class="text-gray-600">Static generation with lazy loading and image optimization</p>
+          <h3 class="text-xl font-semibold mb-2">Responsive</h3>
+          <p class="text-gray-600">Mobile-first design that works on all devices</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">🏷️</span>
+            <span class="text-2xl">💡</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">Tag System</h3>
-          <p class="text-gray-600">Automatic tag-based filtering and navigation</p>
+          <h3 class="text-xl font-semibold mb-2">Developer Friendly</h3>
+          <p class="text-gray-600">TypeScript support and modern development tools</p>
         </div>
 
         <div class="text-center p-6">
           <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-2xl">🔍</span>
+            <span class="text-2xl">🌟</span>
           </div>
-          <h3 class="text-xl font-semibold mb-2">SEO Optimized</h3>
-          <p class="text-gray-600">Dynamic OpenGraph images and structured data</p>
+          <h3 class="text-xl font-semibold mb-2">Minimal & Clean</h3>
+          <p class="text-gray-600">No unnecessary bloat, just the essentials</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Recent Photos Preview -->
+  <!-- Next Steps Section -->
   <section class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Recent Photos
+          What's Next?
         </h2>
         <p class="text-xl text-gray-600">
-          Check out the latest additions to our photo stream
+          This project is ready for you to add amazing features
         </p>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
-        {recentPhotos.map((photo) => (
-          <a 
-            href={`/photos/${photo.slug}`}
-            class="group relative aspect-square overflow-hidden rounded-lg bg-gray-200 hover:scale-105 transition-transform"
-          >
-            <img 
-              src={photo.data.coverImage.src}
-              alt={photo.data.coverImage.alt}
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              loading="lazy"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-              <div class="absolute bottom-2 left-2 right-2">
-                <h3 class="text-white font-medium text-sm truncate">
-                  {photo.data.title}
-                </h3>
-              </div>
-            </div>
-          </a>
-        ))}
-      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-lg p-8 shadow-sm">
+          <h3 class="text-xl font-semibold mb-4">Add Integrations</h3>
+          <p class="text-gray-600 mb-4">
+            Enhance your site with Astro's rich ecosystem of integrations:
+          </p>
+          <ul class="text-sm text-gray-600 space-y-2">
+            <li>• Content Management (MDX, Contentful, Sanity)</li>
+            <li>• UI Frameworks (React, Vue, Svelte)</li>
+            <li>• Styling (Sass, PostCSS, UnoCSS)</li>
+            <li>• Performance (Image optimization, Sitemap)</li>
+          </ul>
+        </div>
 
-      <div class="text-center">
-        <a 
-          href="/photos" 
-          class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-        >
-          View All Photos
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Quick Start Section -->
-  <section class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Quick Start
-        </h2>
-        <p class="text-xl text-gray-600">
-          Get your photo gallery up and running in minutes
-        </p>
-      </div>
-
-      <div class="bg-gray-900 rounded-lg p-8 max-w-4xl mx-auto">
-        <pre class="text-green-400 text-sm overflow-x-auto"><code>{`# Install the integration
-npx astro add astro-photo-stream
-
-# Add to your astro.config.mjs
-import photoStream from 'astro-photo-stream';
-
-export default defineConfig({
-  integrations: [photoStream()]
-});
-
-# Your photo gallery is ready at /photos!`}</code></pre>
-      </div>
-
-      <div class="text-center mt-8">
-        <a 
-          href="https://github.com/walterra/astro-photostream#quick-start" 
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-blue-600 hover:text-blue-700 font-semibold"
-        >
-          View full documentation →
-        </a>
+        <div class="bg-white rounded-lg p-8 shadow-sm">
+          <h3 class="text-xl font-semibold mb-4">Customize & Build</h3>
+          <p class="text-gray-600 mb-4">
+            Start building your unique web experience:
+          </p>
+          <ul class="text-sm text-gray-600 space-y-2">
+            <li>• Add your content and pages</li>
+            <li>• Customize the design and layout</li>
+            <li>• Set up your preferred deployment</li>
+            <li>• Configure SEO and analytics</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
