@@ -1,0 +1,76 @@
+---
+import type { PhotoCardProps } from '../types.js';
+import { Image } from 'astro:assets';
+
+interface Props extends PhotoCardProps {
+  size?: "small" | "medium" | "large";
+}
+
+const { 
+  photo, 
+  size = "medium",
+  loading = 'lazy',
+  class: className = ''
+} = Astro.props;
+
+// Size-specific classes aligned with reference implementation
+const sizeClasses = {
+  small: "aspect-square w-full max-w-sm",
+  medium: "aspect-[4/3] w-full", 
+  large: "aspect-[3/2] w-full",
+};
+
+// Size-specific image dimensions
+const imageDimensions = {
+  small: { width: 300, height: 300 },
+  medium: { width: 400, height: 300 },
+  large: { width: 600, height: 400 }
+};
+
+const dimensions = imageDimensions[size];
+---
+
+<a href={`/photos/${photo.id}`} class={`group block rounded-lg overflow-hidden ${sizeClasses[size]} ${className}`}>
+  <div class="h-full w-full">
+    {typeof photo.coverImage?.src === "string" ? (
+      <img
+        src={photo.coverImage.src}
+        alt={photo.coverImage?.alt || photo.title || `Photo ${photo.id}`}
+        class="h-full w-full object-cover transition-transform group-hover:scale-105"
+        loading={loading}
+        width={dimensions.width}
+        height={dimensions.height}
+      />
+    ) : photo.coverImage?.src ? (
+      <Image
+        src={photo.coverImage.src}
+        alt={photo.coverImage.alt || photo.title || `Photo ${photo.id}`}
+        class="h-full w-full object-cover transition-transform group-hover:scale-105"
+        loading={loading}
+        width={dimensions.width}
+        height={dimensions.height}
+      />
+    ) : (
+      <div class="h-full w-full bg-gray-200 dark:bg-gray-700 flex items-center justify-content">
+        <span class="text-gray-400">No image</span>
+      </div>
+    )}
+  </div>
+  
+  {photo.publishDate && (
+    <div class="mt-2">
+      <time class="text-xs text-gray-600 dark:text-gray-400" datetime={photo.publishDate.toISOString()}>
+        {photo.publishDate.toLocaleDateString()}
+      </time>
+    </div>
+  )}
+</a>
+
+<!-- 
+  Aligned with reference implementation:
+  - Uses Tailwind classes exclusively (no custom CSS)
+  - Clean card design with hover effects
+  - Aspect ratio variants (square, 4:3, 3:2)
+  - Minimal metadata display (just publish date)
+  - Group hover pattern for image scaling
+-->

@@ -1,0 +1,384 @@
+---
+import type { PhotoStreamProps } from '../types.js';
+import PhotoGrid from './PhotoGrid.astro';
+import MultiMarkerMap from './MultiMarkerMap.astro';
+import { createPagination } from '../utils/routing.js';
+
+interface Props extends PhotoStreamProps {}
+
+const { 
+  photos, 
+  itemsPerPage = 20,
+  showPagination = true,
+  showMap = true,
+  class: className = ''
+} = Astro.props;
+
+// Get current page from URL
+const url = new URL(Astro.request.url);
+const currentPageParam = url.pathname.split('/').pop();
+const currentPage = currentPageParam && !isNaN(Number(currentPageParam)) 
+  ? Number(currentPageParam) 
+  : 1;
+
+// Create pagination
+const pagination = createPagination(photos, itemsPerPage, currentPage);
+const paginatedPhotos = pagination.items;
+
+// Filter photos with location data for map
+const photosWithLocation = photos.filter(photo => 
+  photo.location?.coordinates?.latitude && photo.location?.coordinates?.longitude
+);
+
+// Generate pagination URLs
+const basePath = url.pathname.replace(/\/page\/\d+$/, '');
+const generatePageUrl = (page: number) => 
+  page === 1 ? basePath : `${basePath}/page/${page}`;
+---
+
+<div class={`photo-stream ${className}`}>
+  <!-- Stream Header -->
+  <header class="photo-stream__header">
+    <div class="photo-stream__stats">
+      <span class="photo-stream__count">
+        {photos.length} photo{photos.length !== 1 ? 's' : ''}
+      </span>
+      {photosWithLocation.length > 0 && (
+        <span class="photo-stream__location-count">
+          • {photosWithLocation.length} with location data
+        </span>
+      )}
+    </div>
+    
+    {showMap && photosWithLocation.length > 0 && (
+      <button 
+        class="photo-stream__map-toggle"
+        data-toggle-map
+        aria-expanded="false"
+        aria-controls="photo-stream-map"
+      >
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+        </svg>
+        Show Map
+      </button>
+    )}
+  </header>
+  
+  <!-- Interactive Map -->
+  {showMap && photosWithLocation.length > 0 && (
+    <div class="photo-stream__map" id="photo-stream-map" hidden>
+      <MultiMarkerMap 
+        photos={photosWithLocation}
+        height="400px"
+        class="photo-stream__map-container"
+      />
+    </div>
+  )}
+  
+  <!-- Photo Grid -->
+  <div class="photo-stream__grid">
+    <PhotoGrid 
+      photos={paginatedPhotos}
+      columns={{ mobile: 2, tablet: 3, desktop: 4 }}
+      gap="1.5rem"
+    />
+  </div>
+  
+  <!-- Pagination -->
+  {showPagination && pagination.totalPages > 1 && (
+    <nav class="photo-stream__pagination" aria-label="Photo pagination">
+      <div class="photo-stream__pagination-info">
+        Page {pagination.currentPage} of {pagination.totalPages}
+        ({pagination.totalItems} total photos)
+      </div>
+      
+      <div class="photo-stream__pagination-controls">
+        {pagination.hasPrev && (
+          <a 
+            href={generatePageUrl(pagination.prevPage!)}
+            class="photo-stream__pagination-link photo-stream__pagination-link--prev"
+            aria-label="Previous page"
+          >
+            ← Previous
+          </a>
+        )}
+        
+        <!-- Page numbers -->
+        <div class="photo-stream__pagination-numbers">
+          {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+            const pageNum = Math.max(1, pagination.currentPage - 2) + i;
+            if (pageNum > pagination.totalPages) return null;
+            
+            return (
+              <a
+                href={generatePageUrl(pageNum)}
+                class={`photo-stream__pagination-number ${
+                  pageNum === pagination.currentPage ? 'photo-stream__pagination-number--current' : ''
+                }`}
+                aria-label={`Page ${pageNum}`}
+                aria-current={pageNum === pagination.currentPage ? 'page' : undefined}
+              >
+                {pageNum}
+              </a>
+            );
+          })}
+        </div>
+        
+        {pagination.hasNext && (
+          <a 
+            href={generatePageUrl(pagination.nextPage!)}
+            class="photo-stream__pagination-link photo-stream__pagination-link--next"
+            aria-label="Next page"
+          >
+            Next →
+          </a>
+        )}
+      </div>
+    </nav>
+  )}
+</div>
+
+<script>
+  // Map toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const mapToggle = document.querySelector('[data-toggle-map]') as HTMLButtonElement;
+    const mapContainer = document.querySelector('#photo-stream-map') as HTMLElement;
+    
+    if (mapToggle && mapContainer) {
+      mapToggle.addEventListener('click', function() {
+        const isHidden = mapContainer.hasAttribute('hidden');
+        
+        if (isHidden) {
+          mapContainer.removeAttribute('hidden');
+          mapToggle.setAttribute('aria-expanded', 'true');
+          mapToggle.textContent = '🗺️ Hide Map';
+        } else {
+          mapContainer.setAttribute('hidden', '');
+          mapToggle.setAttribute('aria-expanded', 'false');
+          mapToggle.textContent = '🗺️ Show Map';
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .photo-stream {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .photo-stream__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .photo-stream__stats {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  .photo-stream__count {
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  .photo-stream__location-count {
+    color: #6b7280;
+  }
+  
+  .photo-stream__map-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .photo-stream__map-toggle:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+  }
+  
+  .photo-stream__map-toggle:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+  
+  .photo-stream__map {
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .photo-stream__map-container {
+    width: 100%;
+  }
+  
+  .photo-stream__grid {
+    margin-bottom: 3rem;
+  }
+  
+  .photo-stream__pagination {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    padding: 2rem 0 1rem;
+    border-top: 1px solid #e5e7eb;
+  }
+  
+  .photo-stream__pagination-info {
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: center;
+  }
+  
+  .photo-stream__pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .photo-stream__pagination-link {
+    padding: 0.5rem 1rem;
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .photo-stream__pagination-link:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+  }
+  
+  .photo-stream__pagination-link:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+  
+  .photo-stream__pagination-numbers {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  .photo-stream__pagination-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .photo-stream__pagination-number:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+  }
+  
+  .photo-stream__pagination-number--current {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+  }
+  
+  .photo-stream__pagination-number--current:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+  }
+  
+  @media (max-width: 768px) {
+    .photo-stream {
+      padding: 0.75rem;
+    }
+    
+    .photo-stream__header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    
+    .photo-stream__pagination-controls {
+      justify-content: center;
+    }
+    
+    .photo-stream__pagination-numbers {
+      order: 2;
+      margin: 0 0.5rem;
+    }
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .photo-stream__header {
+      border-bottom-color: #374151;
+    }
+    
+    .photo-stream__count {
+      color: #f9fafb;
+    }
+    
+    .photo-stream__stats,
+    .photo-stream__location-count {
+      color: #d1d5db;
+    }
+    
+    .photo-stream__map-toggle {
+      background: #374151;
+      border-color: #4b5563;
+      color: #f9fafb;
+    }
+    
+    .photo-stream__map-toggle:hover {
+      background: #4b5563;
+      border-color: #6b7280;
+    }
+    
+    .photo-stream__pagination {
+      border-top-color: #374151;
+    }
+    
+    .photo-stream__pagination-info {
+      color: #d1d5db;
+    }
+    
+    .photo-stream__pagination-link,
+    .photo-stream__pagination-number {
+      background: #374151;
+      border-color: #4b5563;
+      color: #f9fafb;
+    }
+    
+    .photo-stream__pagination-link:hover,
+    .photo-stream__pagination-number:hover {
+      background: #4b5563;
+      border-color: #6b7280;
+    }
+  }
+</style>

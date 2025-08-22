@@ -1,0 +1,83 @@
+---
+/**
+ * MapImage component for single photo location display
+ * Based on reference implementation pattern from walterra-dev
+ * Uses Geoapify Static Map API for privacy-focused location display
+ */
+
+interface Props {
+  latitude: number;
+  longitude: number;
+  locationName?: string;
+  width?: number;
+  height?: number;
+  zoom?: number;
+  style?: string;
+  class?: string;
+}
+
+const {
+  latitude,
+  longitude,
+  locationName,
+  width = 400,
+  height = 300,
+  zoom = 8, // Fixed zoom for privacy (as per reference)
+  style = "osm-bright-smooth",
+  class: className = ""
+} = Astro.props;
+
+// Geoapify API key from environment
+const apiKey = import.meta.env.GEOAPIFY_API_KEY;
+
+// Generate static map URL (aligned with reference implementation)
+const mapUrl = apiKey 
+  ? `https://maps.geoapify.com/v1/staticmap?style=${style}&width=${width}&height=${height}&center=lonlat:${longitude},${latitude}&zoom=${zoom}&marker=lonlat:${longitude},${latitude};color:%23ff0000;size:medium&apiKey=${apiKey}`
+  : null;
+
+// Generate alt text for accessibility
+const altText = locationName 
+  ? `Map showing location of ${locationName}` 
+  : `Map showing location at coordinates ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+---
+
+<div class={`map-image-container ${className}`}>
+  {mapUrl ? (
+    <img
+      src={mapUrl}
+      alt={altText}
+      width={width}
+      height={height}
+      class="rounded-lg shadow-sm"
+      loading="lazy"
+    />
+  ) : (
+    <!-- Fallback when no API key available -->
+    <div 
+      class="bg-gray-200 dark:bg-gray-700 rounded-lg shadow-sm flex items-center justify-center text-gray-500 dark:text-gray-400"
+      style={`width: ${width}px; height: ${height}px;`}
+    >
+      <div class="text-center">
+        <svg class="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+        </svg>
+        <p class="text-sm">
+          {locationName || 'Location'}
+        </p>
+        <p class="text-xs mt-1">
+          {latitude.toFixed(4)}, {longitude.toFixed(4)}
+        </p>
+      </div>
+    </div>
+  )}
+</div>
+
+<!-- 
+  Aligned with reference implementation:
+  - Uses Geoapify Static Map API with same parameters
+  - Fixed zoom level of 8 for privacy protection
+  - Red marker styling matching reference
+  - Fallback display when API key unavailable
+  - Lazy loading for performance
+  - Rounded corners and shadow matching reference design
+-->

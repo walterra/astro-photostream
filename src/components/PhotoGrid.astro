@@ -1,0 +1,134 @@
+---
+import type { PhotoGridProps } from '../types.js';
+import PhotoCard from './PhotoCard.astro';
+
+interface Props extends PhotoGridProps {}
+
+const { 
+  photos, 
+  columns = {
+    mobile: 2,
+    tablet: 3,
+    desktop: 4
+  },
+  gap = '1rem',
+  class: className = ''
+} = Astro.props;
+
+// Extract column configuration
+const { mobile = 2, tablet = 3, desktop = 4 } = columns;
+---
+
+<div class={`photo-grid ${className}`}>
+  {photos.map(photo => (
+    <a href={`/photos/${photo.id}`} class="photo-grid__item">
+      <PhotoCard 
+        photo={photo}
+        loading="lazy"
+        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+      />
+    </a>
+  ))}
+</div>
+
+<style define:vars={{ 
+  gap,
+  mobileCols: mobile,
+  tabletCols: tablet,
+  desktopCols: desktop
+}}>
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--mobileCols), 1fr);
+    gap: var(--gap);
+    width: 100%;
+  }
+  
+  .photo-grid__item {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  
+  .photo-grid__item:hover {
+    text-decoration: none;
+  }
+  
+  .photo-grid__item:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 12px;
+  }
+  
+  /* Tablet breakpoint */
+  @media (min-width: 768px) {
+    .photo-grid {
+      grid-template-columns: repeat(var(--tabletCols), 1fr);
+    }
+  }
+  
+  /* Desktop breakpoint */
+  @media (min-width: 1024px) {
+    .photo-grid {
+      grid-template-columns: repeat(var(--desktopCols), 1fr);
+    }
+  }
+  
+  /* Large desktop - add more columns if there are many photos */
+  @media (min-width: 1536px) {
+    .photo-grid {
+      grid-template-columns: repeat(calc(var(--desktopCols) + 1), 1fr);
+    }
+  }
+  
+  /* Handle different aspect ratios gracefully */
+  .photo-grid__item:nth-child(7n) {
+    grid-column: span 2;
+  }
+  
+  @media (max-width: 768px) {
+    .photo-grid__item:nth-child(7n) {
+      grid-column: span 1;
+    }
+  }
+  
+  /* Stagger animation on load */
+  .photo-grid__item {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+  }
+  
+  .photo-grid__item:nth-child(1) { animation-delay: 0.1s; }
+  .photo-grid__item:nth-child(2) { animation-delay: 0.2s; }
+  .photo-grid__item:nth-child(3) { animation-delay: 0.3s; }
+  .photo-grid__item:nth-child(4) { animation-delay: 0.4s; }
+  .photo-grid__item:nth-child(5) { animation-delay: 0.5s; }
+  .photo-grid__item:nth-child(6) { animation-delay: 0.6s; }
+  .photo-grid__item:nth-child(n+7) { animation-delay: 0.7s; }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    .photo-grid__item {
+      animation: none;
+    }
+  }
+  
+  /* Masonry-like effect for varied heights */
+  @supports (grid-template-rows: masonry) {
+    .photo-grid {
+      grid-template-rows: masonry;
+      align-tracks: stretch;
+    }
+  }
+</style>
