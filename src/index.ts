@@ -43,34 +43,23 @@ export default defineIntegration({
           
           // Inject photo gallery routes
           if (command === 'dev' || command === 'build') {
-            // Main photo stream page
+            // Main photo stream with pagination (Astro convention)
             injectRoute({
-              pattern: '/photos',
-              entrypoint: resolve('./routes/photos.astro')
+              pattern: '/photos/[...page]',
+              entrypoint: resolve('./routes/photos/[...page].astro')
             });
             
             // Individual photo pages
             injectRoute({
               pattern: '/photos/[slug]',
-              entrypoint: resolve('./routes/photo.astro')
+              entrypoint: resolve('./routes/photos/[slug].astro')
             });
             
-            // Paginated photo pages
-            injectRoute({
-              pattern: '/photos/page/[...page]',
-              entrypoint: resolve('./routes/photos-paginated.astro')
-            });
-            
-            // Tag-based photo filtering
+            // Tag-based photo filtering with pagination
             if (options.gallery.enableTags) {
               injectRoute({
-                pattern: '/photos/tags/[tag]',
-                entrypoint: resolve('./routes/tag.astro')
-              });
-              
-              injectRoute({
                 pattern: '/photos/tags/[tag]/[...page]',
-                entrypoint: resolve('./routes/tag-paginated.astro')
+                entrypoint: resolve('./routes/photos/tags/[tag]/[...page].astro')
               });
             }
             

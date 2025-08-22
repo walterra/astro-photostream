@@ -1,67 +1,36 @@
 #!/usr/bin/env tsx
 /**
- * Photo Metadata Generator
+ * Photo Metadata Generator CLI
  * Aligned with reference implementation from /Users/walterra/dev/walterra-dev
  * 
- * Generates comprehensive photo metadata using:
- * - EXIF data extraction with exifr
- * - AI-powered content generation with Claude API  
- * - Reverse geocoding with OpenCage API
- * - Smart image compression for API uploads
- * - Content collection compatible output
+ * Generates comprehensive photo metadata using modular classes:
+ * - ExifProcessor for EXIF data extraction
+ * - ClaudeAnalyzer for AI-powered content generation  
+ * - GeocodeProcessor for location name resolution
+ * - PhotoMetadataGenerator orchestrating all processors
  */
 
 import fs from 'fs/promises';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import { exifr } from 'exifr';
-import sharp from 'sharp';
 import matter from 'gray-matter';
-import Anthropic from '@anthropic-ai/sdk';
+import { 
+  PhotoMetadataGenerator,
+  ExifProcessor,
+  ClaudeAnalyzer,
+  GeocodeProcessor,
+  extractExifData
+} from '../utils/metadata.js';
+import { loadConfig } from '../utils/config.js';
+import type { IntegrationOptions, PhotoMetadata } from '../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ============================================================================
-// TYPES (aligned with reference)
+// TYPES FOR CLI
 // ============================================================================
-
-interface ExifData {
-    camera?: string;
-    lens?: string;
-    settings?: {
-        aperture?: string;
-        shutter?: string;
-        iso?: string;
-        focalLength?: string;
-    };
-    location?: {
-        name?: string;
-        latitude?: number;
-        longitude?: number;
-    };
-    dateTime?: Date;
-    caption?: string;
-}
-
-interface LLMAnalysis {
-    title: string;
-    description: string;
-    altText: string;
-    suggestedTags: string[];
-    mood?: string;
-    subjects?: string[];
-}
-
-interface PhotoMetadata extends ExifData {
-    title: string;
-    description: string;
-    altText: string;
-    tags: string[];
-    publishDate: string;
-    draft: boolean;
-}
 
 interface ExistingMetadata {
     frontmatter: Record<string, unknown>;
@@ -73,26 +42,15 @@ interface ExistingMetadata {
 // ============================================================================
 
 // Directories
-const CONTENT_DIR = process.env.CONTENT_DIRECTORY || './src/content/photo';
+const CONTENT_DIR = process.env.CONTENT_DIRECTORY || './src/content/photos';
 const ASSETS_DIR = process.env.PHOTOS_DIRECTORY || './src/assets/photos';
 
 // Supported file extensions
 const SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.tiff', '.tif'];
 
-// Initialize Anthropic client
-const anthropic = process.env.ANTHROPIC_API_KEY
-    ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-    : null;
-
-// OpenCage API key
-const OPENCAGE_API_KEY = process.env.OPENCAGE_API_KEY;
-
-// ============================================================================
-// MEMORY SYSTEM (aligned with reference)
-// ============================================================================
-
-// Memory for recent LLM outputs to avoid repetitive descriptions
-const recentLLMOutputs: LLMAnalysis[] = [];
+// Configuration will be loaded in main() function
+let integrationOptions: IntegrationOptions;
+let metadataGenerator: PhotoMetadataGenerator;
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -112,444 +70,6 @@ function question(prompt: string): Promise<string> {
     });
 }
 
-// ============================================================================
-// CORE PROCESSING FUNCTIONS (aligned with reference)
-// ============================================================================
-
-/**
- * Extract EXIF data from image file
- * Based on reference implementation patterns
- */
-async function extractExifData(imagePath: string): Promise<ExifData> {
-    try {
-        const exifData = await exifr.parse(imagePath, {
-            pick: [
-                "Make", "Model", "LensModel", "FNumber", "ExposureTime", "ISO",
-                "FocalLengthIn35mmFormat", "FocalLength", "GPS", "DateTimeOriginal", 
-                "DateTime", "ImageDescription", "UserComment", "XPComment", "XPSubject"
-            ]
-        });
-
-        if (!exifData) {
-            return {};
-        }
-
-        // Format camera information
-        const camera = exifData.Make && exifData.Model 
-            ? `${exifData.Make} ${exifData.Model}` 
-            : undefined;
-
-        // Format settings
-        const settings: any = {};
-        if (exifData.FNumber) {
-            settings.aperture = `f/${exifData.FNumber}`;
-        }
-        if (exifData.ExposureTime) {
-            settings.shutter = exifData.ExposureTime >= 1 
-                ? `${exifData.ExposureTime}s`
-                : `1/${Math.round(1 / exifData.ExposureTime)}s`;
-        }
-        if (exifData.ISO) {
-            settings.iso = exifData.ISO.toString();
-        }
-        if (exifData.FocalLengthIn35mmFormat || exifData.FocalLength) {
-            const focal = exifData.FocalLengthIn35mmFormat || exifData.FocalLength;
-            settings.focalLength = `${focal}mm`;
-        }
-
-        // Extract GPS coordinates if available
-        let location;
-        if (exifData.GPS || (exifData.latitude && exifData.longitude)) {
-            try {
-                const coords = await exifr.gps(imagePath);
-                if (coords) {
-                    location = {
-                        latitude: coords.latitude,
-                        longitude: coords.longitude
-                    };
-                }
-            } catch (error) {
-                console.warn('Failed to extract GPS coordinates:', error);
-            }
-        }
-
-        // Extract description from various EXIF fields
-        const description = exifData.ImageDescription || 
-                           exifData.UserComment || 
-                           exifData.XPComment || 
-                           exifData.XPSubject;
-
-        return {
-            camera,
-            lens: exifData.LensModel,
-            settings: Object.keys(settings).length > 0 ? settings : undefined,
-            location,
-            dateTime: exifData.DateTimeOriginal || exifData.DateTime,
-            caption: description
-        };
-    } catch (error) {
-        console.warn(`Failed to extract EXIF from ${imagePath}:`, error);
-        return {};
-    }
-}
-
-/**
- * Compress image for API upload with progressive strategy
- * Based on reference implementation compression logic
- */
-async function compressImageForAPI(imagePath: string): Promise<Buffer> {
-    // Target ~3.7MB buffer size to account for Base64 encoding overhead (~33%)
-    const MAX_BUFFER_SIZE = Math.floor(5 * 1024 * 1024 * 0.75); // ~3.75MB
-    
-    const originalBuffer = await fs.readFile(imagePath);
-    let compressedBuffer: Buffer;
-    let quality = 85;
-    let maxWidth = 1920;
-
-    // Start with reasonable size and quality
-    compressedBuffer = await sharp(originalBuffer)
-        .resize(maxWidth, maxWidth, { fit: "inside", withoutEnlargement: true })
-        .jpeg({ quality })
-        .toBuffer();
-
-    console.log(`Initial compression: ${(compressedBuffer.length / 1024 / 1024).toFixed(2)}MB`);
-
-    // If still too large, reduce both size and quality progressively
-    while (compressedBuffer.length > MAX_BUFFER_SIZE && (quality > 20 || maxWidth > 800)) {
-        if (quality > 40) {
-            quality -= 15; // Reduce quality more aggressively first
-        } else if (maxWidth > 800) {
-            maxWidth = Math.floor(maxWidth * 0.8); // Then reduce size
-            quality = Math.max(quality, 30); // Reset quality when resizing
-        } else {
-            quality -= 5; // Final quality reduction
-        }
-
-        console.log(`Compressing further: quality=${quality}%, maxWidth=${maxWidth}px`);
-        
-        compressedBuffer = await sharp(originalBuffer)
-            .resize(maxWidth, maxWidth, { fit: "inside", withoutEnlargement: true })
-            .jpeg({ quality })
-            .toBuffer();
-
-        console.log(`New size: ${(compressedBuffer.length / 1024 / 1024).toFixed(2)}MB`);
-    }
-
-    if (compressedBuffer.length > MAX_BUFFER_SIZE) {
-        throw new Error(`Unable to compress image below ${MAX_BUFFER_SIZE} bytes`);
-    }
-
-    return compressedBuffer;
-}
-
-/**
- * Analyze image content using Claude API
- * Based on reference implementation with Walter's personality
- */
-async function analyzeLLMContent(imagePath: string, exifData?: ExifData): Promise<LLMAnalysis> {
-    const filename = path.basename(imagePath);
-    
-    // Fallback analysis for when API is not available
-    const fallbackAnalysis: LLMAnalysis = {
-        title: filename.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
-        description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ''}.`,
-        altText: `Photograph: ${filename}`,
-        suggestedTags: ['photography', ...(exifData?.dateTime ? [exifData.dateTime.getFullYear().toString()] : [])]
-    };
-
-    if (!anthropic) {
-        console.warn('Claude API not configured, using filename-based analysis');
-        return fallbackAnalysis;
-    }
-
-    try {
-        // Compress image for API
-        const compressedBuffer = await compressImageForAPI(imagePath);
-        const base64Image = compressedBuffer.toString('base64');
-        
-        // Build context from recent outputs (memory system)
-        const recentContext = recentLLMOutputs.length > 0
-            ? `Recent outputs to avoid repetition: ${recentLLMOutputs.slice(-3).map(r => r.title).join(', ')}`
-            : '';
-
-        // Camera context
-        const cameraInfo = exifData?.camera || 'Unknown camera';
-        const isSmartphone = cameraInfo.toLowerCase().includes('iphone') || 
-                            cameraInfo.toLowerCase().includes('pixel') ||
-                            cameraInfo.toLowerCase().includes('samsung');
-
-        // Technical context
-        const techContext = exifData?.settings ? [
-            exifData.settings.aperture,
-            exifData.settings.shutter,
-            exifData.settings.iso && `ISO ${exifData.settings.iso}`,
-            exifData.settings.focalLength
-        ].filter(Boolean).join(', ') : '';
-
-        // Build comprehensive prompt (aligned with reference)
-        const prompt = `You are analyzing a photograph for Walter's photography blog. 
-
-${recentContext ? `CONTEXT: ${recentContext}\n` : ''}
-Filename: ${filename}
-Camera: ${cameraInfo}${isSmartphone ? ' (Smartphone camera)' : ' (Dedicated camera)'}
-${exifData?.lens ? `Lens: ${exifData.lens}` : ''}
-${techContext ? `Settings: ${techContext}` : ''}
-${exifData?.location ? `Location: ${exifData.location.latitude?.toFixed(4)}, ${exifData.location.longitude?.toFixed(4)}` : ''}
-${exifData?.dateTime ? `Date: ${exifData.dateTime.toLocaleDateString()}` : ''}
-
-Generate JSON with these fields:
-- title: 30-60 chars, witty/nerdy, can include puns, SEO-friendly
-- description: 200-250 chars, nerdy sarcastic tone, engaging
-- altText: Concise accessibility description
-- suggestedTags: Array of relevant tags (include year if determinable)
-
-Write in Walter's voice: nerdy, slightly sarcastic, humble about photography skills, appreciates technical and artistic aspects.
-
-Focus on what makes this photo interesting or worth sharing. Avoid generic descriptions.`;
-
-        const message = await anthropic.messages.create({
-            model: process.env.ANTHROPIC_MODEL || 'claude-3-haiku-20240307',
-            max_tokens: parseInt(process.env.ANTHROPIC_MAX_TOKENS || '400'),
-            temperature: 0.9,
-            messages: [
-                {
-                    role: 'user',
-                    content: [
-                        {
-                            type: 'text',
-                            text: prompt
-                        },
-                        {
-                            type: 'image',
-                            source: {
-                                type: 'base64',
-                                media_type: 'image/jpeg',
-                                data: base64Image
-                            }
-                        }
-                    ]
-                }
-            ]
-        });
-
-        // Extract and parse JSON response
-        const responseText = message.content[0]?.type === 'text' ? message.content[0].text : '';
-        const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || 
-                         responseText.match(/```\n([\s\S]*?)\n```/) ||
-                         responseText.match(/\{[\s\S]*\}/);
-
-        if (jsonMatch) {
-            const jsonStr = jsonMatch[1] || jsonMatch[0];
-            const parsed = JSON.parse(jsonStr);
-            
-            const analysis: LLMAnalysis = {
-                title: parsed.title || fallbackAnalysis.title,
-                description: parsed.description || fallbackAnalysis.description,
-                altText: parsed.altText || fallbackAnalysis.altText,
-                suggestedTags: Array.isArray(parsed.suggestedTags) ? parsed.suggestedTags : fallbackAnalysis.suggestedTags
-            };
-            
-            // Store this output in recent memory (keep only last 5) with date context
-            const analysisWithDate = {
-                ...analysis,
-                processedDate: exifData?.dateTime || new Date(),
-            };
-            recentLLMOutputs.push(analysisWithDate);
-            if (recentLLMOutputs.length > 5) {
-                recentLLMOutputs.shift(); // Remove oldest entry
-            }
-            
-            return analysis;
-        }
-
-        console.warn('Failed to parse AI response, using fallback');
-        return fallbackAnalysis;
-        
-    } catch (error) {
-        console.warn(`AI analysis failed for ${filename}:`, error);
-        return fallbackAnalysis;
-    }
-}
-
-/**
- * Reverse geocode coordinates to location name using OpenCage API
- * Based on reference implementation with detailed privacy logic
- */
-async function reverseGeocode(lat: number, lng: number): Promise<string | undefined> {
-    if (!OPENCAGE_API_KEY) {
-        console.warn('OpenCage API key not configured');
-        return undefined;
-    }
-
-    try {
-        const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${OPENCAGE_API_KEY}&no_annotations=0&no_dedupe=1&language=en&limit=5`;
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-
-        if (!data.results || data.results.length === 0) {
-            return undefined;
-        }
-
-        // Scoring system for result specificity (from reference)
-        let bestResult = data.results[0];
-        let bestSpecificity = 0;
-
-        for (const result of data.results) {
-            const components = result.components;
-            let specificity = 0;
-            
-            // Landmarks and geographic features get highest priority
-            if (components.attraction || components.mountain || components.peak) {
-                specificity += 12;
-            } else if (components.tourism) {
-                specificity += 11;
-            } else if (components.hamlet) {
-                specificity += 10;
-            } else if (components.village) {
-                specificity += 9;
-            } else if (components.suburb) {
-                specificity += 8;
-            } else if (components.town) {
-                specificity += 7;
-            } else if (components.city) {
-                specificity += 6;
-            } else if (components.county) {
-                specificity += 4;
-            } else if (components.state) {
-                specificity += 3;
-            } else if (components.country) {
-                specificity += 1;
-            }
-            
-            // Boost score based on OpenCage confidence (0-10 scale)
-            if (result.confidence) {
-                specificity += result.confidence * 0.5;
-            }
-            
-            if (specificity > bestSpecificity) {
-                bestSpecificity = specificity;
-                bestResult = result;
-            }
-        }
-
-        const components = bestResult.components;
-        
-        // Build location string with privacy priority order
-        const parts: string[] = [];
-        
-        // Helper function to get English name
-        function getEnglishName(component: any): string | undefined {
-            if (typeof component === 'string') {
-                return component;
-            }
-            if (typeof component === 'object' && component !== null) {
-                return component.en || component.eng || Object.values(component)[0];
-            }
-            return undefined;
-        }
-        
-        // Highest priority: landmarks and geographic features (no roads for privacy)
-        if (components.attraction) {
-            const attraction = getEnglishName(components.attraction);
-            if (attraction) parts.push(attraction);
-        } else if (components.mountain) {
-            const mountain = getEnglishName(components.mountain);
-            if (mountain) parts.push(mountain);
-        } else if (components.peak) {
-            const peak = getEnglishName(components.peak);
-            if (peak) parts.push(peak);
-        }
-        
-        // Settlement hierarchy (privacy-focused)
-        if (components.hamlet) {
-            const hamlet = getEnglishName(components.hamlet);
-            if (hamlet) parts.push(hamlet);
-        } else if (components.village) {
-            const village = getEnglishName(components.village);
-            if (village) parts.push(village);
-        } else if (components.suburb) {
-            const suburb = getEnglishName(components.suburb);
-            if (suburb) parts.push(suburb);
-        } else if (components.town) {
-            const town = getEnglishName(components.town);
-            if (town) parts.push(town);
-        } else if (components.city) {
-            const city = getEnglishName(components.city);
-            if (city) parts.push(city);
-        }
-        
-        // Add broader context if specific location found
-        if (parts.length > 0) {
-            const county = getEnglishName(components.county);
-            if (county && !parts.includes(county)) {
-                parts.push(county);
-            }
-        }
-        
-        // Administrative regions
-        // Special handling for US states (don't include state for US)
-        if (components.state && components.country !== 'United States') {
-            const state = getEnglishName(components.state);
-            if (state) parts.push(state);
-        }
-        
-        // Always add country for international context
-        if (components.country) {
-            const country = getEnglishName(components.country);
-            if (country) parts.push(country);
-        }
-        
-        return parts.length > 0 ? parts.join(', ') : undefined;
-    } catch (error) {
-        console.warn(`Geocoding failed for ${lat}, ${lng}:`, error);
-        return undefined;
-    }
-}
-
-// ============================================================================
-// METADATA GENERATION FUNCTIONS (aligned with reference)
-// ============================================================================
-
-/**
- * Generate complete metadata for a photo by combining EXIF and LLM data
- */
-async function generateMetadata(imagePath: string): Promise<PhotoMetadata> {
-    console.log(`🔍 Processing: ${path.basename(imagePath)}`);
-    
-    // Extract EXIF data
-    const exifData = await extractExifData(imagePath);
-    
-    // Process location if GPS data available
-    if (exifData.location) {
-        const locationName = await reverseGeocode(exifData.location.latitude!, exifData.location.longitude!);
-        if (locationName) {
-            exifData.location.name = locationName;
-        }
-    }
-    
-    // Generate AI analysis
-    const llmAnalysis = await analyzeLLMContent(imagePath, exifData);
-    
-    // Determine publish date
-    const publishDate = exifData.dateTime || new Date();
-    
-    // Combine all metadata
-    return {
-        ...exifData,
-        title: llmAnalysis.title,
-        description: llmAnalysis.description,
-        altText: llmAnalysis.altText,
-        tags: llmAnalysis.suggestedTags,
-        publishDate: publishDate.toISOString().split('T')[0],
-        draft: false
-    };
-}
-
 /**
  * Generate markdown content with frontmatter
  */
@@ -559,9 +79,9 @@ function generateMarkdownContent(metadata: PhotoMetadata, imagePath: string): st
     // Build frontmatter object
     const frontmatter: any = {
         title: metadata.title,
-        publishDate: metadata.publishDate,
+        publishDate: metadata.publishDate.toISOString().split('T')[0],
         coverImage: {
-            alt: metadata.altText,
+            alt: metadata.coverImage.alt,
             src: `../../assets/photos/${filename}`
         },
         tags: metadata.tags,
@@ -605,7 +125,8 @@ function generateMarkdownContent(metadata: PhotoMetadata, imagePath: string): st
  */
 function generateFilename(metadata: PhotoMetadata, imagePath: string): string {
     const originalFilename = path.parse(imagePath).name;
-    return `${metadata.publishDate}_${originalFilename}.md`;
+    const dateStr = metadata.publishDate.toISOString().split('T')[0];
+    return `${dateStr}_${originalFilename}.md`;
 }
 
 // ============================================================================
@@ -644,15 +165,15 @@ async function findImageFiles(dir: string): Promise<string[]> {
 /**
  * Check if metadata file already exists for image
  */
-async function hasMetadataFile(imagePath: string): Promise<boolean> {
+async function hasMetadataFile(imagePath: string, contentDir: string): Promise<boolean> {
     try {
-        // We need to generate metadata first to get the correct filename
+        // We need to extract EXIF to get the correct filename
         const exifData = await extractExifData(imagePath);
         const publishDate = exifData.dateTime || new Date();
         const dateStr = publishDate.toISOString().split('T')[0];
         const originalFilename = path.parse(imagePath).name;
         const metadataFilename = `${dateStr}_${originalFilename}.md`;
-        const metadataPath = path.join(CONTENT_DIR, metadataFilename);
+        const metadataPath = path.join(contentDir, metadataFilename);
         
         await fs.access(metadataPath);
         return true;
@@ -662,23 +183,23 @@ async function hasMetadataFile(imagePath: string): Promise<boolean> {
 }
 
 /**
- * Process a single image file
+ * Process a single image file using the modular metadata generator
  */
-async function processImage(imagePath: string, force = false): Promise<void> {
+async function processImage(imagePath: string, contentDir: string, force = false): Promise<void> {
     // Check if metadata already exists
-    if (!force && await hasMetadataFile(imagePath)) {
+    if (!force && await hasMetadataFile(imagePath, contentDir)) {
         console.log(`⏭️  Skipping ${path.basename(imagePath)} (metadata exists)`);
         return;
     }
     
     try {
-        // Generate metadata
-        const metadata = await generateMetadata(imagePath);
+        // Generate metadata using our modular generator
+        const metadata = await metadataGenerator.generateMetadata(imagePath);
         
         // Generate content
         const markdownContent = generateMarkdownContent(metadata, imagePath);
         const filename = generateFilename(metadata, imagePath);
-        const outputPath = path.join(CONTENT_DIR, filename);
+        const outputPath = path.join(contentDir, filename);
         
         // Ensure output directory exists
         await fs.mkdir(path.dirname(outputPath), { recursive: true });
@@ -714,20 +235,21 @@ async function parseExistingMetadata(filePath: string): Promise<ExistingMetadata
 }
 
 /**
- * Update only EXIF fields in existing metadata files
+ * Update only EXIF fields in existing metadata files using the modular processor
  */
-async function updateExifFields(imagePath: string): Promise<void> {
+async function updateExifFields(imagePath: string, contentDir: string): Promise<void> {
     const filename = path.basename(imagePath);
     console.log(`🔄 Updating EXIF for: ${filename}`);
     
     try {
-        // Find existing metadata file
-        const exifData = await extractExifData(imagePath);
+        // Extract EXIF data using our modular processor
+        const exifProcessor = new ExifProcessor();
+        const exifData = await exifProcessor.extractExifData(imagePath);
         const publishDate = exifData.dateTime || new Date();
         const dateStr = publishDate.toISOString().split('T')[0];
         const originalFilename = path.parse(imagePath).name;
         const metadataFilename = `${dateStr}_${originalFilename}.md`;
-        const metadataPath = path.join(CONTENT_DIR, metadataFilename);
+        const metadataPath = path.join(contentDir, metadataFilename);
         
         const existingMetadata = await parseExistingMetadata(metadataPath);
         if (!existingMetadata) {
@@ -754,22 +276,27 @@ async function updateExifFields(imagePath: string): Promise<void> {
 }
 
 /**
- * Update only location strings in existing metadata files
+ * Update only location strings in existing metadata files using the modular processors
  */
-async function updateLocationStrings(imagePath: string): Promise<void> {
+async function updateLocationStrings(imagePath: string, contentDir: string): Promise<void> {
     const filename = path.basename(imagePath);
     console.log(`🗺️  Updating location for: ${filename}`);
     
     try {
-        // Extract GPS coordinates
-        const exifData = await extractExifData(imagePath);
+        // Extract GPS coordinates using our modular processor
+        const exifProcessor = new ExifProcessor();
+        const exifData = await exifProcessor.extractExifData(imagePath);
         if (!exifData.location) {
             console.log(`⏭️  No GPS data for ${filename}`);
             return;
         }
         
-        // Get location name
-        const locationName = await reverseGeocode(exifData.location.latitude!, exifData.location.longitude!);
+        // Get location name using our modular geocoder
+        const geocodeProcessor = new GeocodeProcessor(process.env.OPENCAGE_API_KEY);
+        const locationName = await geocodeProcessor.reverseGeocode(
+            exifData.location.latitude!, 
+            exifData.location.longitude!
+        );
         if (!locationName) {
             console.log(`⏭️  No location name found for ${filename}`);
             return;
@@ -780,7 +307,7 @@ async function updateLocationStrings(imagePath: string): Promise<void> {
         const dateStr = publishDate.toISOString().split('T')[0];
         const originalFilename = path.parse(imagePath).name;
         const metadataFilename = `${dateStr}_${originalFilename}.md`;
-        const metadataPath = path.join(CONTENT_DIR, metadataFilename);
+        const metadataPath = path.join(contentDir, metadataFilename);
         
         const existingMetadata = await parseExistingMetadata(metadataPath);
         if (!existingMetadata) {
@@ -823,14 +350,36 @@ async function main() {
     const force = args.includes("--force");
     const updateExif = args.includes("--update-exif");
     const updateLocations = args.includes("--update-locations");
+    const generateConfig = args.includes("--generate-config");
     const specificFile = args.find((arg) => !arg.startsWith("--"));
+
+    // Handle config generation command
+    if (generateConfig) {
+        const { configManager } = await import('../utils/config.js');
+        await configManager.writeExampleConfig();
+        console.log('');
+        console.log('Next steps:');
+        console.log('1. Edit the generated astro-photo-stream.config.js file');
+        console.log('2. Add your API keys to environment variables or the config file');
+        console.log('3. Run the metadata generator again');
+        return;
+    }
+
+    // Load configuration from file, environment, and defaults
+    console.log('📋 Loading configuration...');
+    integrationOptions = await loadConfig();
+    metadataGenerator = new PhotoMetadataGenerator(integrationOptions);
+
+    // Override directories from legacy environment variables if set
+    const contentDir = process.env.CONTENT_DIRECTORY || integrationOptions.photos.directory;
+    const assetsDir = process.env.PHOTOS_DIRECTORY || integrationOptions.photos.assetsDirectory || 'src/assets/photos';
 
     // Show configuration
     console.log('Configuration:');
-    console.log(`📁 Photos: ${ASSETS_DIR}`);
-    console.log(`📄 Content: ${CONTENT_DIR}`);
-    console.log(`🤖 Claude API: ${anthropic ? '✅ Configured' : '❌ Missing'}`);
-    console.log(`🗺️  OpenCage API: ${OPENCAGE_API_KEY ? '✅ Configured' : '❌ Missing'}`);
+    console.log(`📁 Photos: ${assetsDir}`);
+    console.log(`📄 Content: ${contentDir}`);
+    console.log(`🤖 Claude API: ${integrationOptions.ai.enabled ? '✅ Configured' : '❌ Missing'}`);
+    console.log(`🗺️  OpenCage API: ${integrationOptions.geolocation.enabled ? '✅ Configured' : '❌ Missing'}`);
     console.log('');
 
     try {
@@ -839,10 +388,10 @@ async function main() {
             console.log('🔄 EXIF Update Mode');
             const imageFiles = specificFile 
                 ? [specificFile]
-                : await findImageFiles(ASSETS_DIR);
+                : await findImageFiles(assetsDir);
             
             for (const imagePath of imageFiles) {
-                await updateExifFields(imagePath);
+                await updateExifFields(imagePath, contentDir);
             }
             return;
         }
@@ -851,10 +400,10 @@ async function main() {
             console.log('🗺️ Location Update Mode');
             const imageFiles = specificFile 
                 ? [specificFile]
-                : await findImageFiles(ASSETS_DIR);
+                : await findImageFiles(assetsDir);
             
             for (const imagePath of imageFiles) {
-                await updateLocationStrings(imagePath);
+                await updateLocationStrings(imagePath, contentDir);
             }
             return;
         }
@@ -862,10 +411,10 @@ async function main() {
         // Normal processing mode
         if (specificFile) {
             console.log(`Processing specific file: ${specificFile}\n`);
-            await processImage(specificFile, force);
+            await processImage(specificFile, contentDir, force);
         } else {
             // Find all images
-            const imageFiles = await findImageFiles(ASSETS_DIR);
+            const imageFiles = await findImageFiles(assetsDir);
             console.log(`Found ${imageFiles.length} image file(s)`);
             
             if (imageFiles.length === 0) {
@@ -910,11 +459,11 @@ async function main() {
                 console.log(`[${i + 1}/${sortedPaths.length}]`);
                 
                 try {
-                    if (!force && await hasMetadataFile(imagePath)) {
+                    if (!force && await hasMetadataFile(imagePath, contentDir)) {
                         console.log(`⏭️  Skipping ${path.basename(imagePath)} (metadata exists)`);
                         skipped++;
                     } else {
-                        await processImage(imagePath, force);
+                        await processImage(imagePath, contentDir, force);
                         processed++;
                     }
                 } catch (error) {
@@ -930,7 +479,7 @@ async function main() {
             console.log(`✅ Processed: ${processed}`);
             console.log(`⏭️  Skipped: ${skipped}`);
             console.log(`❌ Failed: ${failed}`);
-            console.log(`📁 Content files: ${CONTENT_DIR}`);
+            console.log(`📁 Content files: ${contentDir}`);
             
             if (processed > 0) {
                 console.log('\n🎉 Photo metadata generation complete!');
@@ -963,5 +512,3 @@ process.on('unhandledRejection', (error) => {
 if (import.meta.url === `file://${process.argv[1]}`) {
     main().catch(console.error);
 }
-
-export { generateMetadata, extractExifData, analyzeLLMContent, reverseGeocode };

@@ -1,0 +1,158 @@
+---
+/**
+ * FormattedDate Component
+ * Consistent date formatting component
+ * Based on reference implementation patterns
+ */
+
+interface Props {
+  date: Date | string;
+  format?: 'full' | 'medium' | 'short' | 'relative';
+  showTime?: boolean;
+  class?: string;
+}
+
+const { 
+  date, 
+  format = 'medium', 
+  showTime = false,
+  class: className = ''
+} = Astro.props;
+
+// Ensure we have a Date object
+const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+// Format the date based on the format prop
+const formatDate = (date: Date, format: string, showTime: boolean) => {
+  const options: Intl.DateTimeFormatOptions = {};
+  
+  switch (format) {
+    case 'full':
+      options.weekday = 'long';
+      options.year = 'numeric';
+      options.month = 'long';
+      options.day = 'numeric';
+      break;
+    case 'medium':
+      options.year = 'numeric';
+      options.month = 'long';
+      options.day = 'numeric';
+      break;
+    case 'short':
+      options.year = 'numeric';
+      options.month = 'short';
+      options.day = 'numeric';
+      break;
+    case 'relative':
+      // Will be handled separately
+      break;
+  }
+  
+  if (showTime) {
+    options.hour = '2-digit';
+    options.minute = '2-digit';
+  }
+  
+  if (format === 'relative') {
+    return getRelativeTime(date);
+  }
+  
+  return new Intl.DateTimeFormat('en-US', options).format(date);
+};
+
+// Get relative time string (e.g., "2 days ago", "3 months ago")
+const getRelativeTime = (date: Date) => {
+  const now = new Date();
+  const diffInMs = now.getTime() - date.getTime();
+  const diffInSecs = Math.floor(diffInMs / 1000);
+  const diffInMins = Math.floor(diffInSecs / 60);
+  const diffInHours = Math.floor(diffInMins / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+  const diffInMonths = Math.floor(diffInDays / 30);
+  const diffInYears = Math.floor(diffInDays / 365);
+  
+  if (diffInYears > 0) {
+    return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
+  } else if (diffInMonths > 0) {
+    return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+  } else if (diffInDays > 0) {
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  } else if (diffInHours > 0) {
+    return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+  } else if (diffInMins > 0) {
+    return `${diffInMins} minute${diffInMins > 1 ? 's' : ''} ago`;
+  } else {
+    return 'Just now';
+  }
+};
+
+const formattedDate = formatDate(dateObj, format, showTime);
+const isoDate = dateObj.toISOString();
+
+// Determine semantic meaning for styling
+const getDateClass = (format: string) => {
+  switch (format) {
+    case 'full':
+      return 'date-full';
+    case 'medium':
+      return 'date-medium';
+    case 'short':
+      return 'date-short';
+    case 'relative':
+      return 'date-relative';
+    default:
+      return 'date-default';
+  }
+};
+
+const dateClass = getDateClass(format);
+---
+
+<time 
+  datetime={isoDate}
+  class={`formatted-date ${dateClass} ${className}`.trim()}
+  title={format === 'relative' ? formatDate(dateObj, 'full', showTime) : undefined}
+>
+  {formattedDate}
+</time>
+
+<style>
+  .formatted-date {
+    color: inherit;
+    font-weight: inherit;
+  }
+  
+  .date-full {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .date-medium {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .date-short {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #6b7280;
+  }
+  
+  .date-relative {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #9ca3af;
+    font-style: italic;
+  }
+  
+  .date-relative:hover {
+    color: #6b7280;
+  }
+  
+  /* Allow parent components to override styles */
+  .formatted-date[data-inherit="true"] {
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+  }
+</style>
