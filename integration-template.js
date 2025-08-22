@@ -1,45 +1,64 @@
 /**
  * Template for users to set up content collections with astro-photo-stream
- * This file shows how to configure the photo collection in astro.config.mjs
+ * Aligned with reference implementation from /Users/walterra/dev/walterra-dev
+ * 
+ * This file shows how to configure the photo collection exactly as it works
+ * in the proven reference implementation.
  */
 
 // Example astro.config.mjs configuration
 export const exampleConfig = `
 import { defineConfig } from 'astro/config';
-import { createPhotoCollection } from 'astro-photo-stream/schema';
+import photoStreamIntegration from 'astro-photo-stream';
 
 export default defineConfig({
   integrations: [
-    // Your other integrations...
-  ],
-  
-  // Content collections configuration
-  content: {
-    collections: {
-      // Define the photos collection using our schema
-      photos: createPhotoCollection(),
+    // Add the photo stream integration
+    photoStreamIntegration({
+      // Configure photo processing
+      photos: {
+        directory: 'src/assets/photos', // Where your photos are stored
+        formats: ['jpg', 'jpeg', 'png', 'webp']
+      },
       
-      // Your other collections...
-      blog: {
-        type: 'content',
-        schema: ({ z }) => z.object({
-          title: z.string(),
-          // ... other blog fields
-        })
+      // AI metadata generation (optional)
+      ai: {
+        enabled: true,
+        provider: 'claude',
+        apiKey: process.env.ANTHROPIC_API_KEY // Set in .env
+      },
+      
+      // Geolocation features (optional)
+      geolocation: {
+        enabled: true,
+        // Requires OPENCAGE_API_KEY in .env for location names
+      },
+      
+      // Gallery display options
+      gallery: {
+        itemsPerPage: 12,
+        gridCols: {
+          mobile: 2,
+          tablet: 3,
+          desktop: 4
+        }
       }
-    }
-  }
+    }),
+    
+    // Your other integrations...
+  ]
 });
 `;
 
-// Example content/config.ts file
+// Example content/config.ts file - aligned with reference
 export const exampleContentConfig = `
 import { defineCollection } from 'astro:content';
 import { createPhotoCollection } from 'astro-photo-stream/schema';
 
-// Define your content collections
-const photos = createPhotoCollection();
+// Photo collection using reference implementation schema
+const photo = createPhotoCollection();
 
+// Your other collections
 const blog = defineCollection({
   type: 'content',
   schema: ({ z }) => z.object({
@@ -50,100 +69,102 @@ const blog = defineCollection({
   })
 });
 
-// Export collections object
+// Export collections (note: 'photo' not 'photos' - matches reference)
 export const collections = {
-  photos,
+  photo, // Collection name must match reference
   blog
 };
 `;
 
-// Example photo frontmatter
+// Example photo frontmatter - EXACTLY aligned with reference implementation
 export const examplePhotoFrontmatter = `
 ---
-title: "Golden Hour at the Beach"
-description: "A stunning sunset over the Pacific Ocean, captured during golden hour with warm, soft lighting illuminating the waves."
+title: "Golden Hour Beach Vibes (With Extra Saturation Because Why Not)"
+description: "A sunset over the Pacific Ocean that looks suspiciously like every other sunset photo on the internet, but hey, at least the colors are nice. Shot with a camera that cost more than my car."
+publishDate: 2024-08-15
+coverImage:
+  src: ../../assets/photos/sunset-malibu-beach.jpg
+  alt: "Sunset over ocean waves with dramatic orange and pink sky colors reflecting on the water"
+camera: "Canon EOS R5"
+lens: "RF 24-70mm F2.8 L IS USM"
+settings:
+  aperture: "f/8"
+  shutter: "1/125s"
+  iso: "100"
+  focalLength: "35mm"
+location:
+  name: "Malibu Beach, California"
+  latitude: 34.0259
+  longitude: -118.7798
 tags: 
   - sunset
   - beach
   - golden-hour
   - landscape
   - ocean
-
-location:
-  name: "Malibu Beach, California"
-  coordinates:
-    latitude: 34.0259
-    longitude: -118.7798
-  privacy:
-    blurred: false
-    radius: 100
-    method: "blur"
-
-camera:
-  make: "Canon"
-  model: "EOS R5"
-  lens: "RF 24-70mm F2.8 L IS USM"
-
-settings:
-  iso: 100
-  aperture: "f/8"
-  shutterSpeed: "1/125"
-  focalLength: "35mm"
-  flash: false
-  exposureMode: "Manual"
-  meteringMode: "Evaluative"
-  whiteBalance: "Daylight"
-
-dateTime:
-  taken: 2024-08-15T18:45:00Z
-  published: 2024-08-22T10:00:00Z
-
-file:
-  name: "sunset-malibu-beach.jpg"
-  path: "/photos/2024/08/sunset-malibu-beach.jpg"
-  size: 4287562
-  format: "jpg"
-  dimensions:
-    width: 4000
-    height: 2667
-  colorSpace: "sRGB"
-  orientation: 1
-
-social:
-  featured: true
-  allowDownload: true
-  license: "CC BY-SA 4.0"
-  copyright: "© 2024 Your Name"
-  altText: "Golden sunset over ocean waves at Malibu Beach with warm orange and pink sky colors"
-
-ai:
-  generated: true
-  confidence: 0.94
-  model: "claude-3-5-sonnet"
-  generatedAt: 2024-08-22T10:30:00Z
-
-processing:
-  edited: true
-  software: "Adobe Lightroom Classic"
-  filters: ["Vibrance +20", "Clarity +10", "Graduated Filter"]
-  processingNotes: "Enhanced golden hour colors and added graduated filter to balance sky exposure"
+  - 2024
+draft: false
 ---
 
-This breathtaking sunset photograph was captured during golden hour at Malibu Beach, showcasing the Pacific Ocean's natural beauty. The warm, diffused lighting creates a magical atmosphere as waves gently lap against the shore.
+Another golden hour beach photo, because apparently I can't help myself. The warm light was actually pretty spectacular that evening, even if every photographer in Southern California was probably shooting the exact same scene.
 
-The composition emphasizes the dramatic sky filled with golden and pink hues, while the ocean provides a calming counterbalance. Shot with a wide-angle lens to capture the expansive scene, this image represents the perfect harmony between sea and sky during one of nature's most spectacular daily performances.
+Technical note: Used manual exposure to balance the bright sky with the darker foreground. The natural golden tones were enhanced slightly in post, but not as much as you might think – sometimes the real world is actually that saturated.
 
-Technical details: This image was captured using manual exposure settings to ensure proper balance between the bright sky and darker foreground elements. Post-processing enhanced the natural golden tones while maintaining realistic color representation.
+Shot during a weekend trip to Malibu. The waves were gentle that day, creating nice smooth reflections of the sky colors. Perfect conditions for this type of cliché-but-beautiful sunset photography.
 `;
 
-console.log('Astro Photo Stream Integration Template');
-console.log('=====================================');
-console.log('');
-console.log('1. astro.config.mjs example:');
+// Environment variables setup
+export const environmentSetup = `
+# Required environment variables for astro-photo-stream
+# Add these to your .env file
+
+# Claude API for AI metadata generation (optional but recommended)
+ANTHROPIC_API_KEY=your_claude_api_key_here
+ANTHROPIC_MODEL=claude-3-haiku-20240307
+ANTHROPIC_MAX_TOKENS=400
+
+# OpenCage API for location names (optional)
+OPENCAGE_API_KEY=your_opencage_api_key_here
+
+# Geoapify API for static maps (optional)  
+GEOAPIFY_API_KEY=your_geoapify_api_key_here
+
+# Photo processing configuration
+PHOTOS_DIRECTORY=./src/assets/photos
+CONTENT_DIRECTORY=./src/content/photo
+\`;
+
+// CLI usage examples
+export const cliExamples = \`
+# Generate metadata for all photos in your photos directory
+npx astro-photo-stream generate
+
+# Generate metadata for a specific photo
+npx astro-photo-stream generate path/to/photo.jpg
+
+# Process photos with AI enhancement (requires ANTHROPIC_API_KEY)
+npx astro-photo-stream generate --ai
+
+# Update location names only (requires OPENCAGE_API_KEY)
+npx astro-photo-stream generate --update-locations
+
+# Force regenerate all metadata (overwrites existing)
+npx astro-photo-stream generate --force
+\`;
+
+console.log('🚀 Astro Photo Stream Integration Setup');
+console.log('======================================');
+console.log('Based on proven reference implementation\n');
+
+console.log('1️⃣  ASTRO CONFIG (astro.config.mjs):');
 console.log(exampleConfig);
-console.log('');
-console.log('2. content/config.ts example:');
+console.log('\n2️⃣  CONTENT CONFIG (src/content/config.ts):');
 console.log(exampleContentConfig);
-console.log('');
-console.log('3. Example photo frontmatter:');
+console.log('\n3️⃣  PHOTO FRONTMATTER EXAMPLE:');
 console.log(examplePhotoFrontmatter);
+console.log('\n4️⃣  ENVIRONMENT SETUP (.env):');
+console.log(environmentSetup);
+console.log('\n5️⃣  CLI USAGE:');
+console.log(cliExamples);
+console.log('\n✨ Ready to create beautiful photo galleries!');
+console.log('📖 Docs: https://github.com/walterra/astro-photostream#readme');`;
