@@ -1,6 +1,6 @@
 {
   "name": "astro-photostream",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "An Astro integration for creating photo galleries with AI metadata generation and geolocation features",
   "keywords": [
@@ -49,7 +49,7 @@
       "import": "./src/schema.ts"
     },
     "./utils": {
-      "types": "./src/utils/index.ts", 
+      "types": "./src/utils/index.ts",
       "import": "./src/utils/index.ts"
     }
   },
@@ -67,7 +67,7 @@
   ],
   "scripts": {
     "build:cli": "tsc src/scripts/photo-metadata-generator.ts --outDir dist/scripts --moduleResolution bundler --target ES2022 --module ESNext --allowSyntheticDefaultImports --esModuleInterop --skipLibCheck",
-    "dev": "astro check --watch", 
+    "dev": "astro check --watch",
     "check": "astro check",
     "lint": "eslint src --ext .ts,.js",
     "format": "prettier --write src",
