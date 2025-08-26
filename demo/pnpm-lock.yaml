@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@astrojs/tailwind':
         specifier: ^5.1.2
-        version: 5.1.5(astro@5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(typescript@5.9.2)(yaml@2.8.1))(tailwindcss@3.4.17)
+        version: 5.1.5(astro@5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1))(tailwindcss@3.4.17)
       astro:
         specifier: ^5.13.2
-        version: 5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(typescript@5.9.2)(yaml@2.8.1)
+        version: 5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1)
       astro-photo-stream:
         specifier: link:..
         version: link:..
@@ -27,6 +27,9 @@ importers:
       '@types/node':
         specifier: ^20.11.0
         version: 20.19.11
+      tsx:
+        specifier: ^4.7.1
+        version: 4.20.5
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -979,6 +982,9 @@ packages:
     resolution: {integrity: sha512-vpeMIQKxczTD/0s2CdEWHcb0eeJe6TFjxb+J5xgX7hScxqrGuyjmv4c1D4A/gelKfyox0gJJwIHF+fLjeaM8kQ==}
     engines: {node: '>=18'}
 
+  get-tsconfig@4.10.1:
+    resolution: {integrity: sha512-auHyJ4AgMz7vgS8Hp3N6HXSmlMdUyhSUrfBF16w153rxtLIEOE+HGqaBppczZvnHLqQJfiHotCYpNhl0lUROFQ==}
+
   github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
 
@@ -1548,6 +1554,9 @@ packages:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
 
+  resolve-pkg-maps@1.0.0:
+    resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
+
   resolve@1.22.10:
     resolution: {integrity: sha512-NPRy+/ncIMeDlTAsuqwKIiferiawhefFJtkNSW0qZJEqMEb+qBt/77B/jGeeek+F0uOeN05CDa6HXbbIgtVX4w==}
     engines: {node: '>= 0.4'}
@@ -1703,6 +1712,11 @@ packages:
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
+  tsx@4.20.5:
+    resolution: {integrity: sha512-+wKjMNU9w/EaQayHXb7WA7ZaHY6hN8WgfvHNQ3t1PnU91/7O8TcTnIhCDYTZwnt8JsO9IBqZ30Ln1r7pPF52Aw==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
 
   type-fest@4.41.0:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
@@ -2164,9 +2178,9 @@ snapshots:
     dependencies:
       prismjs: 1.30.0
 
-  '@astrojs/tailwind@5.1.5(astro@5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(typescript@5.9.2)(yaml@2.8.1))(tailwindcss@3.4.17)':
+  '@astrojs/tailwind@5.1.5(astro@5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1))(tailwindcss@3.4.17)':
     dependencies:
-      astro: 5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(typescript@5.9.2)(yaml@2.8.1)
+      astro: 5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1)
       autoprefixer: 10.4.21(postcss@8.5.6)
       postcss: 8.5.6
       postcss-load-config: 4.0.2(postcss@8.5.6)
@@ -2657,7 +2671,7 @@ snapshots:
 
   array-iterate@2.0.1: {}
 
-  astro@5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(typescript@5.9.2)(yaml@2.8.1):
+  astro@5.13.2(@types/node@20.19.11)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1):
     dependencies:
       '@astrojs/compiler': 2.12.2
       '@astrojs/internal-helpers': 0.7.2
@@ -2713,8 +2727,8 @@ snapshots:
       unist-util-visit: 5.0.0
       unstorage: 1.16.1
       vfile: 6.0.3
-      vite: 6.3.5(@types/node@20.19.11)(jiti@1.21.7)(yaml@2.8.1)
-      vitefu: 1.1.1(vite@6.3.5(@types/node@20.19.11)(jiti@1.21.7)(yaml@2.8.1))
+      vite: 6.3.5(@types/node@20.19.11)(jiti@1.21.7)(tsx@4.20.5)(yaml@2.8.1)
+      vitefu: 1.1.1(vite@6.3.5(@types/node@20.19.11)(jiti@1.21.7)(tsx@4.20.5)(yaml@2.8.1))
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
       yocto-spinner: 0.2.3
@@ -3066,6 +3080,10 @@ snapshots:
   get-caller-file@2.0.5: {}
 
   get-east-asian-width@1.3.0: {}
+
+  get-tsconfig@4.10.1:
+    dependencies:
+      resolve-pkg-maps: 1.0.0
 
   github-slugger@2.0.0: {}
 
@@ -3858,6 +3876,8 @@ snapshots:
 
   require-from-string@2.0.2: {}
 
+  resolve-pkg-maps@1.0.0: {}
+
   resolve@1.22.10:
     dependencies:
       is-core-module: 2.16.1
@@ -4089,6 +4109,13 @@ snapshots:
 
   tslib@2.8.1: {}
 
+  tsx@4.20.5:
+    dependencies:
+      esbuild: 0.25.9
+      get-tsconfig: 4.10.1
+    optionalDependencies:
+      fsevents: 2.3.3
+
   type-fest@4.41.0: {}
 
   typesafe-path@0.2.2: {}
@@ -4209,7 +4236,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@6.3.5(@types/node@20.19.11)(jiti@1.21.7)(yaml@2.8.1):
+  vite@6.3.5(@types/node@20.19.11)(jiti@1.21.7)(tsx@4.20.5)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.9
       fdir: 6.5.0(picomatch@4.0.3)
@@ -4221,11 +4248,12 @@ snapshots:
       '@types/node': 20.19.11
       fsevents: 2.3.3
       jiti: 1.21.7
+      tsx: 4.20.5
       yaml: 2.8.1
 
-  vitefu@1.1.1(vite@6.3.5(@types/node@20.19.11)(jiti@1.21.7)(yaml@2.8.1)):
+  vitefu@1.1.1(vite@6.3.5(@types/node@20.19.11)(jiti@1.21.7)(tsx@4.20.5)(yaml@2.8.1)):
     optionalDependencies:
-      vite: 6.3.5(@types/node@20.19.11)(jiti@1.21.7)(yaml@2.8.1)
+      vite: 6.3.5(@types/node@20.19.11)(jiti@1.21.7)(tsx@4.20.5)(yaml@2.8.1)
 
   volar-service-css@0.0.62(@volar/language-service@2.4.23):
     dependencies:

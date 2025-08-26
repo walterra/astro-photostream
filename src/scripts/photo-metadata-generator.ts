@@ -42,8 +42,8 @@ interface ExistingMetadata {
 // ============================================================================
 
 // Directories
-const CONTENT_DIR = process.env.CONTENT_DIRECTORY || './src/content/photos';
-const ASSETS_DIR = process.env.PHOTOS_DIRECTORY || './src/assets/photos';
+const CONTENT_DIR = process.env.CONTENT_DIRECTORY || './src/content/photos'; // Output directory for generated .md files
+const ASSETS_DIR = process.env.PHOTOS_DIRECTORY || './src/assets/photos';     // Input directory containing image files
 
 // Supported file extensions
 const SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.tiff', '.tif'];

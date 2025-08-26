@@ -103,19 +103,37 @@ const photos = defineCollection({
 export const collections = { photos };
 ```
 
-### Step 3: Add Your Photos
+### Step 3: Get Sample Photos (Optional)
 
-Create the photos content directory structure:
+For a quick start with sample photos, you can fetch Creative Commons photos from Wikimedia Commons:
 
-```
-src/content/photos/
-├── sunset-beach.md
-├── sunset-beach.jpg
-├── mountain-hike.md
-└── mountain-hike.jpg
+```bash
+pnpm fetch-photos
+# or
+npm run fetch-photos
 ```
 
-### Step 4: Create Photo Entries
+This will download ~50 high-quality, geolocated Creative Commons photos to `src/assets/photos/` for testing the integration.
+
+### Step 4: Add Your Photos
+
+The photo system uses two separate directories:
+
+- **`src/assets/photos/`** - Store your actual image files (.jpg, .png, etc.)
+- **`src/content/photos/`** - Store metadata files (.md) that reference the images
+
+Example structure:
+```
+src/
+├── assets/photos/          # Actual image files
+│   ├── sunset-beach.jpg
+│   └── mountain-hike.jpg
+└── content/photos/         # Metadata files
+    ├── sunset-beach.md
+    └── mountain-hike.md
+```
+
+### Step 5: Create Photo Entries
 
 Example photo entry (`src/content/photos/sunset-beach.md`):
 
@@ -124,7 +142,7 @@ Example photo entry (`src/content/photos/sunset-beach.md`):
 title: "Golden Hour at the Beach"
 description: "Stunning sunset over the Pacific Ocean"
 coverImage:
-  src: "./sunset-beach.jpg"
+  src: "../../assets/photos/sunset-beach.jpg"
   alt: "Golden sunset over ocean waves"
 tags: ["sunset", "beach", "golden-hour"]
 publishDate: 2024-08-15
@@ -138,7 +156,7 @@ draft: false
 A perfect evening capturing the golden hour at Malibu Beach.
 ```
 
-### Step 5: Advanced Configuration (Optional)
+### Step 6: Advanced Configuration (Optional)
 
 For AI-powered metadata and geolocation features, add to your `astro.config.mjs`:
 
@@ -173,7 +191,7 @@ export default defineConfig({
 });
 ```
 
-### Step 6: Environment Variables (Optional)
+### Step 7: Environment Variables (Optional)
 
 For full AI and geolocation features, create a `.env` file:
 
@@ -183,7 +201,7 @@ OPENCAGE_API_KEY=your_opencage_api_key_here
 GEOAPIFY_API_KEY=your_geoapify_api_key_here
 ```
 
-### Step 7: Access Your Photo Gallery
+### Step 8: Access Your Photo Gallery
 
 After installation, your photo gallery will be available at:
 
@@ -199,6 +217,9 @@ pnpm dev          # Start development server
 pnpm build        # Build for production
 pnpm preview      # Preview production build
 pnpm check        # Run Astro type checking
+
+# Sample content
+pnpm fetch-photos # Download sample Creative Commons photos
 
 # After adding astro-photo-stream
 pnpm photo-meta   # Generate AI metadata for photos (if configured)

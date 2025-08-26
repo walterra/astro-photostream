@@ -65,14 +65,16 @@ const photos = defineCollection({
 export const collections = { photos };
 ```
 
-3. **Add photos to `src/content/photos/`:**
+3. **Add photos using the two-directory system:**
 
 ```
-src/content/photos/
-├── sunset-beach.md
-├── sunset-beach.jpg
-├── mountain-hike.md
-└── mountain-hike.jpg
+src/
+├── assets/photos/          # Actual image files
+│   ├── sunset-beach.jpg
+│   └── mountain-hike.jpg
+└── content/photos/         # Metadata (.md) files
+    ├── sunset-beach.md
+    └── mountain-hike.md
 ```
 
 4. **Create photo entries** (`src/content/photos/sunset-beach.md`):
@@ -82,7 +84,7 @@ src/content/photos/
 title: "Golden Hour at the Beach"
 description: "Stunning sunset over the Pacific Ocean"
 coverImage:
-  src: "./sunset-beach.jpg"
+  src: "../../assets/photos/sunset-beach.jpg"
   alt: "Golden sunset over ocean waves"
 tags: ["sunset", "beach", "golden-hour"]
 publishDate: 2024-08-15

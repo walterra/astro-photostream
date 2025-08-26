@@ -7,7 +7,7 @@ export const integrationOptionsSchema = z.object({
   
   // Photo processing options
   photos: z.object({
-    directory: z.string().default('src/content/photos'),
+    directory: z.string().default('src/content/photos'), // Directory for photo markdown (.md) files
     assetsDirectory: z.string().default('src/assets/photos'),
     formats: z.array(z.enum(['jpg', 'jpeg', 'png', 'webp', 'avif'])).default(['jpg', 'jpeg', 'png', 'webp']),
     maxWidth: z.number().default(1920),

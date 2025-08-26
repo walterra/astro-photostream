@@ -15,7 +15,7 @@ const configFileSchema = z.object({
   
   // Photo processing options
   photos: z.object({
-    directory: z.string().default('src/content/photos'),
+    directory: z.string().default('src/content/photos'), // Directory for photo markdown (.md) files
     assetsDirectory: z.string().default('src/assets/photos'),
     formats: z.array(z.enum(['jpg', 'jpeg', 'png', 'webp', 'avif'])).default(['jpg', 'jpeg', 'png', 'webp']),
     maxWidth: z.number().default(1920),
@@ -291,7 +291,7 @@ export default {
   
   // Photo processing configuration
   photos: {
-    directory: 'src/content/photos',           // Content collection directory
+    directory: 'src/content/photos',           // Directory for photo markdown (.md) files
     assetsDirectory: 'src/assets/photos',      // Photo assets directory
     formats: ['jpg', 'jpeg', 'png', 'webp'],  // Supported formats
     maxWidth: 1920,                           // Max width for processing

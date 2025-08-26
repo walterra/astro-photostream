@@ -219,15 +219,17 @@ export const collections = { photos };`}</code></pre>
             <div class="flex-1">
               <h3 class="text-xl font-semibold mb-3">Add Your Photos</h3>
               <p class="text-gray-600 mb-3">
-                Create the photos content directory structure:
+                Photos use two separate directories:
               </p>
               <div class="bg-gray-900 rounded-lg p-4 mb-4">
                 <pre
-                  class="text-green-400 text-sm overflow-x-auto"><code>{`src/content/photos/
-├── sunset-beach.md
-├── sunset-beach.jpg
-├── mountain-hike.md
-└── mountain-hike.jpg`}</code></pre>
+                  class="text-green-400 text-sm overflow-x-auto"><code>{`src/
+├── assets/photos/          # Image files
+│   ├── sunset-beach.jpg
+│   └── mountain-hike.jpg
+└── content/photos/         # Metadata (.md)
+    ├── sunset-beach.md
+    └── mountain-hike.md`}</code></pre>
               </div>
             </div>
           </div>
@@ -255,7 +257,7 @@ export const collections = { photos };`}</code></pre>
 title: "Golden Hour at the Beach"
 description: "Stunning sunset over the Pacific Ocean"
 coverImage:
-  src: "./sunset-beach.jpg"
+  src: "../../assets/photos/sunset-beach.jpg"
   alt: "Golden sunset over ocean waves"
 tags: ["sunset", "beach", "golden-hour"]
 publishDate: 2024-08-15
