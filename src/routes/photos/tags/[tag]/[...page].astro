@@ -276,11 +276,11 @@ const pageDescription = isFirstPage
                   {Array.from({ length: Math.min(5, page.lastPage) }, (_, i) => {
                     const pageNum = Math.max(1, Math.min(page.lastPage - 4, page.currentPage - 2)) + i;
                     if (pageNum <= page.lastPage) {
-                      return pageNum === page.currentPage ? (
+                      return pageNum === page.currentPage ? 
                         <span class="page-number current" aria-current="page">
                           {pageNum}
                         </span>
-                      ) : (
+                       : 
                         <a 
                           href={pageNum === 1 ? `/photos/tags/${tag}` : `/photos/tags/${tag}/${pageNum}`}
                           class="page-number"

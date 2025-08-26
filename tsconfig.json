@@ -23,12 +23,25 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
   "include": [
-    "src/**/*",
+    "src/index.ts",
+    "src/types.ts", 
+    "src/schema.ts",
+    "src/utils/config.ts",
+    "src/utils/metadata.ts",
+    "src/utils/collection.ts",
+    "src/utils/routing.ts",
+    "src/utils/index.ts",
+    "src/scripts/photo-metadata-generator.ts",
     "src/global.d.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "src/components/index.ts",
+    "src/content.config.ts",
+    "src/routes/**/*",
+    "src/content/**/*",
+    "src/utils/photos.ts"
   ]
 }

@@ -3,26 +3,26 @@
  * Generates dynamic OG images for individual photos
  * Based on reference implementation patterns
  */
-import { getEntry } from 'astro:content';
-import { config } from 'virtual:astro-photo-stream/config';
-import sharp from 'sharp';
-import type { APIContext } from 'astro';
+import { getEntry } from "astro:content";
+import { config } from "virtual:astro-photo-stream/config";
+import sharp from "sharp";
+import type { APIContext } from "astro";
 
 // Configuration is imported directly
 
 export async function GET(context: APIContext) {
   try {
     const { slug } = context.params;
-    
+
     if (!slug) {
-      return new Response('Photo not found', { status: 404 });
+      return new Response("Photo not found", { status: 404 });
     }
 
     // Get the photo entry
-    const photo = await getEntry('photos', slug);
+    const photo = await getEntry("photos", slug);
 
     if (!photo) {
-      return new Response('Photo not found', { status: 404 });
+      return new Response("Photo not found", { status: 404 });
     }
 
     // Generate OG image using photo and metadata
@@ -30,21 +30,21 @@ export async function GET(context: APIContext) {
 
     return new Response(ogImage as BodyInit, {
       headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
-        'Content-Length': ogImage.length.toString(),
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=31536000", // Cache for 1 year
+        "Content-Length": ogImage.length.toString(),
       },
     });
   } catch (error) {
-    console.error('Error generating OG image:', error);
-    
+    console.error("Error generating OG image:", error);
+
     // Return a simple error image
     const errorImage = await generateErrorImage();
-    
+
     return new Response(errorImage as BodyInit, {
       headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=3600', // Cache error for 1 hour
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=3600", // Cache error for 1 hour
       },
     });
   }
@@ -57,34 +57,37 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
   const width = 1200;
   const height = 630;
   const padding = 80;
-  
+
   // Base colors and styling
-  const backgroundColor = '#1f2937'; // dark gray
-  const textColor = '#ffffff';
-  const accentColor = '#3b82f6'; // blue
-  
+  const backgroundColor = "#1f2937"; // dark gray
+  const textColor = "#ffffff";
+  const accentColor = "#3b82f6"; // blue
+
   try {
     // Try to load the actual photo if it's accessible
     let photoBuffer: Buffer | null = null;
-    
+
     try {
       // If the photo source is a local path, try to load it
-      if (typeof photo.data.coverImage.src === 'string' && photo.data.coverImage.src.startsWith('./')) {
+      if (
+        typeof photo.data.coverImage.src === "string" &&
+        photo.data.coverImage.src.startsWith("./")
+      ) {
         // This would need to be adapted based on how your images are stored
         // For now, we'll create a placeholder
       }
     } catch {
       // Ignore photo loading errors, we'll create a text-only OG image
     }
-    
+
     // Create base image
     let image = sharp({
       create: {
         width,
         height,
         channels: 4,
-        background: { r: 31, g: 41, b: 55, alpha: 1 } // backgroundColor
-      }
+        background: { r: 31, g: 41, b: 55, alpha: 1 }, // backgroundColor
+      },
     });
 
     // SVG overlay with text and design elements
@@ -136,7 +139,9 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
               -webkit-box-orient: vertical;
             ">${escapeHtml(photo.data.title)}</h1>
             
-            ${photo.data.description ? `
+            ${
+              photo.data.description
+                ? `
             <!-- Photo description -->
             <p style="
               font-size: 24px;
@@ -149,7 +154,9 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
               -webkit-line-clamp: 2;
               -webkit-box-orient: vertical;
             ">${escapeHtml(photo.data.description)}</p>
-            ` : ''}
+            `
+                : ""
+            }
             
             <!-- Metadata row -->
             <div style="
@@ -160,26 +167,38 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
               font-size: 18px;
               color: rgba(255, 255, 255, 0.7);
             ">
-              ${photo.data.camera ? `
+              ${
+                photo.data.camera
+                  ? `
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span style="color: ${accentColor};">📷</span>
                   <span>${escapeHtml(photo.data.camera)}</span>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               
-              ${photo.data.location?.name ? `
+              ${
+                photo.data.location?.name
+                  ? `
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span style="color: ${accentColor};">📍</span>
                   <span>${escapeHtml(photo.data.location.name)}</span>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               
-              ${photo.data.tags.length > 0 ? `
+              ${
+                photo.data.tags.length > 0
+                  ? `
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span style="color: ${accentColor};">#</span>
-                  <span>${escapeHtml(photo.data.tags.slice(0, 3).join(', '))}</span>
+                  <span>${escapeHtml(photo.data.tags.slice(0, 3).join(", "))}</span>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
             
             <!-- Site branding -->
@@ -193,11 +212,15 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
               align-items: center;
               gap: 8px;
             ">
-              ${config.seo.siteName ? `
+              ${
+                config.seo.siteName
+                  ? `
                 <span>${escapeHtml(config.seo.siteName)}</span>
-              ` : `
+              `
+                  : `
                 <span>Photo Gallery</span>
-              `}
+              `
+              }
               <span style="color: ${accentColor};">•</span>
               <span>astro-photo-stream</span>
             </div>
@@ -212,15 +235,15 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
         input: Buffer.from(svgOverlay),
         top: 0,
         left: 0,
-      }
+      },
     ]);
 
     // Convert to PNG
     const buffer = await image.png({ quality: 90 }).toBuffer();
-    
+
     return buffer;
   } catch (error) {
-    console.error('Error in generateOGImage:', error);
+    console.error("Error in generateOGImage:", error);
     throw error;
   }
 }
@@ -231,7 +254,7 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
 async function generateErrorImage(): Promise<Buffer> {
   const width = 1200;
   const height = 630;
-  
+
   const svgError = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="#1f2937"/>
@@ -257,7 +280,7 @@ async function generateErrorImage(): Promise<Buffer> {
   const buffer = await sharp(Buffer.from(svgError))
     .png({ quality: 90 })
     .toBuffer();
-    
+
   return buffer;
 }
 
@@ -266,12 +289,12 @@ async function generateErrorImage(): Promise<Buffer> {
  */
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
   };
-  
+
   return text.replace(/[&<>"']/g, (m) => map[m]);
 }
