@@ -125,7 +125,7 @@ The photo system uses two separate directories:
 Example structure:
 ```
 src/
-├── assets/photos/          # Actual image files
+├── assets/photos/          # Actual image files  
 │   ├── sunset-beach.jpg
 │   └── mountain-hike.jpg
 └── content/photos/         # Metadata files
@@ -221,8 +221,9 @@ pnpm check        # Run Astro type checking
 # Sample content
 pnpm fetch-photos # Download sample Creative Commons photos
 
-# After adding astro-photo-stream
-pnpm photo-meta   # Generate AI metadata for photos (if configured)
+# After adding astro-photo-stream  
+pnpm photo-metadata-generator --generate-config  # Create configuration file
+pnpm photo-metadata-generator                     # Generate metadata for photos
 ```
 
 ## What Changes After Adding astro-photo-stream?

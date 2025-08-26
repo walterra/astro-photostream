@@ -45,12 +45,17 @@ export const photoCollectionSchema = z.object({
 });
 
 /**
- * Create content collection configuration for photos
+ * Create content collection configuration for photos with image optimization
  */
-export function createPhotoCollection() {
+export function createPhotoCollection({ image }: { image: any }) {
   return {
     type: 'content' as const,
-    schema: photoCollectionSchema
+    schema: photoCollectionSchema.extend({
+      coverImage: z.object({
+        alt: z.string().describe('Alt text for accessibility'),
+        src: z.union([image(), z.string().url()]).describe('Image source - optimized ImageMetadata or URL')
+      }).describe('Main photo image')
+    })
   };
 }
 

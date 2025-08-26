@@ -27,7 +27,7 @@ An **Astro integration** for creating sophisticated photo galleries and streams 
 # Using npm
 npx astro add astro-photo-stream
 
-# Using pnpm  
+# Using pnpm
 pnpm astro add astro-photo-stream
 
 # Using yarn
@@ -39,27 +39,27 @@ yarn astro add astro-photo-stream
 1. **Add the integration to your `astro.config.mjs`:**
 
 ```js
-import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import { defineConfig } from "astro/config";
+import photoStream from "astro-photo-stream";
 
 export default defineConfig({
   integrations: [
     photoStream({
       // Zero-config setup works out of the box!
-    })
-  ]
+    }),
+  ],
 });
 ```
 
 2. **Create your photo content collection** (`src/content/config.ts`):
 
 ```ts
-import { defineCollection } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { defineCollection } from "astro:content";
+import { photoSchema } from "astro-photo-stream/schema";
 
 const photos = defineCollection({
-  type: 'content',
-  schema: photoSchema
+  type: "content",
+  schema: photoSchema,
 });
 
 export const collections = { photos };
@@ -105,61 +105,61 @@ A perfect evening capturing the golden hour at Malibu Beach.
 
 ```js
 // astro.config.mjs
-import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import { defineConfig } from "astro/config";
+import photoStream from "astro-photo-stream";
 
 export default defineConfig({
   integrations: [
     photoStream({
       // Photo processing
       photos: {
-        directory: 'src/content/photos',
-        formats: ['jpg', 'jpeg', 'png', 'webp'],
+        directory: "src/content/photos",
+        formats: ["jpg", "jpeg", "png", "webp"],
         maxWidth: 1920,
         maxHeight: 1080,
-        quality: 85
+        quality: 85,
       },
-      
+
       // AI metadata generation
       ai: {
         enabled: true,
-        provider: 'claude', // 'claude' | 'openai' | 'custom'
+        provider: "claude", // 'claude' | 'openai' | 'custom'
         apiKey: process.env.CLAUDE_API_KEY,
-        model: 'claude-3-sonnet-20240229',
-        prompt: 'Analyze this photo and suggest a title and description...'
+        model: "claude-3-sonnet-20240229",
+        prompt: "Analyze this photo and suggest a title and description...",
       },
-      
+
       // Geolocation with privacy
       geolocation: {
         enabled: true,
         privacy: {
           enabled: true,
           radius: 1000, // meters
-          method: 'blur' // 'blur' | 'offset' | 'disable'
-        }
+          method: "blur", // 'blur' | 'offset' | 'disable'
+        },
       },
-      
+
       // Gallery display
       gallery: {
         itemsPerPage: 20,
         gridCols: {
           mobile: 2,
           tablet: 3,
-          desktop: 4
+          desktop: 4,
         },
         enableMap: true,
         enableTags: true,
-        enableSearch: false
+        enableSearch: false,
       },
-      
+
       // SEO optimization
       seo: {
         generateOpenGraph: true,
-        siteName: 'My Photo Gallery',
-        twitterHandle: '@yourhandle'
-      }
-    })
-  ]
+        siteName: "My Photo Gallery",
+        twitterHandle: "@yourhandle",
+      },
+    }),
+  ],
 });
 ```
 
@@ -180,21 +180,21 @@ Create `astro-photo-stream.config.js` for advanced configuration:
 export default {
   ai: {
     enabled: true,
-    provider: 'claude',
-    model: 'claude-3-sonnet-20240229',
+    provider: "claude",
+    model: "claude-3-sonnet-20240229",
     prompt: `Analyze this photo professionally. Provide:
 - A compelling, descriptive title (under 60 chars)
 - A detailed description (2-3 sentences)
-- 3-5 relevant tags`
+- 3-5 relevant tags`,
   },
   geolocation: {
     enabled: true,
     privacy: {
       enabled: true,
       radius: 2000,
-      method: 'blur'
-    }
-  }
+      method: "blur",
+    },
+  },
 };
 ```
 
@@ -221,7 +221,7 @@ npx astro-photo-stream --ai --location --update-exif
 # Generate AI metadata only
 npx astro-photo-stream --ai
 
-# Update location information only  
+# Update location information only
 npx astro-photo-stream --location
 
 # Update EXIF data only
@@ -251,8 +251,8 @@ import { getCollection } from 'astro:content';
 const photos = await getCollection('photos');
 ---
 
-<PhotoGrid 
-  photos={photos} 
+<PhotoGrid
+  photos={photos}
   columns={{ mobile: 2, tablet: 3, desktop: 4 }}
   class="my-custom-grid"
 />
@@ -265,8 +265,8 @@ const photos = await getCollection('photos');
 import { PhotoCard } from 'astro-photo-stream/components';
 ---
 
-<PhotoCard 
-  photo={photo} 
+<PhotoCard
+  photo={photo}
   loading="lazy"
   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 />
@@ -279,7 +279,7 @@ import { PhotoCard } from 'astro-photo-stream/components';
 import { MultiMarkerMap } from 'astro-photo-stream/components';
 ---
 
-<MultiMarkerMap 
+<MultiMarkerMap
   photos={photosWithLocation}
   height="400px"
   consolidationRadius={5000}
@@ -302,18 +302,18 @@ The integration automatically creates these routes:
 ### Photo Data Processing
 
 ```ts
-import { 
-  getAllPhotos, 
-  getPhotosByTag, 
+import {
+  getAllPhotos,
+  getPhotosByTag,
   getFeaturedLocations,
-  getPhotoStatistics 
-} from 'astro-photo-stream/utils';
+  getPhotoStatistics,
+} from "astro-photo-stream/utils";
 
 // Get all published photos
 const photos = await getAllPhotos();
 
 // Filter by tag
-const landscapePhotos = await getPhotosByTag('landscape');
+const landscapePhotos = await getPhotosByTag("landscape");
 
 // Get location data for maps
 const locations = await getFeaturedLocations();
@@ -325,11 +325,11 @@ const stats = await getPhotoStatistics();
 ### Metadata Generation
 
 ```ts
-import { generatePhotoMetadata } from 'astro-photo-stream/utils';
+import { generatePhotoMetadata } from "astro-photo-stream/utils";
 
-const metadata = await generatePhotoMetadata('/path/to/photo.jpg', {
-  ai: { enabled: true, provider: 'claude' },
-  geolocation: { enabled: true }
+const metadata = await generatePhotoMetadata("/path/to/photo.jpg", {
+  ai: { enabled: true, provider: "claude" },
+  geolocation: { enabled: true },
 });
 ```
 
@@ -459,12 +459,8 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 📚 Examples & Resources
+## 📚 Resources
 
-- [📖 Documentation](https://github.com/walterra/astro-photostream/wiki)
-- [🎯 Demo Site](https://astro-photostream-demo.vercel.app/)
-- [🎥 Video Tutorial](https://youtube.com/watch?v=example)
-- [💬 Discord Community](https://astro.build/chat)
 - [🐛 Report Issues](https://github.com/walterra/astro-photostream/issues)
 
 **Star ⭐ this repo if you find it useful!**

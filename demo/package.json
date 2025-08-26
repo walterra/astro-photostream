@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro",
-    "fetch-photos": "tsx scripts/fetch-photos.ts"
+    "fetch-photos": "tsx scripts/fetch-photos.ts",
+    "photo-metadata-generator": "node ../dist/scripts/photo-metadata-generator.js"
   },
   "dependencies": {
     "@astrojs/tailwind": "^5.1.2",

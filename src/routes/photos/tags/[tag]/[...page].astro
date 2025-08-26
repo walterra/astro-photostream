@@ -5,14 +5,13 @@
  * Based on reference implementation patterns
  */
 import { getCollection } from 'astro:content';
-import { getConfig } from 'virtual:astro-photo-stream/config';
+import { config } from 'virtual:astro-photo-stream/config';
 import PhotoStream from '../../../../components/PhotoStream.astro';
 import MultiMarkerMap from '../../../../components/MultiMarkerMap.astro';
 import type { PhotoMetadata } from '../../../../types.js';
 import type { GetStaticPaths } from 'astro';
 
-// Get configuration
-const config = getConfig();
+// Configuration is imported directly
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
   // Get all photos from content collection
