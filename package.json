@@ -1,5 +1,5 @@
 {
-  "name": "astro-photo-stream",
+  "name": "astro-photostream",
   "version": "0.1.0",
   "type": "module",
   "description": "An Astro integration for creating photo galleries with AI metadata generation and geolocation features",
@@ -56,7 +56,7 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "bin": {
-    "astro-photo-stream": "./dist/scripts/photo-metadata-generator.js",
+    "astro-photostream": "./dist/scripts/photo-metadata-generator.js",
     "photo-metadata-generator": "./dist/scripts/photo-metadata-generator.js"
   },
   "files": [

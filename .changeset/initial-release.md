@@ -1,5 +1,5 @@
 ---
-"astro-photo-stream": minor
+"astro-photostream": minor
 ---
 
 Initial release of Astro Photo Stream integration
