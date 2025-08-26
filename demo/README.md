@@ -19,6 +19,7 @@ A clean, minimal Astro.js project with Tailwind CSS, ready for integrations and 
 
 1. **Clone or copy this demo project**
 2. **Install dependencies:**
+
    ```bash
    pnpm install
    # or
@@ -26,6 +27,7 @@ A clean, minimal Astro.js project with Tailwind CSS, ready for integrations and 
    ```
 
 3. **Start the development server:**
+
    ```bash
    pnpm dev
    # or
@@ -47,6 +49,7 @@ npx astro add astro-photo-stream
 ```
 
 This command will:
+
 - Install the `astro-photo-stream` package
 - Update your `astro.config.mjs` automatically
 - Set up the necessary configuration
@@ -72,31 +75,29 @@ npm install ../
 Then manually add to your `astro.config.mjs`:
 
 ```js
-import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
-import photoStream from 'astro-photo-stream';
+import { defineConfig } from "astro/config";
+import tailwind from "@astrojs/tailwind";
+import photoStream from "astro-photo-stream";
 
 export default defineConfig({
   integrations: [
     tailwind(),
-    photoStream({})  // Pass empty object for default options
-  ]
+    photoStream({}), // Pass empty object for default options
+  ],
 });
 ```
-
-**Note:** The main package currently has build errors that need to be fixed first.
 
 ### Step 2: Configure Content Collections
 
 Update your `src/content/config.ts` file:
 
 ```ts
-import { defineCollection } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { defineCollection } from "astro:content";
+import { photoSchema } from "astro-photo-stream/schema";
 
 const photos = defineCollection({
-  type: 'content',
-  schema: photoSchema
+  type: "content",
+  schema: photoSchema,
 });
 
 export const collections = { photos };
@@ -142,9 +143,9 @@ A perfect evening capturing the golden hour at Malibu Beach.
 For AI-powered metadata and geolocation features, add to your `astro.config.mjs`:
 
 ```js
-import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
-import photoStream from 'astro-photo-stream';
+import { defineConfig } from "astro/config";
+import tailwind from "@astrojs/tailwind";
+import photoStream from "astro-photo-stream";
 
 export default defineConfig({
   integrations: [
@@ -152,23 +153,23 @@ export default defineConfig({
     photoStream({
       ai: {
         enabled: true,
-        provider: 'claude',
-        apiKey: process.env.ANTHROPIC_API_KEY
+        provider: "claude",
+        apiKey: process.env.ANTHROPIC_API_KEY,
       },
       geolocation: {
         enabled: true,
         privacy: {
           enabled: true,
-          radius: 1000  // Blur location within 1km
-        }
+          radius: 1000, // Blur location within 1km
+        },
       },
       gallery: {
         itemsPerPage: 20,
         enableTags: true,
-        enableMap: true
-      }
-    })
-  ]
+        enableMap: true,
+      },
+    }),
+  ],
 });
 ```
 

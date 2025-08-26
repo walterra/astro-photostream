@@ -1,5 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Plain Astro Demo Project">
@@ -11,18 +11,20 @@ import Layout from '../layouts/Layout.astro';
           📸 Plain Astro Demo Project
         </h1>
         <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
-          A clean, minimal Astro.js project with Tailwind CSS, ready for integrations. 
-          Perfect starting point before adding <strong>astro-photo-stream</strong>.
+          A clean, minimal Astro.js project with Tailwind CSS, ready for
+          integrations. Perfect starting point before adding <strong
+            >astro-photo-stream</strong
+          >.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a 
-            href="#installation" 
+          <a
+            href="#installation"
             class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
             Add Photo Gallery
           </a>
-          <a 
-            href="https://github.com/walterra/astro-photostream" 
+          <a
+            href="https://github.com/walterra/astro-photostream"
             target="_blank"
             rel="noopener noreferrer"
             class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
@@ -42,13 +44,16 @@ import Layout from '../layouts/Layout.astro';
           What's Included
         </h2>
         <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-          This plain Astro project includes the essentials and is ready for your integrations.
+          This plain Astro project includes the essentials and is ready for your
+          integrations.
         </p>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">⚡</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">Astro 5.x</h3>
@@ -56,7 +61,9 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">🎨</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">Tailwind CSS</h3>
@@ -64,7 +71,9 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">📱</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">Responsive Design</h3>
@@ -72,7 +81,9 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">🚀</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">Development Ready</h3>
@@ -90,40 +101,48 @@ import Layout from '../layouts/Layout.astro';
           Adding astro-photo-stream Integration
         </h2>
         <p class="text-xl text-gray-600">
-          Transform this plain Astro project into a sophisticated photo gallery with AI-powered features
+          Transform this plain Astro project into a sophisticated photo gallery
+          with AI-powered features
         </p>
       </div>
 
       <div class="max-w-4xl mx-auto space-y-12">
-        
         <!-- Step 1 -->
         <div class="bg-white rounded-lg p-8 shadow-sm">
           <div class="flex items-start space-x-4">
-            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold"
+            >
               1
             </div>
             <div class="flex-1">
-              <h3 class="text-xl font-semibold mb-3">Install the Integration</h3>
-              
-              <h4 class="text-lg font-medium mb-2 text-gray-800">For Published Package (Recommended)</h4>
+              <h3 class="text-xl font-semibold mb-3">
+                Install the Integration
+              </h3>
+
+              <h4 class="text-lg font-medium mb-2 text-gray-800">
+                For Published Package (Recommended)
+              </h4>
               <div class="bg-gray-900 rounded-lg p-4 mb-4">
-                <pre class="text-green-400 text-sm overflow-x-auto"><code>npx astro add astro-photo-stream</code></pre>
+                <pre
+                  class="text-green-400 text-sm overflow-x-auto"><code>npx astro add astro-photo-stream</code></pre>
               </div>
               <p class="text-gray-600 mb-4">
-                This command will install the package, update your astro.config.mjs automatically, and set up the necessary configuration.
+                This command will install the package, update your
+                astro.config.mjs automatically, and set up the necessary
+                configuration.
               </p>
 
-              <h4 class="text-lg font-medium mb-2 text-gray-800">For Local Development</h4>
-              
-              <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
-                <p class="text-orange-800 text-sm font-bold">
-                  ⚠️ Current Status: The astro-photo-stream integration is currently in development and has build issues that need to be resolved.
-                </p>
-              </div>
-              
-              <p class="text-gray-600 mb-2 text-sm">When the integration is ready, the process will be:</p>
+              <h4 class="text-lg font-medium mb-2 text-gray-800">
+                For Local Development
+              </h4>
+
+              <p class="text-gray-600 mb-2 text-sm">
+                When the integration is ready, the process will be:
+              </p>
               <div class="bg-gray-900 rounded-lg p-4 mb-3">
-                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`# First, build the main package (from parent directory)
+                <pre
+                  class="text-green-400 text-sm overflow-x-auto"><code>{`# First, build the main package (from parent directory)
 cd ../
 pnpm build
 
@@ -133,9 +152,15 @@ pnpm add ../
 # or
 npm install ../`}</code></pre>
               </div>
-              <p class="text-gray-600 mb-2 text-sm">Then manually add to your <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">astro.config.mjs</code>:</p>
+              <p class="text-gray-600 mb-2 text-sm">
+                Then manually add to your <code
+                  class="bg-gray-100 px-1 py-0.5 rounded text-xs"
+                  >astro.config.mjs</code
+                >:
+              </p>
               <div class="bg-gray-900 rounded-lg p-4 mb-3">
-                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`import { defineConfig } from 'astro/config';
+                <pre
+                  class="text-green-400 text-sm overflow-x-auto"><code>{`import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import photoStream from 'astro-photo-stream';
 
@@ -153,14 +178,23 @@ export default defineConfig({
         <!-- Step 2 -->
         <div class="bg-white rounded-lg p-8 shadow-sm">
           <div class="flex items-start space-x-4">
-            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold"
+            >
               2
             </div>
             <div class="flex-1">
-              <h3 class="text-xl font-semibold mb-3">Configure Content Collections</h3>
-              <p class="text-gray-600 mb-3">Update your <code class="bg-gray-100 px-2 py-1 rounded text-sm">src/content/config.ts</code> file:</p>
+              <h3 class="text-xl font-semibold mb-3">
+                Configure Content Collections
+              </h3>
+              <p class="text-gray-600 mb-3">
+                Update your <code class="bg-gray-100 px-2 py-1 rounded text-sm"
+                  >src/content/config.ts</code
+                > file:
+              </p>
               <div class="bg-gray-900 rounded-lg p-4 mb-4">
-                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`import { defineCollection } from 'astro:content';
+                <pre
+                  class="text-green-400 text-sm overflow-x-auto"><code>{`import { defineCollection } from 'astro:content';
 import { photoSchema } from 'astro-photo-stream/schema';
 
 const photos = defineCollection({
@@ -177,14 +211,19 @@ export const collections = { photos };`}</code></pre>
         <!-- Step 3 -->
         <div class="bg-white rounded-lg p-8 shadow-sm">
           <div class="flex items-start space-x-4">
-            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold"
+            >
               3
             </div>
             <div class="flex-1">
               <h3 class="text-xl font-semibold mb-3">Add Your Photos</h3>
-              <p class="text-gray-600 mb-3">Create the photos content directory structure:</p>
+              <p class="text-gray-600 mb-3">
+                Create the photos content directory structure:
+              </p>
               <div class="bg-gray-900 rounded-lg p-4 mb-4">
-                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`src/content/photos/
+                <pre
+                  class="text-green-400 text-sm overflow-x-auto"><code>{`src/content/photos/
 ├── sunset-beach.md
 ├── sunset-beach.jpg
 ├── mountain-hike.md
@@ -197,14 +236,22 @@ export const collections = { photos };`}</code></pre>
         <!-- Step 4 -->
         <div class="bg-white rounded-lg p-8 shadow-sm">
           <div class="flex items-start space-x-4">
-            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold"
+            >
               4
             </div>
             <div class="flex-1">
               <h3 class="text-xl font-semibold mb-3">Create Photo Entries</h3>
-              <p class="text-gray-600 mb-3">Example photo entry (<code class="bg-gray-100 px-2 py-1 rounded text-sm">src/content/photos/sunset-beach.md</code>):</p>
+              <p class="text-gray-600 mb-3">
+                Example photo entry (<code
+                  class="bg-gray-100 px-2 py-1 rounded text-sm"
+                  >src/content/photos/sunset-beach.md</code
+                >):
+              </p>
               <div class="bg-gray-900 rounded-lg p-4 mb-4">
-                <pre class="text-green-400 text-sm overflow-x-auto"><code>{`---
+                <pre
+                  class="text-green-400 text-sm overflow-x-auto"><code>{`---
 title: "Golden Hour at the Beach"
 description: "Stunning sunset over the Pacific Ocean"
 coverImage:
@@ -228,30 +275,39 @@ A perfect evening capturing the golden hour at Malibu Beach.`}</code></pre>
         <!-- Step 5 -->
         <div class="bg-white rounded-lg p-8 shadow-sm">
           <div class="flex items-start space-x-4">
-            <div class="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+            <div
+              class="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold"
+            >
               ✓
             </div>
             <div class="flex-1">
-              <h3 class="text-xl font-semibold mb-3">Access Your Photo Gallery</h3>
-              <p class="text-gray-600 mb-4">After installation, your photo gallery will be available at:</p>
+              <h3 class="text-xl font-semibold mb-3">
+                Access Your Photo Gallery
+              </h3>
+              <p class="text-gray-600 mb-4">
+                After installation, your photo gallery will be available at:
+              </p>
               <div class="space-y-2">
                 <div class="flex items-center space-x-2">
                   <span class="text-blue-600 font-mono text-sm">/photos</span>
                   <span class="text-gray-500">- Main Gallery</span>
                 </div>
                 <div class="flex items-center space-x-2">
-                  <span class="text-blue-600 font-mono text-sm">/photos/[photo-slug]</span>
+                  <span class="text-blue-600 font-mono text-sm"
+                    >/photos/[photo-slug]</span
+                  >
                   <span class="text-gray-500">- Individual Photos</span>
                 </div>
                 <div class="flex items-center space-x-2">
-                  <span class="text-blue-600 font-mono text-sm">/photos/tags/[tag-name]</span>
+                  <span class="text-blue-600 font-mono text-sm"
+                    >/photos/tags/[tag-name]</span
+                  >
                   <span class="text-gray-500">- Tag Filtering</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </section>
@@ -264,57 +320,82 @@ A perfect evening capturing the golden hour at Malibu Beach.`}</code></pre>
           What You Get After Adding astro-photo-stream
         </h2>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          The integration will automatically add powerful photo gallery features to your site
+          The integration will automatically add powerful photo gallery features
+          to your site
         </p>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">🤖</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">AI-Powered Metadata</h3>
-          <p class="text-gray-600">Automatic titles, descriptions, and tags using Claude API</p>
+          <p class="text-gray-600">
+            Automatic titles, descriptions, and tags using Claude API
+          </p>
         </div>
 
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">📍</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">Smart Geolocation</h3>
-          <p class="text-gray-600">Location name resolution with privacy-focused options</p>
+          <p class="text-gray-600">
+            Location name resolution with privacy-focused options
+          </p>
         </div>
 
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">📱</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">Responsive Galleries</h3>
-          <p class="text-gray-600">2/3/4 column layouts that work on all devices</p>
+          <p class="text-gray-600">
+            2/3/4 column layouts that work on all devices
+          </p>
         </div>
 
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">⚡</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">Performance First</h3>
-          <p class="text-gray-600">Static generation with lazy loading and optimization</p>
+          <p class="text-gray-600">
+            Static generation with lazy loading and optimization
+          </p>
         </div>
 
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">🏷️</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">Tag System</h3>
-          <p class="text-gray-600">Automatic tag-based filtering and navigation</p>
+          <p class="text-gray-600">
+            Automatic tag-based filtering and navigation
+          </p>
         </div>
 
         <div class="text-center p-6">
-          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <span class="text-2xl">🔍</span>
           </div>
           <h3 class="text-xl font-semibold mb-2">SEO Optimized</h3>
-          <p class="text-gray-600">Dynamic OpenGraph images and structured data</p>
+          <p class="text-gray-600">
+            Dynamic OpenGraph images and structured data
+          </p>
         </div>
       </div>
     </div>

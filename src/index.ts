@@ -12,6 +12,8 @@ export default defineIntegration({
   optionsSchema: integrationOptionsSchema,
   setup({ name, options }) {
     const { resolve } = createResolver(import.meta.url);
+    // Create a resolver for the source files (routes/components) relative to package root
+    const resolveSource = (path: string) => resolve(`../src/${path}`);
     
     return {
       hooks: {
@@ -44,20 +46,20 @@ export default defineIntegration({
             // Main photo stream with pagination (Astro convention)
             injectRoute({
               pattern: '/photos/[...page]',
-              entrypoint: resolve('./routes/photos/[...page].astro')
+              entrypoint: resolveSource('routes/photos/[...page].astro')
             });
             
             // Individual photo pages
             injectRoute({
               pattern: '/photos/[slug]',
-              entrypoint: resolve('./routes/photos/[slug].astro')
+              entrypoint: resolveSource('routes/photos/[slug].astro')
             });
             
             // Tag-based photo filtering with pagination
             if (options.gallery.enableTags) {
               injectRoute({
                 pattern: '/photos/tags/[tag]/[...page]',
-                entrypoint: resolve('./routes/photos/tags/[tag]/[...page].astro')
+                entrypoint: resolveSource('routes/photos/tags/[tag]/[...page].astro')
               });
             }
             
@@ -65,7 +67,7 @@ export default defineIntegration({
             if (options.seo.generateOpenGraph) {
               injectRoute({
                 pattern: '/api/og/photo/[slug].png',
-                entrypoint: resolve('./routes/og-image.ts')
+                entrypoint: resolveSource('routes/og-image.ts')
               });
             }
           }
