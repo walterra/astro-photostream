@@ -5,7 +5,7 @@
  */
 
 import { defineCollection, z } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { photoSchema } from 'astro-photostream/schema';
 
 // Example 1: Basic photo collection
 const basicPhotos = defineCollection({

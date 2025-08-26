@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - EXIF extraction (camera settings, GPS, timestamps)
 - Interactive maps (single and multi-marker with clustering)
 - Content collection-based architecture with TypeScript support
-- Zero-config setup with `npx astro add astro-photo-stream`
+- Zero-config setup with `npx astro add astro-photostream`
 - Mobile-responsive design with lazy loading
 - SEO optimization with dynamic OpenGraph images
 - CLI tools for batch metadata processing

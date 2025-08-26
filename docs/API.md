@@ -1,6 +1,6 @@
 # 📚 API Documentation
 
-Complete reference for the **astro-photo-stream** integration API, including TypeScript types, configuration options, components, and utilities.
+Complete reference for the **astro-photostream** integration API, including TypeScript types, configuration options, components, and utilities.
 
 ## Table of Contents
 
@@ -17,19 +17,19 @@ Complete reference for the **astro-photo-stream** integration API, including Typ
 ### Basic Installation
 
 ```bash
-npx astro add astro-photo-stream
+npx astro add astro-photostream
 ```
 
 ### Manual Installation
 
 ```bash
-npm install astro-photo-stream
+npm install astro-photostream
 ```
 
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [photoStream()]
@@ -292,7 +292,7 @@ Display a single photo with metadata.
 
 ```astro
 ---
-import { PhotoCard } from 'astro-photo-stream/components';
+import { PhotoCard } from 'astro-photostream/components';
 ---
 
 <PhotoCard 
@@ -315,7 +315,7 @@ Display a responsive grid of photos.
 
 ```astro
 ---
-import { PhotoGrid } from 'astro-photo-stream/components';
+import { PhotoGrid } from 'astro-photostream/components';
 ---
 
 <PhotoGrid 
@@ -336,7 +336,7 @@ Full photo stream with pagination.
 
 ```astro
 ---
-import { PhotoStream } from 'astro-photo-stream/components';
+import { PhotoStream } from 'astro-photostream/components';
 ---
 
 <PhotoStream 
@@ -361,7 +361,7 @@ Interactive map with multiple photo locations.
 
 ```astro
 ---
-import { MultiMarkerMap } from 'astro-photo-stream/components';
+import { MultiMarkerMap } from 'astro-photostream/components';
 ---
 
 <MultiMarkerMap 
@@ -384,7 +384,7 @@ Static map image for a single photo location.
 
 ```astro
 ---
-import { MapImage } from 'astro-photo-stream/components';
+import { MapImage } from 'astro-photostream/components';
 ---
 
 <MapImage 
@@ -413,7 +413,7 @@ import {
   getPhotosByTag, 
   getFeaturedLocations,
   getPhotoStatistics 
-} from 'astro-photo-stream/utils';
+} from 'astro-photostream/utils';
 
 // Get all published photos
 const photos: PhotoMetadata[] = await getAllPhotos();
@@ -431,7 +431,7 @@ const stats: PhotoStatistics = await getPhotoStatistics();
 ### Metadata Generation
 
 ```ts
-import { generatePhotoMetadata } from 'astro-photo-stream/utils';
+import { generatePhotoMetadata } from 'astro-photostream/utils';
 
 const metadata = await generatePhotoMetadata('/path/to/photo.jpg', {
   ai: { 
@@ -453,7 +453,7 @@ import {
   processPhotoCollection,
   validatePhotoMetadata,
   sortPhotosByDate
-} from 'astro-photo-stream/utils';
+} from 'astro-photostream/utils';
 
 // Process and validate entire photo collection
 const processedPhotos = await processPhotoCollection();
@@ -471,7 +471,7 @@ const sortedPhotos = sortPhotosByDate(photos, 'desc');
 
 ```bash
 # Generate metadata for all photos
-npx astro-photo-stream
+npx astro-photostream
 
 # Alias
 npx photo-metadata-generator
@@ -481,36 +481,36 @@ npx photo-metadata-generator
 
 ```bash
 # AI metadata only
-npx astro-photo-stream --ai
+npx astro-photostream --ai
 
 # Location data only
-npx astro-photo-stream --location
+npx astro-photostream --location
 
 # EXIF data only
-npx astro-photo-stream --update-exif
+npx astro-photostream --update-exif
 
 # Generate config file
-npx astro-photo-stream --generate-config
+npx astro-photostream --generate-config
 
 # Batch processing with progress
-npx astro-photo-stream --batch --progress
+npx astro-photostream --batch --progress
 
 # Overwrite existing metadata
-npx astro-photo-stream --overwrite
+npx astro-photostream --overwrite
 
 # Process specific directory
-npx astro-photo-stream --dir ./custom-photos
+npx astro-photostream --dir ./custom-photos
 
 # Verbose output
-npx astro-photo-stream --verbose
+npx astro-photostream --verbose
 
 # Help
-npx astro-photo-stream --help
+npx astro-photostream --help
 ```
 
 ### Configuration File
 
-Create `astro-photo-stream.config.js`:
+Create `astro-photostream.config.js`:
 
 ```js
 export default {
@@ -564,11 +564,11 @@ The integration uses Astro's official hooks:
 
 ```ts
 // Available in development mode
-document.addEventListener('astro-photo-stream:ready', (event) => {
+document.addEventListener('astro-photostream:ready', (event) => {
   console.log('Photo stream initialized');
 });
 
-document.addEventListener('astro-photo-stream:metadata-generated', (event) => {
+document.addEventListener('astro-photostream:metadata-generated', (event) => {
   console.log('Metadata generated for:', event.detail.photoPath);
 });
 ```

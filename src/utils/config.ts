@@ -8,7 +8,7 @@ import { integrationOptionsSchema, type IntegrationOptions } from "../types.js";
  * Handles loading configuration from files, environment variables, and defaults
  */
 
-// Configuration file schema (for astro-photo-stream.config.js)
+// Configuration file schema (for astro-photostream.config.js)
 const configFileSchema = z.object({
   // Core configuration
   enabled: z.boolean().default(true),
@@ -103,7 +103,7 @@ export class ConfigManager {
   /**
    * Load configuration from multiple sources in priority order:
    * 1. Provided options (highest priority)
-   * 2. astro-photo-stream.config.js file
+   * 2. astro-photostream.config.js file
    * 3. Environment variables
    * 4. Defaults (lowest priority)
    */
@@ -181,15 +181,15 @@ export class ConfigManager {
   }
 
   /**
-   * Load configuration from astro-photo-stream.config.js file
+   * Load configuration from astro-photostream.config.js file
    */
   private async loadConfigFile(
     cwd: string,
   ): Promise<Partial<ConfigFile> | null> {
     const possiblePaths = [
-      "astro-photo-stream.config.js",
-      "astro-photo-stream.config.mjs",
-      "astro-photo-stream.config.ts",
+      "astro-photostream.config.js",
+      "astro-photostream.config.mjs",
+      "astro-photostream.config.ts",
     ];
 
     for (const configPath of possiblePaths) {
@@ -312,7 +312,7 @@ export class ConfigManager {
    * Generate example configuration file
    */
   generateExampleConfig(): string {
-    return `// astro-photo-stream.config.js
+    return `// astro-photostream.config.js
 export default {
   // Enable/disable the integration
   enabled: true,
@@ -375,7 +375,7 @@ export default {
    * Write example configuration file to disk
    */
   async writeExampleConfig(filePath?: string): Promise<void> {
-    const configPath = filePath || "astro-photo-stream.config.js";
+    const configPath = filePath || "astro-photostream.config.js";
     const content = this.generateExampleConfig();
 
     await fs.writeFile(configPath, content, "utf8");

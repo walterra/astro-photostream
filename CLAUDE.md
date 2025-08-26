@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an **Astro integration** called `astro-photo-stream` that creates sophisticated photo galleries with AI-powered metadata generation, geolocation features, and responsive design. It's built as a standalone npm package that users can install via `npx astro add astro-photo-stream`.
+This is an **Astro integration** called `astro-photostream` that creates sophisticated photo galleries with AI-powered metadata generation, geolocation features, and responsive design. It's built as a standalone npm package that users can install via `npx astro add astro-photostream`.
 
 ## Development Commands
 
@@ -62,7 +62,7 @@ Pre-built page templates in `src/routes/`:
 ### Configuration System
 Multi-layered configuration loading in `src/utils/config.ts`:
 1. Default values (in types.ts)
-2. Config file (`astro-photo-stream.config.js`)
+2. Config file (`astro-photostream.config.js`)
 3. Environment variables
 4. Integration options passed to defineConfig
 

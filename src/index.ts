@@ -13,7 +13,7 @@ import { integrationOptionsSchema } from "./types.js";
  * geolocation features, and responsive design.
  */
 export default defineIntegration({
-  name: "astro-photo-stream",
+  name: "astro-photostream",
   optionsSchema: integrationOptionsSchema,
   setup({ options }) {
     const { resolve } = createResolver(import.meta.url);
@@ -33,12 +33,12 @@ export default defineIntegration({
 
           // Add virtual imports for configuration
           addVirtualImports(params, {
-            name: "astro-photo-stream",
+            name: "astro-photostream",
             imports: {
-              "virtual:astro-photo-stream/config": `
+              "virtual:astro-photostream/config": `
                 export const config = ${JSON.stringify(options, null, 2)};
               `,
-              "virtual:astro-photo-stream/utils": `
+              "virtual:astro-photostream/utils": `
                 export { generatePhotoMetadata } from '${resolve("./utils/metadata.js")}';
                 export { processPhotoCollection } from '${resolve("./utils/collection.js")}';
                 export { createPhotoRoutes } from '${resolve("./utils/routing.js")}';
@@ -95,7 +95,7 @@ export default defineIntegration({
           // Add Vite plugin for photo processing during build
           addVitePlugin(params, {
             plugin: {
-              name: "astro-photo-stream-processor",
+              name: "astro-photostream-processor",
               configResolved(config: any) {
                 if (config.command === "build") {
                   logger.info("Photo processing will run during build");

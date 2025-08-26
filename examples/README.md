@@ -7,7 +7,7 @@ This directory contains ready-to-use configuration examples for different use ca
 ### Basic Configurations
 
 - **`minimal.config.js`** - Absolute minimum setup with defaults
-- **`astro-photo-stream.config.js`** - Complete configuration with all options documented
+- **`astro-photostream.config.js`** - Complete configuration with all options documented
 
 ### Use Case Specific
 
@@ -24,7 +24,7 @@ This directory contains ready-to-use configuration examples for different use ca
 ## Quick Start
 
 1. **Choose a configuration** that matches your use case
-2. **Copy the file** to your project root as `astro-photo-stream.config.js`
+2. **Copy the file** to your project root as `astro-photostream.config.js`
 3. **Customize the settings** for your specific needs
 4. **Set environment variables** for API keys if using AI features
 
@@ -50,30 +50,30 @@ ASTRO_PHOTO_STREAM_CONFIG_PATH=./custom-config.js
 
 ```bash
 # Copy the blog configuration
-cp examples/photography-blog.config.js astro-photo-stream.config.js
+cp examples/photography-blog.config.js astro-photostream.config.js
 
 # Set up your environment
 echo "CLAUDE_API_KEY=your-key-here" >> .env
 
 # Install and configure
-npx astro add astro-photo-stream
+npx astro add astro-photostream
 ```
 
 ### Portfolio Site Setup
 
 ```bash
 # Copy the portfolio configuration
-cp examples/portfolio.config.js astro-photo-stream.config.js
+cp examples/portfolio.config.js astro-photostream.config.js
 
 # Customize for your needs
-# Edit astro-photo-stream.config.js
+# Edit astro-photostream.config.js
 ```
 
 ### High Privacy Setup
 
 ```bash
 # Copy the privacy-focused configuration
-cp examples/high-privacy.config.js astro-photo-stream.config.js
+cp examples/high-privacy.config.js astro-photostream.config.js
 
 # No API keys needed - AI features disabled for privacy
 ```
@@ -87,7 +87,7 @@ Choose from the content collection examples in `content-collection.examples.ts`:
 ```ts
 // src/content/config.ts
 import { defineCollection } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { photoSchema } from 'astro-photostream/schema';
 
 const photos = defineCollection({
   type: 'content',
@@ -102,7 +102,7 @@ export const collections = { photos };
 ```ts
 // src/content/config.ts
 import { defineCollection, z } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { photoSchema } from 'astro-photostream/schema';
 
 const photos = defineCollection({
   type: 'content',
@@ -123,7 +123,7 @@ export const collections = { photos };
 Use environment-based configuration for different settings:
 
 ```js
-// astro-photo-stream.config.js
+// astro-photostream.config.js
 const isDev = process.env.NODE_ENV === 'development';
 
 export default {
@@ -149,7 +149,7 @@ Set up different collections for different photo types:
 ```ts
 // src/content/config.ts
 import { defineCollection } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { photoSchema } from 'astro-photostream/schema';
 
 export const collections = {
   'portfolio-photos': defineCollection({
@@ -176,16 +176,16 @@ export const collections = {
 
 ```bash
 # Generate all metadata
-npx astro-photo-stream
+npx astro-photostream
 
 # Generate only AI metadata
-npx astro-photo-stream --ai
+npx astro-photostream --ai
 
 # Generate only location data
-npx astro-photo-stream --location
+npx astro-photostream --location
 
 # Update EXIF data only
-npx astro-photo-stream --update-exif
+npx astro-photostream --update-exif
 ```
 
 ### Custom CLI Config
@@ -210,7 +210,7 @@ Create `.photostream.config.json`:
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -228,7 +228,7 @@ export default defineConfig({
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -284,10 +284,10 @@ import { ViewTransitions } from 'astro:transitions';
 3. **Build failing**
    ```bash
    # Check configuration
-   npx astro-photo-stream --generate-config
+   npx astro-photostream --generate-config
    
    # Run with verbose output
-   npx astro-photo-stream --verbose
+   npx astro-photostream --verbose
    ```
 
 ### Performance Tips

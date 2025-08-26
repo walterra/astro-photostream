@@ -9,7 +9,7 @@ Real-world configuration examples for different use cases and scenarios.
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -24,7 +24,7 @@ export default defineConfig({
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -54,7 +54,7 @@ export default defineConfig({
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -90,7 +90,7 @@ export default defineConfig({
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -124,7 +124,7 @@ export default defineConfig({
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -151,7 +151,7 @@ export default defineConfig({
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -202,7 +202,7 @@ export default defineConfig({
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -256,7 +256,7 @@ export default defineConfig({
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -317,7 +317,7 @@ export default defineConfig({
 
 ### Full Configuration File
 
-Create `astro-photo-stream.config.js`:
+Create `astro-photostream.config.js`:
 
 ```js
 export default {
@@ -427,7 +427,7 @@ export default defineConfig({
 ```ts
 // src/content/config.ts
 import { defineCollection } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { photoSchema } from 'astro-photostream/schema';
 
 const photos = defineCollection({
   type: 'content',
@@ -442,7 +442,7 @@ export const collections = { photos };
 ```ts
 // src/content/config.ts
 import { defineCollection, z } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { photoSchema } from 'astro-photostream/schema';
 
 // Extend the base schema with custom fields
 const extendedPhotoSchema = photoSchema.extend({
@@ -469,16 +469,16 @@ export const collections = { photos };
 
 ```bash
 # Generate all metadata
-npx astro-photo-stream
+npx astro-photostream
 
 # Only AI metadata
-npx astro-photo-stream --ai
+npx astro-photostream --ai
 
 # Only location data
-npx astro-photo-stream --location
+npx astro-photostream --location
 
 # Batch processing with progress
-npx astro-photo-stream --batch --progress --verbose
+npx astro-photostream --batch --progress --verbose
 ```
 
 ### Custom CLI Configuration
@@ -546,7 +546,7 @@ import { ViewTransitions } from 'astro:transitions';
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -563,7 +563,7 @@ title: "My Amazing Photo"
 description: "A detailed story about this photo"
 ---
 
-import { PhotoCard } from 'astro-photo-stream/components';
+import { PhotoCard } from 'astro-photostream/components';
 
 # The Story Behind This Photo
 

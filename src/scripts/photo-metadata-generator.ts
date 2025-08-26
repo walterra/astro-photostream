@@ -384,7 +384,7 @@ async function main() {
     await configManager.writeExampleConfig();
     console.log("");
     console.log("Next steps:");
-    console.log("1. Edit the generated astro-photo-stream.config.js file");
+    console.log("1. Edit the generated astro-photostream.config.js file");
     console.log(
       "2. Add your API keys to environment variables or the config file",
     );

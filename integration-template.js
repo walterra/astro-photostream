@@ -1,5 +1,5 @@
 /**
- * Template for users to set up content collections with astro-photo-stream
+ * Template for users to set up content collections with astro-photostream
  * Aligned with reference implementation from /Users/walterra/dev/walterra-dev
  * 
  * This file shows how to configure the photo collection exactly as it works
@@ -9,7 +9,7 @@
 // Example astro.config.mjs configuration
 export const exampleConfig = `
 import { defineConfig } from 'astro/config';
-import photoStreamIntegration from 'astro-photo-stream';
+import photoStreamIntegration from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -53,7 +53,7 @@ export default defineConfig({
 // Example content/config.ts file - aligned with reference
 export const exampleContentConfig = `
 import { defineCollection } from 'astro:content';
-import { createPhotoCollection } from 'astro-photo-stream/schema';
+import { createPhotoCollection } from 'astro-photostream/schema';
 
 // Photo collection using reference implementation schema
 const photo = createPhotoCollection();
@@ -115,7 +115,7 @@ Shot during a weekend trip to Malibu. The waves were gentle that day, creating n
 
 // Environment variables setup
 export const environmentSetup = `
-# Required environment variables for astro-photo-stream
+# Required environment variables for astro-photostream
 # Add these to your .env file
 
 # Claude API for AI metadata generation (optional but recommended)
@@ -137,19 +137,19 @@ CONTENT_DIRECTORY=./src/content/photo
 // CLI usage examples
 export const cliExamples = \`
 # Generate metadata for all photos in your photos directory
-npx astro-photo-stream generate
+npx astro-photostream generate
 
 # Generate metadata for a specific photo
-npx astro-photo-stream generate path/to/photo.jpg
+npx astro-photostream generate path/to/photo.jpg
 
 # Process photos with AI enhancement (requires ANTHROPIC_API_KEY)
-npx astro-photo-stream generate --ai
+npx astro-photostream generate --ai
 
 # Update location names only (requires OPENCAGE_API_KEY)
-npx astro-photo-stream generate --update-locations
+npx astro-photostream generate --update-locations
 
 # Force regenerate all metadata (overwrites existing)
-npx astro-photo-stream generate --force
+npx astro-photostream generate --force
 \`;
 
 console.log('🚀 Astro Photo Stream Integration Setup');

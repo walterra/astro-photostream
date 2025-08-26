@@ -21,7 +21,7 @@ An open-source Astro.js integration for creating sophisticated photo galleries a
 
 **Note**: Project is in planning phase - no commands currently available. Planned commands:
 
-- **Install**: `npx astro add astro-photo-stream`
+- **Install**: `npx astro add astro-photostream`
 - **Dev**: `pnpm dev`
 - **Build**: `pnpm build`  
 - **Check**: `pnpm check`

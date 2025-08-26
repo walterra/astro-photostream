@@ -1,11 +1,11 @@
 /**
  * Astro Configuration Examples
  * 
- * Different ways to integrate astro-photo-stream with Astro projects.
+ * Different ways to integrate astro-photostream with Astro projects.
  */
 
 import { defineConfig } from 'astro/config';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 // Example 1: Basic integration
 export const basicConfig = defineConfig({

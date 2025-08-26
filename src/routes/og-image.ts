@@ -4,7 +4,7 @@
  * Based on reference implementation patterns
  */
 import { getEntry } from "astro:content";
-import { config } from "virtual:astro-photo-stream/config";
+import { config } from "virtual:astro-photostream/config";
 import sharp from "sharp";
 import type { APIContext } from "astro";
 
@@ -222,7 +222,7 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
               `
               }
               <span style="color: ${accentColor};">•</span>
-              <span>astro-photo-stream</span>
+              <span>astro-photostream</span>
             </div>
           </div>
         </foreignObject>

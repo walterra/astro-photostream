@@ -1,6 +1,6 @@
 # Plain Astro Demo Project
 
-A clean, minimal Astro.js project with Tailwind CSS, ready for integrations and customization. This serves as a starting point before adding specialized integrations like `astro-photo-stream`.
+A clean, minimal Astro.js project with Tailwind CSS, ready for integrations and customization. This serves as a starting point before adding specialized integrations like `astro-photostream`.
 
 ## What's Included
 
@@ -36,7 +36,7 @@ A clean, minimal Astro.js project with Tailwind CSS, ready for integrations and 
 
 4. **Open your browser:** Visit `http://localhost:4321`
 
-## Adding astro-photo-stream Integration
+## Adding astro-photostream Integration
 
 Transform this plain Astro project into a photo gallery with AI metadata features:
 
@@ -45,18 +45,18 @@ Transform this plain Astro project into a photo gallery with AI metadata feature
 #### For Published Package (Recommended)
 
 ```bash
-npx astro add astro-photo-stream
+npx astro add astro-photostream
 ```
 
 This command will:
 
-- Install the `astro-photo-stream` package
+- Install the `astro-photostream` package
 - Update your `astro.config.mjs` automatically
 - Set up the necessary configuration
 
 #### For Local Development
 
-**⚠️ Current Status:** The astro-photo-stream integration is currently in development and has several build issues that need to be resolved before it can be used locally.
+**⚠️ Current Status:** The astro-photostream integration is currently in development and has several build issues that need to be resolved before it can be used locally.
 
 When the integration is ready, the installation process will be:
 
@@ -77,7 +77,7 @@ Then manually add to your `astro.config.mjs`:
 ```js
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-import photoStream from "astro-photo-stream";
+import photoStream from "astro-photostream";
 
 export default defineConfig({
   integrations: [
@@ -93,7 +93,7 @@ Update your `src/content/config.ts` file:
 
 ```ts
 import { defineCollection } from "astro:content";
-import { photoSchema } from "astro-photo-stream/schema";
+import { photoSchema } from "astro-photostream/schema";
 
 const photos = defineCollection({
   type: "content",
@@ -163,7 +163,7 @@ For AI metadata and geolocation features, add to your `astro.config.mjs`:
 ```js
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-import photoStream from "astro-photo-stream";
+import photoStream from "astro-photostream";
 
 export default defineConfig({
   integrations: [
@@ -221,12 +221,12 @@ pnpm check        # Run Astro type checking
 # Sample content
 pnpm fetch-photos # Download sample Creative Commons photos
 
-# After adding astro-photo-stream  
+# After adding astro-photostream  
 pnpm photo-metadata-generator --generate-config  # Create configuration file
 pnpm photo-metadata-generator                     # Generate metadata for photos
 ```
 
-## What Changes After Adding astro-photo-stream?
+## What Changes After Adding astro-photostream?
 
 The integration will automatically:
 
@@ -240,7 +240,7 @@ The integration will automatically:
 ## Learn More
 
 - **Astro Documentation:** [astro.build](https://astro.build)
-- **astro-photo-stream:** [GitHub Repository](https://github.com/walterra/astro-photostream)
+- **astro-photostream:** [GitHub Repository](https://github.com/walterra/astro-photostream)
 - **Tailwind CSS:** [tailwindcss.com](https://tailwindcss.com)
 
 ## Project Structure

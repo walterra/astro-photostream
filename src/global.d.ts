@@ -15,11 +15,11 @@ declare module "*.astro" {
 }
 
 // Virtual module declarations
-declare module "virtual:astro-photo-stream/config" {
+declare module "virtual:astro-photostream/config" {
   export const config: any;
 }
 
-declare module "virtual:astro-photo-stream/utils" {
+declare module "virtual:astro-photostream/utils" {
   export const generatePhotoMetadata: any;
   export const processPhotoCollection: any;
   export const createPhotoRoutes: any;

@@ -13,7 +13,7 @@ import Layout from "../layouts/Layout.astro";
         <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
           A clean, minimal Astro.js project with Tailwind CSS, ready for
           integrations. Perfect starting point before adding <strong
-            >astro-photo-stream</strong
+            >astro-photostream</strong
           >.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -98,7 +98,7 @@ import Layout from "../layouts/Layout.astro";
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Adding astro-photo-stream Integration
+          Adding astro-photostream Integration
         </h2>
         <p class="text-xl text-gray-600">
           Transform this plain Astro project into a photo gallery
@@ -125,7 +125,7 @@ import Layout from "../layouts/Layout.astro";
               </h4>
               <div class="bg-gray-900 rounded-lg p-4 mb-4">
                 <pre
-                  class="text-green-400 text-sm overflow-x-auto"><code>npx astro add astro-photo-stream</code></pre>
+                  class="text-green-400 text-sm overflow-x-auto"><code>npx astro add astro-photostream</code></pre>
               </div>
               <p class="text-gray-600 mb-4">
                 This command will install the package, update your
@@ -162,7 +162,7 @@ npm install ../`}</code></pre>
                 <pre
                   class="text-green-400 text-sm overflow-x-auto"><code>{`import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
-import photoStream from 'astro-photo-stream';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -195,7 +195,7 @@ export default defineConfig({
               <div class="bg-gray-900 rounded-lg p-4 mb-4">
                 <pre
                   class="text-green-400 text-sm overflow-x-auto"><code>{`import { defineCollection } from 'astro:content';
-import { photoSchema } from 'astro-photo-stream/schema';
+import { photoSchema } from 'astro-photostream/schema';
 
 const photos = defineCollection({
   type: 'content',
@@ -319,7 +319,7 @@ A perfect evening capturing the golden hour at Malibu Beach.`}</code></pre>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          What You Get After Adding astro-photo-stream
+          What You Get After Adding astro-photostream
         </h2>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
           The integration will automatically add photo gallery features

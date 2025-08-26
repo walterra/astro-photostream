@@ -1,6 +1,6 @@
 # 📸 Astro Photo Stream
 
-[![npm version](https://badge.fury.io/js/astro-photo-stream.svg)](https://badge.fury.io/js/astro-photo-stream)
+[![npm version](https://badge.fury.io/js/astro-photostream.svg)](https://badge.fury.io/js/astro-photostream)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 
@@ -25,13 +25,13 @@ An **Astro integration** for creating sophisticated photo galleries and streams 
 
 ```bash
 # Using npm
-npx astro add astro-photo-stream
+npx astro add astro-photostream
 
 # Using pnpm
-pnpm astro add astro-photo-stream
+pnpm astro add astro-photostream
 
 # Using yarn
-yarn astro add astro-photo-stream
+yarn astro add astro-photostream
 ```
 
 ### Basic Setup
@@ -40,7 +40,7 @@ yarn astro add astro-photo-stream
 
 ```js
 import { defineConfig } from "astro/config";
-import photoStream from "astro-photo-stream";
+import photoStream from "astro-photostream";
 
 export default defineConfig({
   integrations: [
@@ -55,7 +55,7 @@ export default defineConfig({
 
 ```ts
 import { defineCollection } from "astro:content";
-import { photoSchema } from "astro-photo-stream/schema";
+import { photoSchema } from "astro-photostream/schema";
 
 const photos = defineCollection({
   type: "content",
@@ -106,7 +106,7 @@ A perfect evening capturing the golden hour at Malibu Beach.
 ```js
 // astro.config.mjs
 import { defineConfig } from "astro/config";
-import photoStream from "astro-photo-stream";
+import photoStream from "astro-photostream";
 
 export default defineConfig({
   integrations: [
@@ -174,7 +174,7 @@ OPENCAGE_API_KEY=your-opencage-key
 
 ### Configuration File
 
-Create `astro-photo-stream.config.js` for advanced configuration:
+Create `astro-photostream.config.js` for advanced configuration:
 
 ```js
 export default {
@@ -206,35 +206,35 @@ The package includes powerful CLI tools for metadata generation:
 
 ```bash
 # Using npx
-npx astro-photo-stream
+npx astro-photostream
 
 # Using the full command
 npx photo-metadata-generator
 
 # With options
-npx astro-photo-stream --ai --location --update-exif
+npx astro-photostream --ai --location --update-exif
 ```
 
 ### CLI Options
 
 ```bash
 # Generate AI metadata only
-npx astro-photo-stream --ai
+npx astro-photostream --ai
 
 # Update location information only
-npx astro-photo-stream --location
+npx astro-photostream --location
 
 # Update EXIF data only
-npx astro-photo-stream --update-exif
+npx astro-photostream --update-exif
 
 # Generate configuration file
-npx astro-photo-stream --generate-config
+npx astro-photostream --generate-config
 
 # Batch process with progress
-npx astro-photo-stream --batch --progress
+npx astro-photostream --batch --progress
 
 # Help
-npx astro-photo-stream --help
+npx astro-photostream --help
 ```
 
 ## 🧩 Components
@@ -245,7 +245,7 @@ Import and use components directly in your Astro pages:
 
 ```astro
 ---
-import { PhotoGrid } from 'astro-photo-stream/components';
+import { PhotoGrid } from 'astro-photostream/components';
 import { getCollection } from 'astro:content';
 
 const photos = await getCollection('photos');
@@ -262,7 +262,7 @@ const photos = await getCollection('photos');
 
 ```astro
 ---
-import { PhotoCard } from 'astro-photo-stream/components';
+import { PhotoCard } from 'astro-photostream/components';
 ---
 
 <PhotoCard
@@ -276,7 +276,7 @@ import { PhotoCard } from 'astro-photo-stream/components';
 
 ```astro
 ---
-import { MultiMarkerMap } from 'astro-photo-stream/components';
+import { MultiMarkerMap } from 'astro-photostream/components';
 ---
 
 <MultiMarkerMap
@@ -307,7 +307,7 @@ import {
   getPhotosByTag,
   getFeaturedLocations,
   getPhotoStatistics,
-} from "astro-photo-stream/utils";
+} from "astro-photostream/utils";
 
 // Get all published photos
 const photos = await getAllPhotos();
@@ -325,7 +325,7 @@ const stats = await getPhotoStatistics();
 ### Metadata Generation
 
 ```ts
-import { generatePhotoMetadata } from "astro-photo-stream/utils";
+import { generatePhotoMetadata } from "astro-photostream/utils";
 
 const metadata = await generatePhotoMetadata("/path/to/photo.jpg", {
   ai: { enabled: true, provider: "claude" },
@@ -433,7 +433,7 @@ pnpm link --global
 
 ```bash
 # In your Astro project
-pnpm link --global astro-photo-stream
+pnpm link --global astro-photostream
 ```
 
 ## 🤝 Contributing
