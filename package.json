@@ -2,7 +2,7 @@
   "name": "astro-photo-stream",
   "version": "0.1.0",
   "type": "module",
-  "description": "An Astro integration for creating sophisticated photo galleries and streams with AI-powered metadata generation and geolocation features",
+  "description": "An Astro integration for creating photo galleries with AI metadata generation and geolocation features",
   "keywords": [
     "astro-integration",
     "withastro",
@@ -73,9 +73,11 @@
     "format": "prettier --write src",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
-    "prepublishOnly": "npm run build:cli",
-    "changeset": "changeset", 
-    "release": "changeset publish"
+    "version": "changeset version",
+    "release": "pnpm build:cli && changeset publish",
+    "changeset": "changeset",
+    "changeset:add": "changeset add",
+    "changeset:status": "changeset status"
   },
   "peerDependencies": {
     "astro": "^4.0.0 || ^5.0.0"

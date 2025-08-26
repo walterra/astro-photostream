@@ -38,7 +38,7 @@ A clean, minimal Astro.js project with Tailwind CSS, ready for integrations and 
 
 ## Adding astro-photo-stream Integration
 
-Transform this plain Astro project into a sophisticated photo gallery with AI-powered features:
+Transform this plain Astro project into a photo gallery with AI metadata features:
 
 ### Step 1: Install the Integration
 
@@ -113,7 +113,7 @@ pnpm fetch-photos
 npm run fetch-photos
 ```
 
-This will download ~50 high-quality, geolocated Creative Commons photos to `src/assets/photos/` for testing the integration.
+This will download ~50 geolocated Creative Commons photos to `src/assets/photos/` for testing the integration.
 
 ### Step 4: Add Your Photos
 
@@ -158,7 +158,7 @@ A perfect evening capturing the golden hour at Malibu Beach.
 
 ### Step 6: Advanced Configuration (Optional)
 
-For AI-powered metadata and geolocation features, add to your `astro.config.mjs`:
+For AI metadata and geolocation features, add to your `astro.config.mjs`:
 
 ```js
 import { defineConfig } from "astro/config";
@@ -232,7 +232,7 @@ The integration will automatically:
 
 1. **Add photo routes** (`/photos`, `/photos/[slug]`, etc.)
 2. **Inject photo components** (PhotoGrid, PhotoCard, etc.)
-3. **Enable content collections** with comprehensive photo schema
+3. **Enable content collections** with photo schema
 4. **Provide AI metadata generation** (if configured)
 5. **Add geolocation features** with privacy controls
 6. **Include interactive maps** and OpenGraph image generation
