@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- Fix critical bug: integration now works with empty options
+
+  **Bug Fix:**
+  - Fixed integration failing when called with `photoStream()` or `photoStream({})`
+  - Added default empty object to top-level integration options schema
+  - Integration now works out-of-the-box without any required configuration
+
+  **Impact:**
+  - `npx astro add astro-photostream` now works correctly
+  - Zero-config setup is truly zero-config
+  - No breaking changes to existing configurations
+
 ## 0.2.0
 
 ### Minor Changes

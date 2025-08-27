@@ -69,7 +69,7 @@ export const integrationOptionsSchema = z.object({
       twitterHandle: z.string().optional(),
     })
     .default({}),
-});
+}).default({});
 
 export type IntegrationOptions = z.infer<typeof integrationOptionsSchema>;
 
