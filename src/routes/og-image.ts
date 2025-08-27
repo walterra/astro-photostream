@@ -3,12 +3,22 @@
  * Generates dynamic OG images for individual photos
  * Based on reference implementation patterns
  */
-import { getEntry } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import { config } from "virtual:astro-photostream/config";
 import sharp from "sharp";
-import type { APIContext } from "astro";
+import type { APIContext, GetStaticPaths } from "astro";
 
-// Configuration is imported directly
+// Generate static paths for all photos
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Get all photos from content collection
+  const allPhotos = await getCollection("photos", ({ data }) => {
+    return data.draft !== true;
+  });
+
+  return allPhotos.map((photo) => ({
+    params: { slug: photo.slug },
+  }));
+};
 
 export async function GET(context: APIContext) {
   try {

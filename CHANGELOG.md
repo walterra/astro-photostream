@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.3
+
+### Patch Changes
+
+- Fix missing getStaticPaths in OG image route for static builds
+
+  **Bug Fix:**
+  - Added required `getStaticPaths()` function to `og-image.ts` route
+  - OG image generation now works correctly in static builds
+  - Pre-generates OG image routes for all published photos
+
+  **Impact:**
+  - Static builds (`astro build`) now complete successfully
+  - OpenGraph images are properly generated for all photos
+  - No breaking changes to existing functionality
+
 ## 0.2.2
 
 ### Patch Changes

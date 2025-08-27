@@ -1,6 +1,6 @@
 {
   "name": "astro-photostream",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "description": "An Astro integration for creating photo galleries with AI metadata generation and geolocation features",
   "keywords": [
