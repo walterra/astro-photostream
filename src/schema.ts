@@ -47,10 +47,13 @@ export const photoCollectionSchema = z.object({
       name: z.string().optional().describe("Human-readable location name"),
       latitude: z.number().optional().describe("GPS latitude"),
       longitude: z.number().optional().describe("GPS longitude"),
-      coordinates: z.object({
-        latitude: z.number().describe("GPS latitude coordinate"),
-        longitude: z.number().describe("GPS longitude coordinate"),
-      }).optional().describe("GPS coordinates object"),
+      coordinates: z
+        .object({
+          latitude: z.number().describe("GPS latitude coordinate"),
+          longitude: z.number().describe("GPS longitude coordinate"),
+        })
+        .optional()
+        .describe("GPS coordinates object"),
     })
     .optional()
     .describe("Photo location information"),

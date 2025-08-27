@@ -1,5 +1,5 @@
 // Global type declarations for TypeScript compilation
-import * as L from 'leaflet';
+import * as L from "leaflet";
 
 // Extend Window interface for Leaflet
 declare global {
