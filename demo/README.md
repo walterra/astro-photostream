@@ -75,9 +75,9 @@ npm install ../
 Then manually add to your `astro.config.mjs`:
 
 ```js
-import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
-import photoStream from "astro-photostream";
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -92,11 +92,11 @@ export default defineConfig({
 Update your `src/content/config.ts` file:
 
 ```ts
-import { defineCollection } from "astro:content";
-import { photoSchema } from "astro-photostream/schema";
+import { defineCollection } from 'astro:content';
+import { photoSchema } from 'astro-photostream/schema';
 
 const photos = defineCollection({
-  type: "content",
+  type: 'content',
   schema: photoSchema,
 });
 
@@ -113,7 +113,15 @@ pnpm fetch-photos
 npm run fetch-photos
 ```
 
-This will download ~50 geolocated Creative Commons photos to `src/assets/photos/` for testing the integration.
+This script will:
+
+- **Fetch high-quality Creative Commons photos** from Wikimedia Featured Pictures and Quality Images
+- **Filter for geolocated images** with GPS coordinates embedded in EXIF data
+- **Download ~20-50 photos** (depending on availability) to `src/assets/photos/`
+- **Use deterministic sorting** (timestamp-based) for reproducible results
+- **Handle network errors** gracefully with retry logic
+
+The fetched photos are perfect for testing the integration's AI metadata generation and geolocation features.
 
 ### Step 4: Add Your Photos
 
@@ -123,9 +131,10 @@ The photo system uses two separate directories:
 - **`src/content/photos/`** - Store metadata files (.md) that reference the images
 
 Example structure:
+
 ```
 src/
-├── assets/photos/          # Actual image files  
+├── assets/photos/          # Actual image files
 │   ├── sunset-beach.jpg
 │   └── mountain-hike.jpg
 └── content/photos/         # Metadata files
@@ -139,15 +148,15 @@ Example photo entry (`src/content/photos/sunset-beach.md`):
 
 ```markdown
 ---
-title: "Golden Hour at the Beach"
-description: "Stunning sunset over the Pacific Ocean"
+title: 'Golden Hour at the Beach'
+description: 'Stunning sunset over the Pacific Ocean'
 coverImage:
-  src: "../../assets/photos/sunset-beach.jpg"
-  alt: "Golden sunset over ocean waves"
-tags: ["sunset", "beach", "golden-hour"]
+  src: '../../assets/photos/sunset-beach.jpg'
+  alt: 'Golden sunset over ocean waves'
+tags: ['sunset', 'beach', 'golden-hour']
 publishDate: 2024-08-15
 location:
-  name: "Malibu Beach, California"
+  name: 'Malibu Beach, California'
   latitude: 34.0259
   longitude: -118.7798
 draft: false
@@ -161,9 +170,9 @@ A perfect evening capturing the golden hour at Malibu Beach.
 For AI metadata and geolocation features, add to your `astro.config.mjs`:
 
 ```js
-import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
-import photoStream from "astro-photostream";
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -171,7 +180,7 @@ export default defineConfig({
     photoStream({
       ai: {
         enabled: true,
-        provider: "claude",
+        provider: 'claude',
         apiKey: process.env.ANTHROPIC_API_KEY,
       },
       geolocation: {
@@ -219,9 +228,9 @@ pnpm preview      # Preview production build
 pnpm check        # Run Astro type checking
 
 # Sample content
-pnpm fetch-photos # Download sample Creative Commons photos
+pnpm fetch-photos # Download 20-50 Creative Commons photos with GPS data
 
-# After adding astro-photostream  
+# After adding astro-photostream
 pnpm photo-metadata-generator --generate-config  # Create configuration file
 pnpm photo-metadata-generator                     # Generate metadata for photos
 ```
