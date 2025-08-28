@@ -9,6 +9,7 @@ This is an **Astro integration** called `astro-photostream` that creates sophist
 ## Development Commands
 
 ### Core Development
+
 - `pnpm build` - Build the TypeScript source to dist/ directory (required before testing)
 - `pnpm dev` - Watch mode TypeScript compilation
 - `pnpm check` - Run Astro type checking
@@ -17,18 +18,21 @@ This is an **Astro integration** called `astro-photostream` that creates sophist
 - `pnpm test` - Run Vitest tests
 - `pnpm test:coverage` - Run tests with coverage report
 
-### Demo Site Development  
+### Demo Site Development
+
 - `cd demo && pnpm dev` - Run demo site locally (requires main package to be built first)
 - `cd demo && pnpm build` - Build demo site for production
 - `cd demo && pnpm check` - Check demo site types
 
 ### CLI Tool Testing
+
 - `pnpm build` then `node dist/scripts/photo-metadata-generator.js --help` - Test CLI
 - `node dist/scripts/photo-metadata-generator.js --generate-config` - Generate example config
 
 ## Architecture Overview
 
 ### Integration Structure
+
 The project follows Astro integration patterns using `astro-integration-kit`:
 
 - **`src/index.ts`** - Main integration entry point, handles route injection and virtual imports
@@ -36,6 +40,7 @@ The project follows Astro integration patterns using `astro-integration-kit`:
 - **`src/schema.ts`** - Astro content collection schema exported for users
 
 ### Modular Processing Classes
+
 The metadata generation system uses a class-based architecture:
 
 - **`ExifProcessor`** - Extracts camera metadata (settings, GPS, dates) using exifr
@@ -45,7 +50,9 @@ The metadata generation system uses a class-based architecture:
 - **`PhotoMetadataGenerator`** - Orchestrates all processors together
 
 ### Component System
+
 Astro components in `src/components/`:
+
 - **`PhotoGrid`** - Responsive photo gallery grid (2/3/4 columns)
 - **`PhotoCard`** - Individual photo display with metadata
 - **`PhotoStream`** - Paginated photo stream with year grouping
@@ -53,21 +60,27 @@ Astro components in `src/components/`:
 - **`Paginator`** - Reusable pagination component
 
 ### Route Templates
+
 Pre-built page templates in `src/routes/`:
+
 - **`photos/[...page].astro`** - Main gallery with pagination (`/photos`, `/photos/2`)
 - **`photos/[slug].astro`** - Individual photo pages with navigation
 - **`photos/tags/[tag]/[...page].astro`** - Tag-based filtering with pagination
 - **`og-image.ts`** - Dynamic OpenGraph image generation endpoint
 
 ### Configuration System
+
 Multi-layered configuration loading in `src/utils/config.ts`:
+
 1. Default values (in types.ts)
 2. Config file (`astro-photostream.config.js`)
 3. Environment variables
 4. Integration options passed to defineConfig
 
 ### CLI Tool Architecture
+
 The CLI (`src/scripts/photo-metadata-generator.ts`) uses the same modular classes as the integration:
+
 - Supports batch processing, EXIF-only updates, location-only updates
 - Memory system to avoid repetitive AI-generated content
 - Progressive image compression for API upload limits
@@ -76,25 +89,30 @@ The CLI (`src/scripts/photo-metadata-generator.ts`) uses the same modular classe
 ## Key Implementation Details
 
 ### EXIF Data Processing
+
 Uses `exifr` library with specific field extraction for:
+
 - Camera/lens information
-- Exposure settings (aperture, shutter, ISO, focal length)  
+- Exposure settings (aperture, shutter, ISO, focal length)
 - GPS coordinates with privacy-aware location resolution
 - Date/time metadata with timezone handling
 
 ### AI Integration
+
 - Supports Claude API with configurable prompts and models
 - Image compression pipeline to stay under API limits (~3.7MB target)
 - Memory system tracks recent outputs to avoid repetitive content
 - Graceful fallback to filename-based metadata when AI unavailable
 
 ### Privacy & Geolocation
+
 - OpenCage API integration for location name resolution
 - Privacy-first approach with configurable blur radius and offset
 - Intelligent location specificity scoring (landmarks > cities > countries)
 - No street-level addresses for privacy protection
 
 ### Build & Distribution
+
 - TypeScript compilation with `tsc-alias` for path resolution
 - Exports multiple entry points: main, components, schema, utils
 - CLI tools published as bin commands
@@ -103,6 +121,7 @@ Uses `exifr` library with specific field extraction for:
 ## Environment Variables
 
 Required for full functionality:
+
 - `ANTHROPIC_API_KEY` - Claude API access for AI metadata generation
 - `OPENCAGE_API_KEY` - Location name resolution from GPS coordinates
 - `GEOAPIFY_API_KEY` - Static map generation (optional)
@@ -110,7 +129,18 @@ Required for full functionality:
 ## Demo Site
 
 The `demo/` directory contains a working Astro site that showcases the integration:
+
 - Uses Tailwind CSS for styling
 - Can run independently with basic photo gallery functionality
 - Temporarily disables integration during development (until package is built)
 - Includes sample photo content with realistic metadata
+
+## Coding Styles
+
+### Positive Prompt
+
+production-ready code, clean architecture, perfect TypeScript, ultra performant, pristine component structure, flawless accessibility, masterpiece SEO, pixel-perfect responsive, enterprise-grade quality, zero technical debt, bulletproof error handling, crystal clear documentation
+
+### Negative Prompt
+
+--no spaghetti code --no broken layouts --no memory leaks --no accessibility violations --no SEO failures --no performance bottlenecks --no type errors --no code smells --no bloated bundles --no broken responsive --no missing error states --no undocumented functions
