@@ -49,7 +49,7 @@ const optimizedImage = photo.coverImage?.src ? await getImage({
         <img
           src={optimizedImage.src}
           alt={photo.coverImage.alt || photo.title || `Photo ${photo.id}`}
-          class="h-full w-full object-cover transition-transform group-hover:scale-105"
+          class="h-full w-full object-cover rounded-lg transition-transform group-hover:scale-105"
           loading={loading}
           width={optimizedImage.attributes.width}
           height={optimizedImage.attributes.height}
@@ -58,7 +58,7 @@ const optimizedImage = photo.coverImage?.src ? await getImage({
         <img
           src={photo.coverImage.src}
           alt={photo.coverImage?.alt || photo.title || `Photo ${photo.id}`}
-          class="h-full w-full object-cover transition-transform group-hover:scale-105"
+          class="h-full w-full object-cover rounded-lg transition-transform group-hover:scale-105"
           loading={loading}
           width={dimensions.width}
           height={dimensions.height}
