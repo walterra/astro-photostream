@@ -78,17 +78,16 @@ export default defineIntegration({
                 entrypoint: resolveSource("routes/og-image.ts"),
               });
               
-              // Gallery OG images (commented out due to font loading issues)
-              // These endpoints are ready but need proper font loading setup
-              // injectRoute({
-              //   pattern: "/og-image/photos.png",
-              //   entrypoint: resolveSource("routes/og-image/photos.png.ts"),
-              // });
+              // Gallery OG images with photo grids
+              injectRoute({
+                pattern: "/og-image/photos.png",
+                entrypoint: resolveSource("routes/og-image/photos.png.ts"),
+              });
               
-              // injectRoute({
-              //   pattern: "/og-image/photos/[...page].png",
-              //   entrypoint: resolveSource("routes/og-image/photos/[...page].png.ts"),
-              // });
+              injectRoute({
+                pattern: "/og-image/photos/[...page].png",
+                entrypoint: resolveSource("routes/og-image/photos/[...page].png.ts"),
+              });
             }
           }
 
@@ -101,6 +100,7 @@ export default defineIntegration({
               },
               optimizeDeps: {
                 include: ["exifr", "sharp"],
+                exclude: ["@resvg/resvg-js"],
               },
             },
           });

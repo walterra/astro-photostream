@@ -3,45 +3,68 @@ import satori, { type SatoriOptions } from "satori";
 import { getCollection, type CollectionEntry } from "astro:content";
 import path from "path";
 import sharp from "sharp";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
-// Dynamic font loading for Satori
-const getFallbackFont = async (): Promise<ArrayBuffer> => {
+// Load fonts dynamically at runtime
+const getOgOptions = async (): Promise<SatoriOptions> => {
 	try {
-		// Use a TTF font instead of WOFF2 since Satori doesn't support WOFF2
-		const fontUrl = 'https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.ttf';
-		const response = await fetch(fontUrl);
-		if (!response.ok) throw new Error('Font fetch failed');
-		return response.arrayBuffer();
-	} catch (error) {
-		console.warn('Failed to load font, falling back to minimal font buffer');
-		// Create a minimal valid TTF header - this won't work for actual rendering
-		// but should prevent Satori from crashing
-		const buffer = new ArrayBuffer(12);
-		const view = new DataView(buffer);
-		// TTF magic number
-		view.setUint32(0, 0x00010000);
-		view.setUint16(4, 0); // numTables
-		view.setUint16(6, 0); // searchRange
-		view.setUint16(8, 0); // entrySelector
-		view.setUint16(10, 0); // rangeShift
-		return buffer;
-	}
-};
-
-export const getOgOptions = async (): Promise<SatoriOptions> => {
-	const fontData = await getFallbackFont();
-	return {
-		fonts: [
-			{
-				name: 'Inter',
-				data: Buffer.from(fontData),
-				weight: 400,
-				style: 'normal',
+		// Try multiple possible paths for font loading
+		const possiblePaths = [
+			// From the built package structure
+			path.resolve(process.cwd(), "node_modules/astro-photostream/src/assets/fonts"),
+			// From current file location  
+			path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../assets/fonts"),
+			// From development structure
+			path.resolve(process.cwd(), "../src/assets/fonts"),
+		];
+		
+		let robotoRegular: Buffer | null = null;
+		let robotoBold: Buffer | null = null;
+		
+		for (const fontsDir of possiblePaths) {
+			try {
+				robotoRegular = fs.readFileSync(path.join(fontsDir, "roboto-mono-regular.ttf"));
+				robotoBold = fs.readFileSync(path.join(fontsDir, "roboto-mono-700.ttf"));
+				break;
+			} catch {
+				// Try next path
+				continue;
 			}
-		],
-		height: 630,
-		width: 1200,
-	};
+		}
+		
+		if (!robotoRegular || !robotoBold) {
+			throw new Error("Could not find fonts in any expected location");
+		}
+
+		return {
+			fonts: [
+				{
+					data: robotoRegular,
+					name: "Roboto Mono",
+					style: "normal",
+					weight: 400,
+				},
+				{
+					data: robotoBold,
+					name: "Roboto Mono",
+					style: "normal",
+					weight: 700,
+				},
+			],
+			height: 630,
+			width: 1200,
+		};
+	} catch (error) {
+		console.warn("Failed to load Roboto Mono fonts, using fallback:", error);
+		// Return empty fonts array as fallback - this will cause Satori to fail
+		// but at least we'll get a clearer error
+		return {
+			fonts: [],
+			height: 630,
+			width: 1200,
+		};
+	}
 };
 
 export const getDateRange = (photos: CollectionEntry<"photos">[]) => {
@@ -155,7 +178,7 @@ export const createPhotoGridMarkup = (title: string, subtitle: string, details: 
 				height: '100%',
 				backgroundColor: '#1d1f21',
 				color: '#c9cacc',
-				fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+				fontFamily: 'Roboto Mono',
 			},
 			children: [
 				// Left side - Text content (50% width)
