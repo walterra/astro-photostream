@@ -1,1 +1,2 @@
-- let's set up dependabot for this repo
+- this astro integration now provides certain routes, for example for the photo index page and individual index pages. what are astro best practice ways to make use of templates, styles, themes that the consuming astro project might want to provide. for example, for my blog i have astro with cactus theme. when i install the photo stream integration, the provided routes will not pick up the cactus theme.
+- review this repo in the style of /Users/walterra/dev/eddoapp/dev/REVIEW-2025-06-18.md

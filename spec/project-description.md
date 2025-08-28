@@ -7,6 +7,7 @@ An open-source Astro.js integration for creating sophisticated photo galleries a
 ## Features
 
 **Based on Proven Reference Implementation:**
+
 - **Content Collections**: Astro-native content collection schema with comprehensive photo metadata
 - **EXIF Processing**: Automated extraction of camera settings, GPS, timestamps using exifr
 - **AI Metadata Generation**: Claude API integration for intelligent titles, descriptions, and tags
@@ -23,7 +24,7 @@ An open-source Astro.js integration for creating sophisticated photo galleries a
 
 - **Install**: `npx astro add astro-photostream`
 - **Dev**: `pnpm dev`
-- **Build**: `pnpm build`  
+- **Build CLI**: `pnpm build:cli`
 - **Check**: `pnpm check`
 - **Test**: `pnpm test`
 - **Lint**: `pnpm lint`

@@ -39,8 +39,8 @@ yarn astro add astro-photostream
 1. **Add the integration to your `astro.config.mjs`:**
 
 ```js
-import { defineConfig } from "astro/config";
-import photoStream from "astro-photostream";
+import { defineConfig } from 'astro/config';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
@@ -54,11 +54,11 @@ export default defineConfig({
 2. **Create your photo content collection** (`src/content/config.ts`):
 
 ```ts
-import { defineCollection } from "astro:content";
-import { photoSchema } from "astro-photostream/schema";
+import { defineCollection } from 'astro:content';
+import { photoSchema } from 'astro-photostream/schema';
 
 const photos = defineCollection({
-  type: "content",
+  type: 'content',
   schema: photoSchema,
 });
 
@@ -81,15 +81,15 @@ src/
 
 ```markdown
 ---
-title: "Golden Hour at the Beach"
-description: "Stunning sunset over the Pacific Ocean"
+title: 'Golden Hour at the Beach'
+description: 'Stunning sunset over the Pacific Ocean'
 coverImage:
-  src: "../../assets/photos/sunset-beach.jpg"
-  alt: "Golden sunset over ocean waves"
-tags: ["sunset", "beach", "golden-hour"]
+  src: '../../assets/photos/sunset-beach.jpg'
+  alt: 'Golden sunset over ocean waves'
+tags: ['sunset', 'beach', 'golden-hour']
 publishDate: 2024-08-15
 location:
-  name: "Malibu Beach, California"
+  name: 'Malibu Beach, California'
   latitude: 34.0259
   longitude: -118.7798
 ---
@@ -105,16 +105,16 @@ A perfect evening capturing the golden hour at Malibu Beach.
 
 ```js
 // astro.config.mjs
-import { defineConfig } from "astro/config";
-import photoStream from "astro-photostream";
+import { defineConfig } from 'astro/config';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
   integrations: [
     photoStream({
       // Photo processing
       photos: {
-        directory: "src/content/photos",
-        formats: ["jpg", "jpeg", "png", "webp"],
+        directory: 'src/content/photos',
+        formats: ['jpg', 'jpeg', 'png', 'webp'],
         maxWidth: 1920,
         maxHeight: 1080,
         quality: 85,
@@ -123,10 +123,10 @@ export default defineConfig({
       // AI metadata generation
       ai: {
         enabled: true,
-        provider: "claude", // 'claude' | 'openai' | 'custom'
+        provider: 'claude', // 'claude' | 'openai' | 'custom'
         apiKey: process.env.CLAUDE_API_KEY,
-        model: "claude-3-sonnet-20240229",
-        prompt: "Analyze this photo and suggest a title and description...",
+        model: 'claude-3-sonnet-20240229',
+        prompt: 'Analyze this photo and suggest a title and description...',
       },
 
       // Geolocation with privacy
@@ -135,7 +135,7 @@ export default defineConfig({
         privacy: {
           enabled: true,
           radius: 1000, // meters
-          method: "blur", // 'blur' | 'offset' | 'disable'
+          method: 'blur', // 'blur' | 'offset' | 'disable'
         },
       },
 
@@ -155,8 +155,8 @@ export default defineConfig({
       // SEO optimization
       seo: {
         generateOpenGraph: true,
-        siteName: "My Photo Gallery",
-        twitterHandle: "@yourhandle",
+        siteName: 'My Photo Gallery',
+        twitterHandle: '@yourhandle',
       },
     }),
   ],
@@ -180,8 +180,8 @@ Create `astro-photostream.config.js` for advanced configuration:
 export default {
   ai: {
     enabled: true,
-    provider: "claude",
-    model: "claude-3-sonnet-20240229",
+    provider: 'claude',
+    model: 'claude-3-sonnet-20240229',
     prompt: `Analyze this photo professionally. Provide:
 - A compelling, descriptive title (under 60 chars)
 - A detailed description (2-3 sentences)
@@ -192,7 +192,7 @@ export default {
     privacy: {
       enabled: true,
       radius: 2000,
-      method: "blur",
+      method: 'blur',
     },
   },
 };
@@ -307,13 +307,13 @@ import {
   getPhotosByTag,
   getFeaturedLocations,
   getPhotoStatistics,
-} from "astro-photostream/utils";
+} from 'astro-photostream/utils';
 
 // Get all published photos
 const photos = await getAllPhotos();
 
 // Filter by tag
-const landscapePhotos = await getPhotosByTag("landscape");
+const landscapePhotos = await getPhotosByTag('landscape');
 
 // Get location data for maps
 const locations = await getFeaturedLocations();
@@ -325,10 +325,10 @@ const stats = await getPhotoStatistics();
 ### Metadata Generation
 
 ```ts
-import { generatePhotoMetadata } from "astro-photostream/utils";
+import { generatePhotoMetadata } from 'astro-photostream/utils';
 
-const metadata = await generatePhotoMetadata("/path/to/photo.jpg", {
-  ai: { enabled: true, provider: "claude" },
+const metadata = await generatePhotoMetadata('/path/to/photo.jpg', {
+  ai: { enabled: true, provider: 'claude' },
   geolocation: { enabled: true },
 });
 ```
@@ -419,8 +419,8 @@ cd astro-photostream
 # Install dependencies
 pnpm install
 
-# Build the package
-pnpm build
+# Build CLI tools
+pnpm build:cli
 
 # Run tests
 pnpm test

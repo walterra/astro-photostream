@@ -61,9 +61,9 @@ This command will:
 When the integration is ready, the installation process will be:
 
 ```bash
-# First, build the main package (from parent directory)
+# First, build the CLI tools (from parent directory)
 cd ../
-pnpm build
+pnpm build:cli
 
 # Then install from local package
 cd demo/
