@@ -228,7 +228,7 @@ export abstract class LLMAnalyzer {
  * Claude API Analyzer
  */
 export class ClaudeAnalyzer extends LLMAnalyzer {
-  private client: unknown;
+  private client: any;
 
   constructor(options: IntegrationOptions['ai']) {
     super(options);
@@ -449,7 +449,12 @@ export class GeocodeProcessor {
           return component;
         }
         if (typeof component === 'object' && component !== null) {
-          return component.en || component.eng || Object.values(component)[0];
+          const componentObj = component as Record<string, any>;
+          return (
+            componentObj.en ||
+            componentObj.eng ||
+            Object.values(componentObj)[0]
+          );
         }
         return undefined;
       }

@@ -35,6 +35,7 @@ export const integrationOptionsSchema = z
     geolocation: z
       .object({
         enabled: z.boolean().default(true),
+        apiKey: z.string().optional(),
         privacy: z
           .object({
             enabled: z.boolean().default(true),

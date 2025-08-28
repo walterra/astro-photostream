@@ -229,7 +229,7 @@ export class ConfigManager {
    * Load configuration from environment variables
    */
   private loadConfigFromEnv(): Partial<IntegrationOptions> {
-    const envConfig: Record<string, unknown> = {};
+    const envConfig: Partial<IntegrationOptions> = {};
 
     // AI configuration from environment
     if (process.env.ANTHROPIC_API_KEY) {
@@ -292,7 +292,10 @@ export class ConfigManager {
       }
 
       if (typeof source[key] === 'object' && !Array.isArray(source[key])) {
-        result[key] = this.deepMerge(result[key] || {}, source[key]);
+        result[key] = this.deepMerge(
+          (result[key] as Record<string, unknown>) || {},
+          source[key] as Record<string, unknown>
+        );
       } else {
         result[key] = source[key];
       }
