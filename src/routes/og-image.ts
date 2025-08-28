@@ -3,19 +3,19 @@
  * Generates dynamic OG images for individual photos
  * Based on reference implementation patterns
  */
-import { getCollection, getEntry } from "astro:content";
-import { config } from "virtual:astro-photostream/config";
-import sharp from "sharp";
-import type { APIContext, GetStaticPaths } from "astro";
+import { getCollection, getEntry } from 'astro:content';
+import { config } from 'virtual:astro-photostream/config';
+import sharp from 'sharp';
+import type { APIContext, GetStaticPaths } from 'astro';
 
 // Generate static paths for all photos
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get all photos from content collection
-  const allPhotos = await getCollection("photos", ({ data }) => {
+  const allPhotos = await getCollection('photos', ({ data }) => {
     return data.draft !== true;
   });
 
-  return allPhotos.map((photo) => ({
+  return allPhotos.map(photo => ({
     params: { slug: photo.slug },
   }));
 };
@@ -25,14 +25,14 @@ export async function GET(context: APIContext) {
     const { slug } = context.params;
 
     if (!slug) {
-      return new Response("Photo not found", { status: 404 });
+      return new Response('Photo not found', { status: 404 });
     }
 
     // Get the photo entry
-    const photo = await getEntry("photos", slug);
+    const photo = await getEntry('photos', slug);
 
     if (!photo) {
-      return new Response("Photo not found", { status: 404 });
+      return new Response('Photo not found', { status: 404 });
     }
 
     // Generate OG image using photo and metadata
@@ -40,21 +40,21 @@ export async function GET(context: APIContext) {
 
     return new Response(ogImage as BodyInit, {
       headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=31536000", // Cache for 1 year
-        "Content-Length": ogImage.length.toString(),
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+        'Content-Length': ogImage.length.toString(),
       },
     });
   } catch (error) {
-    console.error("Error generating OG image:", error);
+    console.error('Error generating OG image:', error);
 
     // Return a simple error image
     const errorImage = await generateErrorImage();
 
     return new Response(errorImage as BodyInit, {
       headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=3600", // Cache error for 1 hour
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=3600', // Cache error for 1 hour
       },
     });
   }
@@ -63,25 +63,26 @@ export async function GET(context: APIContext) {
 /**
  * Generate OpenGraph image for a photo
  */
-async function generateOGImage(photo: any, config: any): Promise<Buffer> {
+async function generateOGImage(
+  photo: unknown,
+  config: unknown
+): Promise<Buffer> {
   const width = 1200;
   const height = 630;
   const padding = 80;
 
   // Base colors and styling
-  const backgroundColor = "#1f2937"; // dark gray
-  const textColor = "#ffffff";
-  const accentColor = "#3b82f6"; // blue
+  const textColor = '#ffffff';
+  const accentColor = '#3b82f6'; // blue
 
   try {
-    // Try to load the actual photo if it's accessible
-    let photoBuffer: Buffer | null = null;
+    // Photo buffer handling would go here if needed
 
     try {
       // If the photo source is a local path, try to load it
       if (
-        typeof photo.data.coverImage.src === "string" &&
-        photo.data.coverImage.src.startsWith("./")
+        typeof photo.data.coverImage.src === 'string' &&
+        photo.data.coverImage.src.startsWith('./')
       ) {
         // This would need to be adapted based on how your images are stored
         // For now, we'll create a placeholder
@@ -165,7 +166,7 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
               -webkit-box-orient: vertical;
             ">${escapeHtml(photo.data.description)}</p>
             `
-                : ""
+                : ''
             }
             
             <!-- Metadata row -->
@@ -185,7 +186,7 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
                   <span>${escapeHtml(photo.data.camera)}</span>
                 </div>
               `
-                  : ""
+                  : ''
               }
               
               ${
@@ -196,7 +197,7 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
                   <span>${escapeHtml(photo.data.location.name)}</span>
                 </div>
               `
-                  : ""
+                  : ''
               }
               
               ${
@@ -204,10 +205,10 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
                   ? `
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span style="color: ${accentColor};">#</span>
-                  <span>${escapeHtml(photo.data.tags.slice(0, 3).join(", "))}</span>
+                  <span>${escapeHtml(photo.data.tags.slice(0, 3).join(', '))}</span>
                 </div>
               `
-                  : ""
+                  : ''
               }
             </div>
             
@@ -253,7 +254,7 @@ async function generateOGImage(photo: any, config: any): Promise<Buffer> {
 
     return buffer;
   } catch (error) {
-    console.error("Error in generateOGImage:", error);
+    console.error('Error in generateOGImage:', error);
     throw error;
   }
 }
@@ -299,12 +300,12 @@ async function generateErrorImage(): Promise<Buffer> {
  */
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
   };
 
-  return text.replace(/[&<>"']/g, (m) => map[m]);
+  return text.replace(/[&<>"']/g, m => map[m]);
 }

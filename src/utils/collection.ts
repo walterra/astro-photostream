@@ -1,13 +1,11 @@
-import type { PhotoMetadata, IntegrationOptions } from "../types.js";
+import type { PhotoMetadata } from '../types.js';
+import { photoCollectionSchema } from '../schema.js';
 
 /**
  * Process photo collection and generate content collection entries
  * Placeholder for Phase 2 implementation
  */
-export async function processPhotoCollection(
-  photoDirectory: string,
-  options: IntegrationOptions,
-): Promise<PhotoMetadata[]> {
+export async function processPhotoCollection(): Promise<PhotoMetadata[]> {
   // TODO Phase 2: Scan photo directory
   // TODO Phase 2: Process each photo file
   // TODO Phase 2: Generate metadata for each photo
@@ -21,11 +19,8 @@ export async function processPhotoCollection(
  * Create content collection schema for photos
  */
 export function createPhotoCollectionSchema() {
-  // Import the comprehensive schema from schema.ts
-  const { photoCollectionSchema } = require("../schema.js");
-
   return {
-    type: "content" as const,
+    type: 'content' as const,
     schema: () => photoCollectionSchema,
   };
 }

@@ -1,12 +1,12 @@
-import type { PhotoMetadata, IntegrationOptions } from "../types.js";
+import type { PhotoMetadata, IntegrationOptions } from '../types.js';
 
 /**
  * Create photo routes with pagination
  * Placeholder for Phase 3 implementation
  */
 export function createPhotoRoutes(
-  photos: PhotoMetadata[],
-  options: IntegrationOptions,
+  _photos: PhotoMetadata[],
+  _options: IntegrationOptions
 ) {
   // TODO Phase 3: Implement route generation logic
   // TODO Phase 3: Handle pagination
@@ -25,7 +25,7 @@ export function createPhotoRoutes(
 export function createPagination(
   items: PhotoMetadata[],
   itemsPerPage: number,
-  currentPage: number = 1,
+  currentPage: number = 1
 ) {
   const totalItems = items.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);

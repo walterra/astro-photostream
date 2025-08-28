@@ -1,0 +1,1 @@
+- let's set up dependabot for this repo

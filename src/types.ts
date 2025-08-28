@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Integration options schema with Zod validation
 export const integrationOptionsSchema = z
@@ -9,11 +9,11 @@ export const integrationOptionsSchema = z
     // Photo processing options
     photos: z
       .object({
-        directory: z.string().default("src/content/photos"), // Directory for photo markdown (.md) files
-        assetsDirectory: z.string().default("src/assets/photos"),
+        directory: z.string().default('src/content/photos'), // Directory for photo markdown (.md) files
+        assetsDirectory: z.string().default('src/assets/photos'),
         formats: z
-          .array(z.enum(["jpg", "jpeg", "png", "webp", "avif"]))
-          .default(["jpg", "jpeg", "png", "webp"]),
+          .array(z.enum(['jpg', 'jpeg', 'png', 'webp', 'avif']))
+          .default(['jpg', 'jpeg', 'png', 'webp']),
         maxWidth: z.number().default(1920),
         maxHeight: z.number().default(1080),
         quality: z.number().min(1).max(100).default(85),
@@ -24,7 +24,7 @@ export const integrationOptionsSchema = z
     ai: z
       .object({
         enabled: z.boolean().default(false),
-        provider: z.enum(["claude", "openai", "custom"]).default("claude"),
+        provider: z.enum(['claude', 'openai', 'custom']).default('claude'),
         apiKey: z.string().optional(),
         model: z.string().optional(),
         prompt: z.string().optional(),
@@ -39,7 +39,7 @@ export const integrationOptionsSchema = z
           .object({
             enabled: z.boolean().default(true),
             radius: z.number().default(1000), // meters
-            method: z.enum(["blur", "offset", "disable"]).default("blur"),
+            method: z.enum(['blur', 'offset', 'disable']).default('blur'),
           })
           .default({}),
       })
@@ -82,7 +82,7 @@ export interface PhotoMetadata {
   description?: string;
   coverImage: {
     alt: string;
-    src: any; // ImageMetadata | string
+    src: unknown; // ImageMetadata | string
   };
   camera?: string; // Combined make and model
   lens?: string;
@@ -105,7 +105,7 @@ export interface PhotoMetadata {
 // Component props types
 export interface PhotoCardProps {
   photo: PhotoMetadata;
-  loading?: "eager" | "lazy";
+  loading?: 'eager' | 'lazy';
   sizes?: string;
   class?: string;
 }
@@ -141,6 +141,6 @@ export interface PhotoCollectionEntry {
   id: string;
   slug: string;
   body: string;
-  collection: "photos";
+  collection: 'photos';
   data: PhotoMetadata;
 }

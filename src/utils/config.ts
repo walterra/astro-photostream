@@ -1,7 +1,7 @@
-import fs from "fs/promises";
-import path from "path";
-import { z } from "zod";
-import { integrationOptionsSchema, type IntegrationOptions } from "../types.js";
+import fs from 'fs/promises';
+import path from 'path';
+import { z } from 'zod';
+import { integrationOptionsSchema, type IntegrationOptions } from '../types.js';
 
 /**
  * Configuration Manager for Astro Photo Stream
@@ -16,11 +16,11 @@ const configFileSchema = z.object({
   // Photo processing options
   photos: z
     .object({
-      directory: z.string().default("src/content/photos"), // Directory for photo markdown (.md) files
-      assetsDirectory: z.string().default("src/assets/photos"),
+      directory: z.string().default('src/content/photos'), // Directory for photo markdown (.md) files
+      assetsDirectory: z.string().default('src/assets/photos'),
       formats: z
-        .array(z.enum(["jpg", "jpeg", "png", "webp", "avif"]))
-        .default(["jpg", "jpeg", "png", "webp"]),
+        .array(z.enum(['jpg', 'jpeg', 'png', 'webp', 'avif']))
+        .default(['jpg', 'jpeg', 'png', 'webp']),
       maxWidth: z.number().default(1920),
       maxHeight: z.number().default(1080),
       quality: z.number().min(1).max(100).default(85),
@@ -31,7 +31,7 @@ const configFileSchema = z.object({
   ai: z
     .object({
       enabled: z.boolean().default(false),
-      provider: z.enum(["claude", "openai", "custom"]).default("claude"),
+      provider: z.enum(['claude', 'openai', 'custom']).default('claude'),
       apiKey: z.string().optional(),
       model: z.string().optional(),
       prompt: z.string().optional(),
@@ -49,7 +49,7 @@ const configFileSchema = z.object({
         .object({
           enabled: z.boolean().default(true),
           radius: z.number().default(1000), // meters
-          method: z.enum(["blur", "offset", "disable"]).default("blur"),
+          method: z.enum(['blur', 'offset', 'disable']).default('blur'),
         })
         .default({}),
     })
@@ -109,7 +109,7 @@ export class ConfigManager {
    */
   async loadConfig(
     providedOptions?: Partial<IntegrationOptions>,
-    cwd?: string,
+    cwd?: string
   ): Promise<IntegrationOptions> {
     if (this.config && !providedOptions) {
       return this.config;
@@ -118,19 +118,19 @@ export class ConfigManager {
     const workingDir = cwd || process.cwd();
 
     // Start with defaults
-    let config: any = {
+    let config: Record<string, unknown> = {
       enabled: true,
       photos: {
-        directory: "src/content/photos",
-        formats: ["jpg", "jpeg", "png", "webp"],
+        directory: 'src/content/photos',
+        formats: ['jpg', 'jpeg', 'png', 'webp'],
         maxWidth: 1920,
         maxHeight: 1080,
         quality: 85,
       },
       ai: {
         enabled: false,
-        provider: "claude",
-        model: "claude-3-haiku-20240307",
+        provider: 'claude',
+        model: 'claude-3-haiku-20240307',
         maxTokens: 400,
         temperature: 0.9,
       },
@@ -139,7 +139,7 @@ export class ConfigManager {
         privacy: {
           enabled: true,
           radius: 1000,
-          method: "blur",
+          method: 'blur',
         },
       },
       gallery: {
@@ -184,12 +184,12 @@ export class ConfigManager {
    * Load configuration from astro-photostream.config.js file
    */
   private async loadConfigFile(
-    cwd: string,
+    cwd: string
   ): Promise<Partial<ConfigFile> | null> {
     const possiblePaths = [
-      "astro-photostream.config.js",
-      "astro-photostream.config.mjs",
-      "astro-photostream.config.ts",
+      'astro-photostream.config.js',
+      'astro-photostream.config.mjs',
+      'astro-photostream.config.ts',
     ];
 
     for (const configPath of possiblePaths) {
@@ -210,12 +210,12 @@ export class ConfigManager {
         // File doesn't exist or has errors, continue to next
         if (
           error instanceof Error &&
-          "code" in error &&
-          error.code !== "ENOENT"
+          'code' in error &&
+          error.code !== 'ENOENT'
         ) {
           console.warn(
             `⚠️  Error loading config file ${configPath}:`,
-            error.message,
+            error.message
           );
         }
         continue;
@@ -229,13 +229,13 @@ export class ConfigManager {
    * Load configuration from environment variables
    */
   private loadConfigFromEnv(): Partial<IntegrationOptions> {
-    const envConfig: any = {};
+    const envConfig: Record<string, unknown> = {};
 
     // AI configuration from environment
     if (process.env.ANTHROPIC_API_KEY) {
       envConfig.ai = {
         enabled: true,
-        provider: "claude",
+        provider: 'claude',
         apiKey: process.env.ANTHROPIC_API_KEY,
         model: process.env.ANTHROPIC_MODEL,
         prompt: process.env.ANTHROPIC_PROMPT,
@@ -246,9 +246,9 @@ export class ConfigManager {
       envConfig.ai = {
         ...envConfig.ai,
         enabled: true,
-        provider: "openai",
+        provider: 'openai',
         apiKey: process.env.OPENAI_API_KEY,
-        model: process.env.OPENAI_MODEL || "gpt-4-vision-preview",
+        model: process.env.OPENAI_MODEL || 'gpt-4-vision-preview',
       };
     }
 
@@ -280,7 +280,10 @@ export class ConfigManager {
   /**
    * Deep merge two objects
    */
-  private deepMerge(target: any, source: any): any {
+  private deepMerge(
+    target: Record<string, unknown>,
+    source: Record<string, unknown>
+  ): Record<string, unknown> {
     const result = { ...target };
 
     for (const key in source) {
@@ -288,7 +291,7 @@ export class ConfigManager {
         continue;
       }
 
-      if (typeof source[key] === "object" && !Array.isArray(source[key])) {
+      if (typeof source[key] === 'object' && !Array.isArray(source[key])) {
         result[key] = this.deepMerge(result[key] || {}, source[key]);
       } else {
         result[key] = source[key];
@@ -303,7 +306,7 @@ export class ConfigManager {
    */
   getConfig(): IntegrationOptions {
     if (!this.config) {
-      throw new Error("Configuration not loaded. Call loadConfig() first.");
+      throw new Error('Configuration not loaded. Call loadConfig() first.');
     }
     return this.config;
   }
@@ -375,10 +378,10 @@ export default {
    * Write example configuration file to disk
    */
   async writeExampleConfig(filePath?: string): Promise<void> {
-    const configPath = filePath || "astro-photostream.config.js";
+    const configPath = filePath || 'astro-photostream.config.js';
     const content = this.generateExampleConfig();
 
-    await fs.writeFile(configPath, content, "utf8");
+    await fs.writeFile(configPath, content, 'utf8');
     console.log(`✅ Created example configuration file: ${configPath}`);
   }
 }
@@ -391,7 +394,7 @@ export const configManager = ConfigManager.getInstance();
  */
 export async function loadConfig(
   providedOptions?: Partial<IntegrationOptions>,
-  cwd?: string,
+  cwd?: string
 ): Promise<IntegrationOptions> {
   return configManager.loadConfig(providedOptions, cwd);
 }

@@ -91,12 +91,18 @@ const pageDescription = isFirstPage
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={Astro.url} />
+    {config.seo.generateOpenGraph && (
+      <meta property="og:image" content={isFirstPage ? `${Astro.url.origin}/og-image/photos.png` : `${Astro.url.origin}/og-image/photos/${page.currentPage}.png`} />
+    )}
     {config.seo.siteName && <meta property="og:site_name" content={config.seo.siteName} />}
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
+    {config.seo.generateOpenGraph && (
+      <meta name="twitter:image" content={isFirstPage ? `${Astro.url.origin}/og-image/photos.png` : `${Astro.url.origin}/og-image/photos/${page.currentPage}.png`} />
+    )}
     {config.seo.twitterHandle && <meta name="twitter:creator" content={config.seo.twitterHandle} />}
     
     <!-- Canonical URL -->
