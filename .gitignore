@@ -94,3 +94,9 @@ demo/src/assets/photos/
 
 # Demo auto-generated markdown files should not be added to the repo
 demo/src/content/photos
+
+# Downloaded font files (automatically downloaded during installation)
+src/assets/fonts/*.ttf
+src/assets/fonts/*.otf
+src/assets/fonts/*.woff
+src/assets/fonts/*.woff2

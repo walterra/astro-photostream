@@ -62,6 +62,7 @@
   "files": [
     "src",
     "dist/scripts",
+    "scripts",
     "README.md",
     "CHANGELOG.md"
   ],
@@ -77,7 +78,8 @@
     "release": "pnpm build:cli && changeset publish",
     "changeset": "changeset",
     "changeset:add": "changeset add",
-    "changeset:status": "changeset status"
+    "changeset:status": "changeset status",
+    "postinstall": "node scripts/download-fonts.js"
   },
   "peerDependencies": {
     "astro": "^4.0.0 || ^5.0.0"

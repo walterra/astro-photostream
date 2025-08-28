@@ -450,12 +450,18 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 MIT License - see the [LICENSE](LICENSE) file for details.
 
+### Font Licenses
+
+The OG image generation feature downloads and uses [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) font files during installation, which are licensed under the [SIL Open Font License v1.1](https://openfontlicense.org/). The font files are automatically downloaded from the official Google Fonts repository and are used solely for generating OpenGraph images.
+
 ## 🙏 Acknowledgments
 
 - Built with [Astro](https://astro.build/) and [astro-integration-kit](https://github.com/florian-lefebvre/astro-integration-kit)
 - EXIF processing powered by [exifr](https://github.com/MikeKovarik/exifr)
 - Image optimization using [Sharp](https://sharp.pixelplumbing.com/)
 - AI integration with [Anthropic Claude](https://www.anthropic.com/) and [OpenAI](https://openai.com/)
+- OG image generation with [Satori](https://github.com/vercel/satori) and [Resvg](https://github.com/RazrFalcon/resvg)
+- Fonts courtesy of [Google Fonts](https://fonts.google.com/)
 
 ---
 
