@@ -70,12 +70,25 @@ export default defineIntegration({
               });
             }
 
-            // OpenGraph image generation endpoint
+            // OpenGraph image generation endpoints
             if (options.seo.generateOpenGraph) {
+              // Individual photo OG images (text-only, works)
               injectRoute({
                 pattern: "/api/og/photo/[slug].png",
                 entrypoint: resolveSource("routes/og-image.ts"),
               });
+              
+              // Gallery OG images (commented out due to font loading issues)
+              // These endpoints are ready but need proper font loading setup
+              // injectRoute({
+              //   pattern: "/og-image/photos.png",
+              //   entrypoint: resolveSource("routes/og-image/photos.png.ts"),
+              // });
+              
+              // injectRoute({
+              //   pattern: "/og-image/photos/[...page].png",
+              //   entrypoint: resolveSource("routes/og-image/photos/[...page].png.ts"),
+              // });
             }
           }
 
