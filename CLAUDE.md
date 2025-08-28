@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important Restrictions
+
+**NEVER run these commands directly:**
+
+- `git add`, `git commit`, `git push` - Always instruct the user to commit changes
+- `pnpm version`, `pnpm release` - Always instruct the user to handle releases
+- `pnpm changeset` - Always instruct the user to create changesets
+- Any command that modifies git history or publishes to npm
+
 ## Project Overview
 
 This is an **Astro integration** called `astro-photostream` that creates sophisticated photo galleries with AI-powered metadata generation, geolocation features, and responsive design. It's built as a standalone npm package that users can install via `npx astro add astro-photostream`.
@@ -10,13 +19,34 @@ This is an **Astro integration** called `astro-photostream` that creates sophist
 
 ### Core Development
 
-- `pnpm build` - Build the TypeScript source to dist/ directory (required before testing)
-- `pnpm dev` - Watch mode TypeScript compilation
+- `pnpm build:cli` - Build CLI scripts only (TypeScript compilation for scripts)
+- `pnpm dev` - Astro type checking in watch mode
 - `pnpm check` - Run Astro type checking
-- `pnpm lint` - ESLint checking on src/
+- `pnpm lint` - ESLint checking on src/ (flat config format)
+- `pnpm lint:fix` - ESLint with auto-fix
 - `pnpm format` - Format code with Prettier
+- `pnpm format:check` - Check code formatting without changes
+- `pnpm quality` - Run lint + format:check + check in sequence
 - `pnpm test` - Run Vitest tests
 - `pnpm test:coverage` - Run tests with coverage report
+
+### Git Workflow (Husky + Conventional Commits)
+
+**User Commands Only:**
+
+- User must run: `pnpm commit` or `npx git-cz` for interactive commits
+- User must run: `git add`, `git commit`, `git push` for all git operations
+- Pre-commit hooks automatically run `lint-staged` (ESLint + Prettier on staged files only)
+- Commit-msg hooks validate conventional commit format with custom scopes
+
+### Release Management (Changesets)
+
+**User Commands Only:**
+
+- `pnpm changeset:status` - Check changeset status (read-only)
+- User must run: `pnpm changeset` to create changesets
+- User must run: `pnpm version` to apply changesets and bump version
+- User must run: `pnpm release` to build CLI and publish to npm
 
 ### Demo Site Development
 
@@ -26,8 +56,9 @@ This is an **Astro integration** called `astro-photostream` that creates sophist
 
 ### CLI Tool Testing
 
-- `pnpm build` then `node dist/scripts/photo-metadata-generator.js --help` - Test CLI
+- `pnpm build:cli` then `node dist/scripts/photo-metadata-generator.js --help` - Test CLI
 - `node dist/scripts/photo-metadata-generator.js --generate-config` - Generate example config
+- CLI is also available as `npx astro-photostream` after publishing
 
 ## Architecture Overview
 
@@ -113,10 +144,33 @@ Uses `exifr` library with specific field extraction for:
 
 ### Build & Distribution
 
-- TypeScript compilation with `tsc-alias` for path resolution
+- TypeScript compilation with custom CLI build script (no bundling for main package)
 - Exports multiple entry points: main, components, schema, utils
-- CLI tools published as bin commands
+- CLI tools published as bin commands (`astro-photostream`, `photo-metadata-generator`)
 - Demo site included for testing and showcasing features
+- Uses Changesets for semantic versioning and automated changelog generation
+
+### Development Workflow Automation
+
+**Modern Git Hooks with Husky v9:**
+
+- `.husky/pre-commit` - Runs `lint-staged` for staged file processing only
+- `.husky/commit-msg` - Validates conventional commit messages with `commitlint`
+- `lint-staged` configured to run ESLint + Prettier on TypeScript/JavaScript files
+- Commitizen provides interactive commit creation with predefined scopes
+
+**Quality Assurance:**
+
+- ESLint with modern flat config format (`eslint.config.js`)
+- Prettier with project-specific configuration (`.prettierrc.json`)
+- Custom commitlint rules with project-specific scopes: components, cli, docs, demo, deps, integration, utils, types, config
+- VS Code workspace settings for auto-format on save
+
+**Dependency Management:**
+
+- Dependabot configured for weekly updates with intelligent PR grouping
+- Separate configurations for main package and demo subdirectory
+- GitHub Actions dependency updates grouped by category
 
 ## Environment Variables
 
@@ -135,6 +189,38 @@ The `demo/` directory contains a working Astro site that showcases the integrati
 - Temporarily disables integration during development (until package is built)
 - Includes sample photo content with realistic metadata
 
+## Important Development Notes
+
+### Package Structure
+
+- **No build step for main package** - Source files are exported directly via TypeScript paths
+- **CLI tools require building** - Use `pnpm build:cli` before testing CLI functionality
+- **Integration-first architecture** - Designed as Astro integration, not standalone library
+- **Multi-entry exports** - Components, utils, schema, and main integration exported separately
+
+### Development Workflow
+
+- **Pre-commit quality gates** - All staged files are automatically linted and formatted
+- **Conventional commits enforced** - User must use `pnpm commit` for interactive commit creation
+- **Quality command** - Run `pnpm quality` before instructing user to commit changes
+- **Demo development** - Build main package first before running demo site
+- **Never commit automatically** - Always instruct user to review and commit changes
+
+### Configuration Architecture
+
+The system uses a sophisticated 4-layer configuration cascade:
+
+1. Integration options (highest priority)
+2. Config file (`astro-photostream.config.js`)
+3. Environment variables
+4. Built-in defaults (lowest priority)
+
+### Testing Strategy
+
+- **CLI tools** - Require build step before testing
+- **Integration** - Test via demo site or direct import
+- **Components** - Can be imported individually for testing
+
 ## Coding Styles
 
 ### Positive Prompt
@@ -144,3 +230,33 @@ production-ready code, clean architecture, perfect TypeScript, ultra performant,
 ### Negative Prompt
 
 --no spaghetti code --no broken layouts --no memory leaks --no accessibility violations --no SEO failures --no performance bottlenecks --no type errors --no code smells --no bloated bundles --no broken responsive --no missing error states --no undocumented functions
+
+## Conversational Style
+
+Direct responses only. No apologies, enthusiasm, or anthropomorphism.
+
+## Forbidden
+
+- "I'm sorry" / "I apologize"
+- "Great!" / "Excellent!" / "Wonderful!"
+- "I feel" / "I think" / "I believe"
+- "Happy to help" / "Love to assist"
+- Conversational fillers
+- Meta-commentary
+
+## Required
+
+- Lead with core information
+- Use declarative statements
+- State "System cannot" not "I cannot"
+- End when complete
+- Technical precision over politeness
+
+## Style
+
+- Terse, functional responses
+- No exclamation points
+- No hedging language
+- No social pleasantries
+- Pure information delivery
+- Execute immediately. No preamble.

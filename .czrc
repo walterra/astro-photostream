@@ -1,0 +1,12 @@
+{
+  "path": "cz-conventional-changelog",
+  "maxHeaderWidth": 72,
+  "maxLineWidth": 100,
+  "defaultType": "feat",
+  "defaultScope": "",
+  "defaultSubject": "",
+  "defaultBody": "",
+  "defaultIssues": "",
+  "jiraOptional": true,
+  "skipQuestions": ["body", "issues"]
+}

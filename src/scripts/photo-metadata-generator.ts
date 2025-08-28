@@ -10,23 +10,18 @@
  * - PhotoMetadataGenerator orchestrating all processors
  */
 
-import fs from "fs/promises";
-import path from "path";
-import readline from "readline";
-import { fileURLToPath } from "url";
-import matter from "gray-matter";
+import fs from 'fs/promises';
+import path from 'path';
+import readline from 'readline';
+import matter from 'gray-matter';
 import {
   PhotoMetadataGenerator,
   ExifProcessor,
-  ClaudeAnalyzer,
   GeocodeProcessor,
   extractExifData,
-} from "../utils/metadata.js";
-import { loadConfig } from "../utils/config.js";
-import type { IntegrationOptions, PhotoMetadata } from "../types.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+} from '../utils/metadata.js';
+import { loadConfig } from '../utils/config.js';
+import type { IntegrationOptions, PhotoMetadata } from '../types.js';
 
 // ============================================================================
 // TYPES FOR CLI
@@ -41,12 +36,10 @@ interface ExistingMetadata {
 // CONFIGURATION (aligned with reference)
 // ============================================================================
 
-// Directories
-const CONTENT_DIR = process.env.CONTENT_DIRECTORY || "./src/content/photos"; // Output directory for generated .md files
-const ASSETS_DIR = process.env.PHOTOS_DIRECTORY || "./src/assets/photos"; // Input directory containing image files
+// Directories (legacy support - actual values loaded from config)
 
 // Supported file extensions
-const SUPPORTED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".tiff", ".tif"];
+const SUPPORTED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.tiff', '.tif'];
 
 // Configuration will be loaded in main() function
 let integrationOptions: IntegrationOptions;
@@ -62,8 +55,8 @@ function question(prompt: string): Promise<string> {
     output: process.stdout,
   });
 
-  return new Promise((resolve) => {
-    rl.question(prompt, (answer) => {
+  return new Promise(resolve => {
+    rl.question(prompt, answer => {
       rl.close();
       resolve(answer.trim());
     });
@@ -75,14 +68,14 @@ function question(prompt: string): Promise<string> {
  */
 function generateMarkdownContent(
   metadata: PhotoMetadata,
-  imagePath: string,
+  imagePath: string
 ): string {
   const filename = path.basename(imagePath);
 
   // Build frontmatter object
-  const frontmatter: any = {
+  const frontmatter: Record<string, unknown> = {
     title: metadata.title,
-    publishDate: metadata.publishDate.toISOString().split("T")[0],
+    publishDate: metadata.publishDate.toISOString().split('T')[0],
     coverImage: {
       alt: metadata.coverImage.alt,
       src: `../../assets/photos/${filename}`,
@@ -118,7 +111,7 @@ function generateMarkdownContent(
   // Generate content body
   const content = metadata.description
     ? `${metadata.description}\n\n<!-- Add additional context or story about this photo here -->`
-    : "<!-- Add description or story about this photo here -->";
+    : '<!-- Add description or story about this photo here -->';
 
   return matter.stringify(content, frontmatter);
 }
@@ -128,7 +121,7 @@ function generateMarkdownContent(
  */
 function generateFilename(metadata: PhotoMetadata, imagePath: string): string {
   const originalFilename = path.parse(imagePath).name;
-  const dateStr = metadata.publishDate.toISOString().split("T")[0];
+  const dateStr = metadata.publishDate.toISOString().split('T')[0];
   return `${dateStr}_${originalFilename}.md`;
 }
 
@@ -170,13 +163,13 @@ async function findImageFiles(dir: string): Promise<string[]> {
  */
 async function hasMetadataFile(
   imagePath: string,
-  contentDir: string,
+  contentDir: string
 ): Promise<boolean> {
   try {
     // We need to extract EXIF to get the correct filename
     const exifData = await extractExifData(imagePath);
     const publishDate = exifData.dateTime || new Date();
-    const dateStr = publishDate.toISOString().split("T")[0];
+    const dateStr = publishDate.toISOString().split('T')[0];
     const originalFilename = path.parse(imagePath).name;
     const metadataFilename = `${dateStr}_${originalFilename}.md`;
     const metadataPath = path.join(contentDir, metadataFilename);
@@ -194,7 +187,7 @@ async function hasMetadataFile(
 async function processImage(
   imagePath: string,
   contentDir: string,
-  force = false,
+  force = false
 ): Promise<void> {
   // Check if metadata already exists
   if (!force && (await hasMetadataFile(imagePath, contentDir))) {
@@ -215,7 +208,7 @@ async function processImage(
     await fs.mkdir(path.dirname(outputPath), { recursive: true });
 
     // Write file
-    await fs.writeFile(outputPath, markdownContent, "utf8");
+    await fs.writeFile(outputPath, markdownContent, 'utf8');
 
     console.log(`✅ Generated: ${filename}`);
   } catch (error) {
@@ -231,10 +224,10 @@ async function processImage(
  * Parse existing metadata file
  */
 async function parseExistingMetadata(
-  filePath: string,
+  filePath: string
 ): Promise<ExistingMetadata | null> {
   try {
-    const fileContent = await fs.readFile(filePath, "utf8");
+    const fileContent = await fs.readFile(filePath, 'utf8');
     const parsed = matter(fileContent);
     return {
       frontmatter: parsed.data,
@@ -251,7 +244,7 @@ async function parseExistingMetadata(
  */
 async function updateExifFields(
   imagePath: string,
-  contentDir: string,
+  contentDir: string
 ): Promise<void> {
   const filename = path.basename(imagePath);
   console.log(`🔄 Updating EXIF for: ${filename}`);
@@ -261,7 +254,7 @@ async function updateExifFields(
     const exifProcessor = new ExifProcessor();
     const exifData = await exifProcessor.extractExifData(imagePath);
     const publishDate = exifData.dateTime || new Date();
-    const dateStr = publishDate.toISOString().split("T")[0];
+    const dateStr = publishDate.toISOString().split('T')[0];
     const originalFilename = path.parse(imagePath).name;
     const metadataFilename = `${dateStr}_${originalFilename}.md`;
     const metadataPath = path.join(contentDir, metadataFilename);
@@ -283,9 +276,9 @@ async function updateExifFields(
     // Regenerate content with updated frontmatter
     const updatedContent = matter.stringify(
       existingMetadata.content,
-      updatedFrontmatter,
+      updatedFrontmatter
     );
-    await fs.writeFile(metadataPath, updatedContent, "utf8");
+    await fs.writeFile(metadataPath, updatedContent, 'utf8');
 
     console.log(`✅ Updated EXIF: ${metadataFilename}`);
   } catch (error) {
@@ -298,7 +291,7 @@ async function updateExifFields(
  */
 async function updateLocationStrings(
   imagePath: string,
-  contentDir: string,
+  contentDir: string
 ): Promise<void> {
   const filename = path.basename(imagePath);
   console.log(`🗺️  Updating location for: ${filename}`);
@@ -316,7 +309,7 @@ async function updateLocationStrings(
     const geocodeProcessor = new GeocodeProcessor(process.env.OPENCAGE_API_KEY);
     const locationName = await geocodeProcessor.reverseGeocode(
       exifData.location.latitude!,
-      exifData.location.longitude!,
+      exifData.location.longitude!
     );
     if (!locationName) {
       console.log(`⏭️  No location name found for ${filename}`);
@@ -325,7 +318,7 @@ async function updateLocationStrings(
 
     // Find existing metadata file
     const publishDate = exifData.dateTime || new Date();
-    const dateStr = publishDate.toISOString().split("T")[0];
+    const dateStr = publishDate.toISOString().split('T')[0];
     const originalFilename = path.parse(imagePath).name;
     const metadataFilename = `${dateStr}_${originalFilename}.md`;
     const metadataPath = path.join(contentDir, metadataFilename);
@@ -338,7 +331,7 @@ async function updateLocationStrings(
 
     // Update location information
     const existingLocation =
-      (existingMetadata.frontmatter.location as any) || {};
+      (existingMetadata.frontmatter.location as Record<string, unknown>) || {};
     const updatedFrontmatter = {
       ...existingMetadata.frontmatter,
       location: {
@@ -352,9 +345,9 @@ async function updateLocationStrings(
     // Regenerate content with updated frontmatter
     const updatedContent = matter.stringify(
       existingMetadata.content,
-      updatedFrontmatter,
+      updatedFrontmatter
     );
-    await fs.writeFile(metadataPath, updatedContent, "utf8");
+    await fs.writeFile(metadataPath, updatedContent, 'utf8');
 
     console.log(`✅ Updated location: ${metadataFilename} (${locationName})`);
   } catch (error) {
@@ -367,33 +360,33 @@ async function updateLocationStrings(
 // ============================================================================
 
 async function main() {
-  console.log("🚀 Astro Photo Stream - Metadata Generator");
-  console.log("==========================================\n");
+  console.log('🚀 Astro Photo Stream - Metadata Generator');
+  console.log('==========================================\n');
 
   // Parse command line arguments
   const args = process.argv.slice(2);
-  const force = args.includes("--force");
-  const updateExif = args.includes("--update-exif");
-  const updateLocations = args.includes("--update-locations");
-  const generateConfig = args.includes("--generate-config");
-  const specificFile = args.find((arg) => !arg.startsWith("--"));
+  const force = args.includes('--force');
+  const updateExif = args.includes('--update-exif');
+  const updateLocations = args.includes('--update-locations');
+  const generateConfig = args.includes('--generate-config');
+  const specificFile = args.find(arg => !arg.startsWith('--'));
 
   // Handle config generation command
   if (generateConfig) {
-    const { configManager } = await import("../utils/config.js");
+    const { configManager } = await import('../utils/config.js');
     await configManager.writeExampleConfig();
-    console.log("");
-    console.log("Next steps:");
-    console.log("1. Edit the generated astro-photostream.config.js file");
+    console.log('');
+    console.log('Next steps:');
+    console.log('1. Edit the generated astro-photostream.config.js file');
     console.log(
-      "2. Add your API keys to environment variables or the config file",
+      '2. Add your API keys to environment variables or the config file'
     );
-    console.log("3. Run the metadata generator again");
+    console.log('3. Run the metadata generator again');
     return;
   }
 
   // Load configuration from file, environment, and defaults
-  console.log("📋 Loading configuration...");
+  console.log('📋 Loading configuration...');
   integrationOptions = await loadConfig();
   metadataGenerator = new PhotoMetadataGenerator(integrationOptions);
 
@@ -403,24 +396,24 @@ async function main() {
   const assetsDir =
     process.env.PHOTOS_DIRECTORY ||
     integrationOptions.photos.assetsDirectory ||
-    "src/assets/photos";
+    'src/assets/photos';
 
   // Show configuration
-  console.log("Configuration:");
+  console.log('Configuration:');
   console.log(`📁 Photos: ${assetsDir}`);
   console.log(`📄 Content: ${contentDir}`);
   console.log(
-    `🤖 Claude API: ${integrationOptions.ai.enabled ? "✅ Configured" : "❌ Missing"}`,
+    `🤖 Claude API: ${integrationOptions.ai.enabled ? '✅ Configured' : '❌ Missing'}`
   );
   console.log(
-    `🗺️  OpenCage API: ${integrationOptions.geolocation.enabled ? "✅ Configured" : "❌ Missing"}`,
+    `🗺️  OpenCage API: ${integrationOptions.geolocation.enabled ? '✅ Configured' : '❌ Missing'}`
   );
-  console.log("");
+  console.log('');
 
   try {
     // Handle update modes
     if (updateExif) {
-      console.log("🔄 EXIF Update Mode");
+      console.log('🔄 EXIF Update Mode');
       const imageFiles = specificFile
         ? [specificFile]
         : await findImageFiles(assetsDir);
@@ -432,7 +425,7 @@ async function main() {
     }
 
     if (updateLocations) {
-      console.log("🗺️ Location Update Mode");
+      console.log('🗺️ Location Update Mode');
       const imageFiles = specificFile
         ? [specificFile]
         : await findImageFiles(assetsDir);
@@ -453,38 +446,38 @@ async function main() {
       console.log(`Found ${imageFiles.length} image file(s)`);
 
       if (imageFiles.length === 0) {
-        console.log("No images found to process.");
+        console.log('No images found to process.');
         return;
       }
 
       // Sort by EXIF date (oldest first, matching reference)
-      console.log("📅 Sorting images by date...");
+      console.log('📅 Sorting images by date...');
       const sortedImages = [];
       for (const imagePath of imageFiles) {
         try {
           const exifData = await extractExifData(imagePath);
           const date = exifData.dateTime || (await fs.stat(imagePath)).mtime;
           sortedImages.push({ path: imagePath, date });
-        } catch (error) {
+        } catch {
           sortedImages.push({ path: imagePath, date: new Date() });
         }
       }
 
       sortedImages.sort((a, b) => a.date.getTime() - b.date.getTime());
-      const sortedPaths = sortedImages.map((item) => item.path);
+      const sortedPaths = sortedImages.map(item => item.path);
 
       // Ask for confirmation if not forced
       if (!force) {
         const answer = await question(
-          `\n📸 Process ${sortedPaths.length} images? (y/N): `,
+          `\n📸 Process ${sortedPaths.length} images? (y/N): `
         );
-        if (answer.toLowerCase() !== "y" && answer.toLowerCase() !== "yes") {
-          console.log("Operation cancelled.");
+        if (answer.toLowerCase() !== 'y' && answer.toLowerCase() !== 'yes') {
+          console.log('Operation cancelled.');
           return;
         }
       }
 
-      console.log("");
+      console.log('');
 
       // Process each image
       let processed = 0;
@@ -498,7 +491,7 @@ async function main() {
         try {
           if (!force && (await hasMetadataFile(imagePath, contentDir))) {
             console.log(
-              `⏭️  Skipping ${path.basename(imagePath)} (metadata exists)`,
+              `⏭️  Skipping ${path.basename(imagePath)} (metadata exists)`
             );
             skipped++;
           } else {
@@ -510,23 +503,23 @@ async function main() {
           failed++;
         }
 
-        console.log("");
+        console.log('');
       }
 
       // Summary
-      console.log("📊 Processing Summary:");
+      console.log('📊 Processing Summary:');
       console.log(`✅ Processed: ${processed}`);
       console.log(`⏭️  Skipped: ${skipped}`);
       console.log(`❌ Failed: ${failed}`);
       console.log(`📁 Content files: ${contentDir}`);
 
       if (processed > 0) {
-        console.log("\n🎉 Photo metadata generation complete!");
-        console.log("Your photo gallery is ready to build.");
+        console.log('\n🎉 Photo metadata generation complete!');
+        console.log('Your photo gallery is ready to build.');
       }
     }
   } catch (error) {
-    console.error("❌ Generation failed:", error);
+    console.error('❌ Generation failed:', error);
     process.exit(1);
   }
 }
@@ -536,14 +529,14 @@ async function main() {
 // ============================================================================
 
 // Handle interruption gracefully
-process.on("SIGINT", () => {
-  console.log("\n\n⏹️  Operation interrupted by user");
+process.on('SIGINT', () => {
+  console.log('\n\n⏹️  Operation interrupted by user');
   process.exit(0);
 });
 
 // Handle unhandled promise rejections
-process.on("unhandledRejection", (error) => {
-  console.error("Unhandled promise rejection:", error);
+process.on('unhandledRejection', error => {
+  console.error('Unhandled promise rejection:', error);
   process.exit(1);
 });
 

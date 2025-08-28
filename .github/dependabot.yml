@@ -1,0 +1,88 @@
+version: 2
+updates:
+  # Enable version updates for npm dependencies in main package
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "walterra"
+    assignees:
+      - "walterra"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+    groups:
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+          - "@typescript-eslint/*"
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+      linting:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "prettier"
+          - "husky"
+          - "lint-staged"
+          - "@commitlint/*"
+
+  # Enable version updates for npm dependencies in demo package
+  - package-ecosystem: "npm"
+    directory: "/demo"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "walterra"
+    assignees:
+      - "walterra"
+    commit-message:
+      prefix: "deps(demo)"
+      prefix-development: "deps(demo)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "demo"
+    groups:
+      astro-demo:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+      tailwind-demo:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "ci"

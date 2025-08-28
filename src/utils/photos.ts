@@ -3,32 +3,35 @@
  * Based on reference implementation patterns
  * Utility functions for processing and organizing photo data
  */
-import { getCollection } from "astro:content";
-import type { PhotoMetadata } from "../types.js";
+import { getCollection } from 'astro:content';
+import type { PhotoMetadata } from '../types.js';
 
 /**
  * Get all photos with optional filtering and sorting
  */
 export async function getAllPhotos(options?: {
   includeDrafts?: boolean;
-  sortBy?: "date" | "title" | "camera";
-  sortOrder?: "asc" | "desc";
+  sortBy?: 'date' | 'title' | 'camera';
+  sortOrder?: 'asc' | 'desc';
   limit?: number;
 }): Promise<PhotoMetadata[]> {
   const {
     includeDrafts = false,
-    sortBy = "date",
-    sortOrder = "desc",
+    sortBy = 'date',
+    sortOrder = 'desc',
     limit,
   } = options || {};
 
   // Get photos from content collection
-  const allPhotos = await getCollection("photos", ({ data }: { data: any }) => {
-    return includeDrafts || !data.draft;
-  });
+  const allPhotos = await getCollection(
+    'photos',
+    ({ data }: { data: unknown }) => {
+      return includeDrafts || !data.draft;
+    }
+  );
 
   // Convert to PhotoMetadata format
-  const photos: PhotoMetadata[] = allPhotos.map((photo: any) => ({
+  const photos: PhotoMetadata[] = allPhotos.map((photo: unknown) => ({
     id: photo.slug,
     title: photo.data.title,
     description: photo.data.description,
@@ -47,18 +50,18 @@ export async function getAllPhotos(options?: {
     let comparison = 0;
 
     switch (sortBy) {
-      case "date":
+      case 'date':
         comparison = a.publishDate.getTime() - b.publishDate.getTime();
         break;
-      case "title":
+      case 'title':
         comparison = a.title.localeCompare(b.title);
         break;
-      case "camera":
-        comparison = (a.camera || "").localeCompare(b.camera || "");
+      case 'camera':
+        comparison = (a.camera || '').localeCompare(b.camera || '');
         break;
     }
 
-    return sortOrder === "desc" ? -comparison : comparison;
+    return sortOrder === 'desc' ? -comparison : comparison;
   });
 
   // Apply limit if specified
@@ -71,16 +74,16 @@ export async function getAllPhotos(options?: {
 export async function getPhotosByTag(
   tag: string,
   options?: {
-    sortBy?: "date" | "title";
-    sortOrder?: "asc" | "desc";
+    sortBy?: 'date' | 'title';
+    sortOrder?: 'asc' | 'desc';
     limit?: number;
-  },
+  }
 ): Promise<PhotoMetadata[]> {
   const photos = await getAllPhotos({
     sortBy: options?.sortBy,
     sortOrder: options?.sortOrder,
   });
-  const filteredPhotos = photos.filter((photo) => photo.tags.includes(tag));
+  const filteredPhotos = photos.filter(photo => photo.tags.includes(tag));
 
   return options?.limit
     ? filteredPhotos.slice(0, options.limit)
@@ -96,8 +99,8 @@ export async function getAllTags(): Promise<
   const photos = await getAllPhotos();
   const tagCounts = new Map<string, number>();
 
-  photos.forEach((photo) => {
-    photo.tags.forEach((tag) => {
+  photos.forEach(photo => {
+    photo.tags.forEach(tag => {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     });
   });
@@ -113,7 +116,7 @@ export async function getAllTags(): Promise<
 export async function getPhotosWithLocation(): Promise<PhotoMetadata[]> {
   const photos = await getAllPhotos();
   return photos.filter(
-    (photo) => photo.location?.latitude && photo.location?.longitude,
+    photo => photo.location?.latitude && photo.location?.longitude
   );
 }
 
@@ -126,11 +129,11 @@ export function getDateRange(photos: PhotoMetadata[]): {
   yearRange: string;
 } {
   if (photos.length === 0) {
-    return { startDate: null, endDate: null, yearRange: "" };
+    return { startDate: null, endDate: null, yearRange: '' };
   }
 
   const dates = photos
-    .map((p) => p.publishDate)
+    .map(p => p.publishDate)
     .sort((a, b) => a.getTime() - b.getTime());
   const startDate = dates[0];
   const endDate = dates[dates.length - 1];
@@ -165,7 +168,7 @@ export async function getFeaturedLocations(limit = 5): Promise<
     }
   >();
 
-  photos.forEach((photo) => {
+  photos.forEach(photo => {
     if (
       photo.location?.name &&
       photo.location.latitude &&
@@ -209,7 +212,7 @@ export async function getCameraStats(): Promise<
   const photos = await getAllPhotos();
   const cameraCounts = new Map<string, PhotoMetadata[]>();
 
-  photos.forEach((photo) => {
+  photos.forEach(photo => {
     if (photo.camera) {
       const existing = cameraCounts.get(photo.camera);
       if (existing) {
@@ -231,21 +234,21 @@ export async function getCameraStats(): Promise<
 export function getRelatedPhotos(
   currentPhoto: PhotoMetadata,
   allPhotos: PhotoMetadata[],
-  limit = 4,
+  limit = 4
 ): PhotoMetadata[] {
   // Calculate tag overlap scores
   const scored = allPhotos
-    .filter((photo) => photo.id !== currentPhoto.id)
-    .map((photo) => {
-      const commonTags = photo.tags.filter((tag) =>
-        currentPhoto.tags.includes(tag),
+    .filter(photo => photo.id !== currentPhoto.id)
+    .map(photo => {
+      const commonTags = photo.tags.filter(tag =>
+        currentPhoto.tags.includes(tag)
       );
       return {
         photo,
         score: commonTags.length,
       };
     })
-    .filter((item) => item.score > 0)
+    .filter(item => item.score > 0)
     .sort((a, b) => {
       // Sort by score first, then by date
       if (b.score !== a.score) {
@@ -254,7 +257,7 @@ export function getRelatedPhotos(
       return b.photo.publishDate.getTime() - a.photo.publishDate.getTime();
     });
 
-  return scored.slice(0, limit).map((item) => item.photo);
+  return scored.slice(0, limit).map(item => item.photo);
 }
 
 /**
@@ -266,17 +269,17 @@ export function generatePageDescription(
     tag?: string;
     page?: number;
     totalPages?: number;
-  },
+  }
 ): string {
   if (photos.length === 0) {
-    return "No photos found.";
+    return 'No photos found.';
   }
 
   const { yearRange } = getDateRange(photos);
   const photoCount = photos.length;
-  const hasLocations = photos.some((p) => p.location?.name);
+  const hasLocations = photos.some(p => p.location?.name);
 
-  let description = `${photoCount} photograph${photoCount !== 1 ? "s" : ""}`;
+  let description = `${photoCount} photograph${photoCount !== 1 ? 's' : ''}`;
 
   if (context?.tag) {
     description += ` tagged with "${context.tag}"`;
@@ -291,11 +294,11 @@ export function generatePageDescription(
   }
 
   if (hasLocations) {
-    const locationCount = photos.filter((p) => p.location?.name).length;
+    const locationCount = photos.filter(p => p.location?.name).length;
     description += `. ${locationCount} with location data`;
   }
 
-  description += ".";
+  description += '.';
 
   return description;
 }
@@ -305,23 +308,23 @@ export function generatePageDescription(
  */
 export function groupPhotosByPeriod(
   photos: PhotoMetadata[],
-  period: "year" | "month" | "day" = "year",
+  period: 'year' | 'month' | 'day' = 'year'
 ): Array<{ period: string; photos: PhotoMetadata[] }> {
   const groups = new Map<string, PhotoMetadata[]>();
 
-  photos.forEach((photo) => {
+  photos.forEach(photo => {
     let key: string;
     const date = photo.publishDate;
 
     switch (period) {
-      case "year":
+      case 'year':
         key = date.getFullYear().toString();
         break;
-      case "month":
-        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      case 'month':
+        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
         break;
-      case "day":
-        key = date.toISOString().split("T")[0];
+      case 'day':
+        key = date.toISOString().split('T')[0];
         break;
     }
 

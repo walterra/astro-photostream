@@ -70,16 +70,21 @@
     "build:cli": "tsc src/scripts/photo-metadata-generator.ts --outDir dist/scripts --moduleResolution bundler --target ES2022 --module ESNext --allowSyntheticDefaultImports --esModuleInterop --skipLibCheck",
     "dev": "astro check --watch",
     "check": "astro check",
-    "lint": "eslint src --ext .ts,.js",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "quality": "pnpm lint && pnpm format:check && pnpm check",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "commit": "git-cz",
     "version": "changeset version",
     "release": "pnpm build:cli && changeset publish",
     "changeset": "changeset",
     "changeset:add": "changeset add",
     "changeset:status": "changeset status",
-    "postinstall": "node scripts/download-fonts.js"
+    "postinstall": "node scripts/download-fonts.js",
+    "prepare": "husky"
   },
   "peerDependencies": {
     "astro": "^4.0.0 || ^5.0.0"
@@ -97,18 +102,32 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@changesets/cli": "^2.27.1",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@eslint/js": "^9.34.0",
     "@types/leaflet": "^1.9.20",
     "@types/node": "^20.11.0",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
     "astro": "^5.13.2",
-    "eslint": "^8.56.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
     "prettier": "^3.2.4",
     "tsc-alias": "^1.8.8",
     "typescript": "^5.3.3",
+    "typescript-eslint": "^8.41.0",
     "vitest": "^1.2.0"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

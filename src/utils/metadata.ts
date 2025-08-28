@@ -1,8 +1,8 @@
-import fs from "fs/promises";
-import path from "path";
-import exifr from "exifr";
-import sharp from "sharp";
-import type { PhotoMetadata, IntegrationOptions } from "../types.js";
+import fs from 'fs/promises';
+import path from 'path';
+import exifr from 'exifr';
+import sharp from 'sharp';
+import type { PhotoMetadata, IntegrationOptions } from '../types.js';
 
 // ============================================================================
 // TYPES
@@ -50,21 +50,21 @@ export class ExifProcessor {
     try {
       const exifData = await exifr.parse(imagePath, {
         pick: [
-          "Make",
-          "Model",
-          "LensModel",
-          "FNumber",
-          "ExposureTime",
-          "ISO",
-          "FocalLengthIn35mmFormat",
-          "FocalLength",
-          "GPS",
-          "DateTimeOriginal",
-          "DateTime",
-          "ImageDescription",
-          "UserComment",
-          "XPComment",
-          "XPSubject",
+          'Make',
+          'Model',
+          'LensModel',
+          'FNumber',
+          'ExposureTime',
+          'ISO',
+          'FocalLengthIn35mmFormat',
+          'FocalLength',
+          'GPS',
+          'DateTimeOriginal',
+          'DateTime',
+          'ImageDescription',
+          'UserComment',
+          'XPComment',
+          'XPSubject',
         ],
       });
 
@@ -79,7 +79,7 @@ export class ExifProcessor {
           : undefined;
 
       // Format settings
-      const settings: any = {};
+      const settings: Record<string, string> = {};
       if (exifData.FNumber) {
         settings.aperture = `f/${exifData.FNumber}`;
       }
@@ -109,7 +109,7 @@ export class ExifProcessor {
             };
           }
         } catch (error) {
-          console.warn("Failed to extract GPS coordinates:", error);
+          console.warn('Failed to extract GPS coordinates:', error);
         }
       }
 
@@ -142,11 +142,11 @@ export class ExifProcessor {
 export abstract class LLMAnalyzer {
   protected recentOutputs: LLMAnalysis[] = [];
 
-  constructor(protected options: IntegrationOptions["ai"]) {}
+  constructor(protected options: IntegrationOptions['ai']) {}
 
   abstract analyzeContent(
     imagePath: string,
-    exifData?: ExifData,
+    exifData?: ExifData
   ): Promise<LLMAnalysis>;
 
   protected async compressImageForAPI(imagePath: string): Promise<Buffer> {
@@ -160,7 +160,7 @@ export abstract class LLMAnalyzer {
 
     // Start with reasonable size and quality
     compressedBuffer = await sharp(originalBuffer)
-      .resize(maxWidth, maxWidth, { fit: "inside", withoutEnlargement: true })
+      .resize(maxWidth, maxWidth, { fit: 'inside', withoutEnlargement: true })
       .jpeg({ quality })
       .toBuffer();
 
@@ -179,14 +179,14 @@ export abstract class LLMAnalyzer {
       }
 
       compressedBuffer = await sharp(originalBuffer)
-        .resize(maxWidth, maxWidth, { fit: "inside", withoutEnlargement: true })
+        .resize(maxWidth, maxWidth, { fit: 'inside', withoutEnlargement: true })
         .jpeg({ quality })
         .toBuffer();
     }
 
     if (compressedBuffer.length > MAX_BUFFER_SIZE) {
       throw new Error(
-        `Unable to compress image below ${MAX_BUFFER_SIZE} bytes`,
+        `Unable to compress image below ${MAX_BUFFER_SIZE} bytes`
       );
     }
 
@@ -195,16 +195,16 @@ export abstract class LLMAnalyzer {
 
   protected getFallbackAnalysis(
     imagePath: string,
-    exifData?: ExifData,
+    exifData?: ExifData
   ): LLMAnalysis {
     const filename = path.basename(imagePath);
 
     return {
-      title: filename.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " "),
-      description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ""}.`,
+      title: filename.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
+      description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ''}.`,
       altText: `Photograph: ${filename}`,
       suggestedTags: [
-        "photography",
+        'photography',
         ...(exifData?.dateTime
           ? [exifData.dateTime.getFullYear().toString()]
           : []),
@@ -228,55 +228,55 @@ export abstract class LLMAnalyzer {
  * Claude API Analyzer
  */
 export class ClaudeAnalyzer extends LLMAnalyzer {
-  private client: any;
+  private client: unknown;
 
-  constructor(options: IntegrationOptions["ai"]) {
+  constructor(options: IntegrationOptions['ai']) {
     super(options);
 
     if (options.apiKey) {
       // Dynamic import to handle optional dependency
-      import("@anthropic-ai/sdk")
+      import('@anthropic-ai/sdk')
         .then(({ default: Anthropic }) => {
           this.client = new Anthropic({ apiKey: options.apiKey });
         })
-        .catch((error) => {
-          console.warn("Anthropic SDK not available:", error);
+        .catch(error => {
+          console.warn('Anthropic SDK not available:', error);
         });
     }
   }
 
   async analyzeContent(
     imagePath: string,
-    exifData?: ExifData,
+    exifData?: ExifData
   ): Promise<LLMAnalysis> {
     const filename = path.basename(imagePath);
     const fallback = this.getFallbackAnalysis(imagePath, exifData);
 
     if (!this.client || !this.options.apiKey) {
-      console.warn("Claude API not configured, using filename-based analysis");
+      console.warn('Claude API not configured, using filename-based analysis');
       return fallback;
     }
 
     try {
       // Compress image for API
       const compressedBuffer = await this.compressImageForAPI(imagePath);
-      const base64Image = compressedBuffer.toString("base64");
+      const base64Image = compressedBuffer.toString('base64');
 
       // Build context from recent outputs (memory system)
       const recentContext =
         this.recentOutputs.length > 0
           ? `Recent outputs to avoid repetition: ${this.recentOutputs
               .slice(-3)
-              .map((r) => r.title)
-              .join(", ")}`
-          : "";
+              .map(r => r.title)
+              .join(', ')}`
+          : '';
 
       // Camera context
-      const cameraInfo = exifData?.camera || "Unknown camera";
+      const cameraInfo = exifData?.camera || 'Unknown camera';
       const isSmartphone =
-        cameraInfo.toLowerCase().includes("iphone") ||
-        cameraInfo.toLowerCase().includes("pixel") ||
-        cameraInfo.toLowerCase().includes("samsung");
+        cameraInfo.toLowerCase().includes('iphone') ||
+        cameraInfo.toLowerCase().includes('pixel') ||
+        cameraInfo.toLowerCase().includes('samsung');
 
       // Technical context
       const techContext = exifData?.settings
@@ -287,21 +287,21 @@ export class ClaudeAnalyzer extends LLMAnalyzer {
             exifData.settings.focalLength,
           ]
             .filter(Boolean)
-            .join(", ")
-        : "";
+            .join(', ')
+        : '';
 
       // Build comprehensive prompt
       const prompt =
         this.options.prompt ||
         `You are analyzing a photograph for a photography blog. 
 
-${recentContext ? `CONTEXT: ${recentContext}\n` : ""}
+${recentContext ? `CONTEXT: ${recentContext}\n` : ''}
 Filename: ${filename}
-Camera: ${cameraInfo}${isSmartphone ? " (Smartphone camera)" : " (Dedicated camera)"}
-${exifData?.lens ? `Lens: ${exifData.lens}` : ""}
-${techContext ? `Settings: ${techContext}` : ""}
-${exifData?.location ? `Location: ${exifData.location.latitude?.toFixed(4)}, ${exifData.location.longitude?.toFixed(4)}` : ""}
-${exifData?.dateTime ? `Date: ${exifData.dateTime.toLocaleDateString()}` : ""}
+Camera: ${cameraInfo}${isSmartphone ? ' (Smartphone camera)' : ' (Dedicated camera)'}
+${exifData?.lens ? `Lens: ${exifData.lens}` : ''}
+${techContext ? `Settings: ${techContext}` : ''}
+${exifData?.location ? `Location: ${exifData.location.latitude?.toFixed(4)}, ${exifData.location.longitude?.toFixed(4)}` : ''}
+${exifData?.dateTime ? `Date: ${exifData.dateTime.toLocaleDateString()}` : ''}
 
 Generate JSON with these fields:
 - title: 30-60 chars, engaging and descriptive, SEO-friendly
@@ -312,22 +312,22 @@ Generate JSON with these fields:
 Focus on what makes this photo interesting or worth sharing. Avoid generic descriptions.`;
 
       const message = await this.client.messages.create({
-        model: this.options.model || "claude-3-haiku-20240307",
+        model: this.options.model || 'claude-3-haiku-20240307',
         max_tokens: 400,
         temperature: 0.9,
         messages: [
           {
-            role: "user",
+            role: 'user',
             content: [
               {
-                type: "text",
+                type: 'text',
                 text: prompt,
               },
               {
-                type: "image",
+                type: 'image',
                 source: {
-                  type: "base64",
-                  media_type: "image/jpeg",
+                  type: 'base64',
+                  media_type: 'image/jpeg',
                   data: base64Image,
                 },
               },
@@ -338,7 +338,7 @@ Focus on what makes this photo interesting or worth sharing. Avoid generic descr
 
       // Extract and parse JSON response
       const responseText =
-        message.content[0]?.type === "text" ? message.content[0].text : "";
+        message.content[0]?.type === 'text' ? message.content[0].text : '';
       const jsonMatch =
         responseText.match(/```json\n([\s\S]*?)\n```/) ||
         responseText.match(/```\n([\s\S]*?)\n```/) ||
@@ -361,7 +361,7 @@ Focus on what makes this photo interesting or worth sharing. Avoid generic descr
         return analysis;
       }
 
-      console.warn("Failed to parse AI response, using fallback");
+      console.warn('Failed to parse AI response, using fallback');
       return fallback;
     } catch (error) {
       console.warn(`AI analysis failed for ${filename}:`, error);
@@ -378,7 +378,7 @@ export class GeocodeProcessor {
 
   async reverseGeocode(lat: number, lng: number): Promise<string | undefined> {
     if (!this.apiKey) {
-      console.warn("OpenCage API key not configured");
+      console.warn('OpenCage API key not configured');
       return undefined;
     }
 
@@ -444,11 +444,11 @@ export class GeocodeProcessor {
       const parts: string[] = [];
 
       // Helper function to get English name
-      function getEnglishName(component: any): string | undefined {
-        if (typeof component === "string") {
+      function getEnglishName(component: unknown): string | undefined {
+        if (typeof component === 'string') {
           return component;
         }
-        if (typeof component === "object" && component !== null) {
+        if (typeof component === 'object' && component !== null) {
           return component.en || component.eng || Object.values(component)[0];
         }
         return undefined;
@@ -494,7 +494,7 @@ export class GeocodeProcessor {
 
       // Administrative regions
       // Special handling for US states (don't include state for US)
-      if (components.state && components.country !== "United States") {
+      if (components.state && components.country !== 'United States') {
         const state = getEnglishName(components.state);
         if (state) parts.push(state);
       }
@@ -505,7 +505,7 @@ export class GeocodeProcessor {
         if (country) parts.push(country);
       }
 
-      return parts.length > 0 ? parts.join(", ") : undefined;
+      return parts.length > 0 ? parts.join(', ') : undefined;
     } catch (error) {
       console.warn(`Geocoding failed for ${lat}, ${lng}:`, error);
       return undefined;
@@ -526,7 +526,7 @@ export class PhotoMetadataGenerator {
 
     if (options.ai.enabled && options.ai.apiKey) {
       switch (options.ai.provider) {
-        case "claude":
+        case 'claude':
           this.llmAnalyzer = new ClaudeAnalyzer(options.ai);
           break;
         // TODO: Add OpenAI and other providers
@@ -555,7 +555,7 @@ export class PhotoMetadataGenerator {
     if (exifData.location && this.geocodeProcessor) {
       const locationName = await this.geocodeProcessor.reverseGeocode(
         exifData.location.latitude!,
-        exifData.location.longitude!,
+        exifData.location.longitude!
       );
       if (locationName) {
         exifData.location.name = locationName;
@@ -570,11 +570,11 @@ export class PhotoMetadataGenerator {
       // Fallback analysis
       const filename = path.basename(imagePath);
       llmAnalysis = {
-        title: filename.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " "),
-        description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ""}.`,
+        title: filename.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
+        description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ''}.`,
         altText: `Photograph: ${filename}`,
         suggestedTags: [
-          "photography",
+          'photography',
           ...(exifData?.dateTime
             ? [exifData.dateTime.getFullYear().toString()]
             : []),
@@ -587,7 +587,7 @@ export class PhotoMetadataGenerator {
 
     // Generate unique ID
     const fileName = path.basename(imagePath);
-    const id = fileName.replace(/\.[^/.]+$/, ""); // Remove extension
+    const id = fileName.replace(/\.[^/.]+$/, ''); // Remove extension
 
     // Combine all metadata
     return {
@@ -618,7 +618,7 @@ export class PhotoMetadataGenerator {
  */
 export async function generatePhotoMetadata(
   filePath: string,
-  options: IntegrationOptions,
+  options: IntegrationOptions
 ): Promise<PhotoMetadata> {
   const generator = new PhotoMetadataGenerator(options);
   return generator.generateMetadata(filePath);
@@ -638,7 +638,7 @@ export async function extractExifData(filePath: string): Promise<ExifData> {
 export async function generateAIMetadata(
   filePath: string,
   exifData: ExifData,
-  options: IntegrationOptions,
+  options: IntegrationOptions
 ): Promise<{ title?: string; description?: string; tags: string[] }> {
   if (!options.ai.enabled || !options.ai.apiKey) {
     return {
@@ -650,7 +650,7 @@ export async function generateAIMetadata(
 
   let analyzer: LLMAnalyzer;
   switch (options.ai.provider) {
-    case "claude":
+    case 'claude':
       analyzer = new ClaudeAnalyzer(options.ai);
       break;
     default:
