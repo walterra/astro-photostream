@@ -62,7 +62,7 @@ export const photoCollectionSchema = z.object({
 /**
  * Create content collection configuration for photos with image optimization
  */
-export function createPhotoCollection({ image }: { image: unknown }) {
+export function createPhotoCollection({ image }: { image: () => any }) {
   return {
     type: 'content' as const,
     schema: photoCollectionSchema.extend({
