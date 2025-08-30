@@ -71,6 +71,15 @@ export const integrationOptionsSchema = z
         twitterHandle: z.string().optional(),
       })
       .default({}),
+
+    // Layout wrapper integration
+    layout: z
+      .object({
+        enabled: z.boolean().default(false),
+        wrapper: z.string().optional(), // Path to layout component
+        props: z.record(z.unknown()).default({}), // Props to pass to layout
+      })
+      .default({}),
   })
   .default({});
 

@@ -1,0 +1,344 @@
+---
+/**
+ * Content-only photo gallery with pagination - for use with layout wrappers
+ * Handles URLs: /photos, /photos/2, /photos/3, etc.
+ * Based on main gallery route but extracting only content portion
+ */
+import { getCollection } from 'astro:content';
+import { config } from 'virtual:astro-photostream/config';
+import { layoutConfig, shouldUseLayout, layoutWrapper, layoutProps } from 'virtual:astro-photostream/layout';
+import PhotoStream from '../../components/PhotoStream.astro';
+import MultiMarkerMap from '../../components/MultiMarkerMap.astro';
+import type { PhotoMetadata } from '../../types.js';
+import type { GetStaticPaths, Page } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  // Get all photos from content collection
+  const allPhotos = await getCollection('photos', ({ data }) => {
+    return !data.draft;
+  });
+
+  // Sort photos by publish date (newest first)
+  const sortedPhotos = allPhotos
+    .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+
+  // Convert to PhotoMetadata format for pagination
+  const photos: PhotoMetadata[] = sortedPhotos.map(photo => ({
+    id: photo.slug,
+    title: photo.data.title,
+    description: photo.data.description,
+    coverImage: photo.data.coverImage,
+    camera: photo.data.camera,
+    lens: photo.data.lens,
+    settings: photo.data.settings,
+    location: photo.data.location,
+    tags: photo.data.tags,
+    publishDate: new Date(photo.data.publishDate),
+    draft: photo.data.draft || false
+  }));
+
+  // Use Astro's built-in paginate function
+  return paginate(photos, { 
+    pageSize: config.gallery.itemsPerPage,
+    params: {},
+    props: {
+      totalPhotos: photos.length,
+      config,
+      layoutConfig,
+      layoutWrapper,
+      layoutProps
+    }
+  });
+};
+
+// Get paginated data
+const { page, totalPhotos, layoutConfig: passedLayoutConfig, layoutWrapper: passedLayoutWrapper, layoutProps: passedLayoutProps } = Astro.props as { 
+  page: Page<PhotoMetadata>, 
+  totalPhotos: number,
+  layoutConfig: any,
+  layoutWrapper: string | null,
+  layoutProps: any
+};
+const photos = page.data;
+
+// Get photos with location data for map
+const photosWithLocation = photos.filter((photo: PhotoMetadata) => 
+  photo.location?.latitude && photo.location?.longitude
+);
+
+// Calculate date range for this page
+const dates = photos.map((p: PhotoMetadata) => p.publishDate).sort((a: Date, b: Date) => b.getTime() - a.getTime());
+const newestDate = dates[0];
+const oldestDate = dates[dates.length - 1];
+const dateRange = newestDate && oldestDate && newestDate !== oldestDate
+  ? `${oldestDate.getFullYear()} - ${newestDate.getFullYear()}`
+  : newestDate?.getFullYear().toString() || '';
+
+// Page metadata
+const isFirstPage = page.currentPage === 1;
+const pageTitle = isFirstPage 
+  ? `Photo Gallery - ${config.seo.siteName || 'Photo Stream'}`
+  : `Photo Gallery - Page ${page.currentPage} - ${config.seo.siteName || 'Photo Stream'}`;
+
+const pageDescription = isFirstPage
+  ? `Browse through ${totalPhotos} photographs captured with love for photography and technology. ${dateRange ? `Photos from ${dateRange}.` : ''}`
+  : `Browse photographs - page ${page.currentPage} of ${page.lastPage}. ${dateRange ? `Photos from ${dateRange} on this page.` : ''}`;
+
+// Prepare props for layout wrapper
+const layoutWrapperProps = {
+  title: pageTitle,
+  description: pageDescription,
+  ...passedLayoutProps
+};
+
+// Try to load layout wrapper if provided
+const LayoutComponent = passedLayoutWrapper 
+  ? (await import(passedLayoutWrapper)).default
+  : null;
+---
+
+{LayoutComponent ? (
+  <LayoutComponent {...layoutWrapperProps}>
+    <main class="photo-gallery-page">
+      {!isFirstPage && (
+        <nav class="page-nav">
+          <a href="/photos" class="nav-link">← Gallery Home</a>
+        </nav>
+      )}
+      
+      <header class="page-header">
+        <h1 class="page-title">
+          {isFirstPage ? 'Photo Gallery' : `Photo Gallery - Page ${page.currentPage}`}
+        </h1>
+        <p class="page-description">
+          {isFirstPage 
+            ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
+            : `Page ${page.currentPage} of ${page.lastPage} • ${totalPhotos} total photos`
+          }
+        </p>
+        
+        {photos.length > 0 && photosWithLocation.length > 0 && (
+          <div class="gallery-stats">
+            <span class="location-count">
+              {photosWithLocation.length} with locations{!isFirstPage ? ' on this page' : ''}
+            </span>
+          </div>
+        )}
+      </header>
+
+      <!-- Map Section -->
+      {photos.length > 0 && photosWithLocation.length > 0 && config.gallery.enableMap && (
+        <section class="map-section">
+          <h2 class="section-title">Photo Locations</h2>
+          <div class="map-container">
+            <MultiMarkerMap 
+              photos={photosWithLocation} 
+              height="400px" 
+            />
+          </div>
+          {photosWithLocation.length < photos.length && (
+            <p class="map-note">
+              Showing {photosWithLocation.length} of {photos.length} photos with location data
+            </p>
+          )}
+        </section>
+      )}
+
+      <!-- Photo Gallery Section -->
+      <section class="photos-section">
+        <PhotoStream photos={photos} />
+      </section>
+
+      <!-- Pagination -->
+      {(page.url.prev || page.url.next) && (
+        <nav class="pagination" aria-label="Gallery pagination">
+          <div class="pagination-links">
+            {page.url.prev ? (
+              <a href={page.url.prev} class="pagination-link pagination-prev" rel="prev">
+                ← Previous
+              </a>
+            ) : (
+              <span class="pagination-link pagination-prev disabled">← Previous</span>
+            )}
+            
+            <div class="pagination-info">
+              <span class="current-page">{page.currentPage}</span>
+              <span class="separator">of</span>
+              <span class="total-pages">{page.lastPage}</span>
+            </div>
+            
+            {page.url.next ? (
+              <a href={page.url.next} class="pagination-link pagination-next" rel="next">
+                Next →
+              </a>
+            ) : (
+              <span class="pagination-link pagination-next disabled">Next →</span>
+            )}
+          </div>
+        </nav>
+      )}
+    </main>
+  </LayoutComponent>
+) : (
+  <!-- Minimal fallback when no layout wrapper is provided -->
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      <meta name="viewport" content="width=device-width" />
+      <meta name="generator" content={Astro.generator} />
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+    </head>
+    <body>
+      <main class="photo-gallery-page">
+        {!isFirstPage && (
+          <nav class="page-nav">
+            <a href="/photos" class="nav-link">← Gallery Home</a>
+          </nav>
+        )}
+        
+        <header class="page-header">
+          <h1 class="page-title">
+            {isFirstPage ? 'Photo Gallery' : `Photo Gallery - Page ${page.currentPage}`}
+          </h1>
+          <p class="page-description">
+            {isFirstPage 
+              ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
+              : `Page ${page.currentPage} of ${page.lastPage} • ${totalPhotos} total photos`
+            }
+          </p>
+          
+          {photos.length > 0 && photosWithLocation.length > 0 && (
+            <div class="gallery-stats">
+              <span class="location-count">
+                {photosWithLocation.length} with locations{!isFirstPage ? ' on this page' : ''}
+              </span>
+            </div>
+          )}
+        </header>
+
+        <!-- Map Section -->
+        {photos.length > 0 && photosWithLocation.length > 0 && config.gallery.enableMap && (
+          <section class="map-section">
+            <h2 class="section-title">Photo Locations</h2>
+            <div class="map-container">
+              <MultiMarkerMap 
+                photos={photosWithLocation} 
+                height="400px" 
+              />
+            </div>
+            {photosWithLocation.length < photos.length && (
+              <p class="map-note">
+                Showing {photosWithLocation.length} of {photos.length} photos with location data
+              </p>
+            )}
+          </section>
+        )}
+
+        <!-- Photo Gallery Section -->
+        <section class="photos-section">
+          <PhotoStream photos={photos} />
+        </section>
+
+        <!-- Pagination -->
+        {(page.url.prev || page.url.next) && (
+          <nav class="pagination" aria-label="Gallery pagination">
+            <div class="pagination-links">
+              {page.url.prev ? (
+                <a href={page.url.prev} class="pagination-link pagination-prev" rel="prev">
+                  ← Previous
+                </a>
+              ) : (
+                <span class="pagination-link pagination-prev disabled">← Previous</span>
+              )}
+              
+              <div class="pagination-info">
+                <span class="current-page">{page.currentPage}</span>
+                <span class="separator">of</span>
+                <span class="total-pages">{page.lastPage}</span>
+              </div>
+              
+              {page.url.next ? (
+                <a href={page.url.next} class="pagination-link pagination-next" rel="next">
+                  Next →
+                </a>
+              ) : (
+                <span class="pagination-link pagination-next disabled">Next →</span>
+              )}
+            </div>
+          </nav>
+        )}
+      </main>
+      
+      <style>
+        /* Minimal styling for fallback mode */
+        .photo-gallery-page {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 2rem 1rem;
+        }
+        
+        .page-header {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+        
+        .page-title {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+          color: #1f2937;
+        }
+        
+        .page-description {
+          color: #6b7280;
+          font-size: 1.1rem;
+        }
+        
+        .pagination {
+          margin-top: 3rem;
+          display: flex;
+          justify-content: center;
+        }
+        
+        .pagination-links {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        
+        .pagination-link {
+          padding: 0.5rem 1rem;
+          background: #f3f4f6;
+          border-radius: 0.375rem;
+          text-decoration: none;
+          color: #374151;
+        }
+        
+        .pagination-link:hover:not(.disabled) {
+          background: #e5e7eb;
+        }
+        
+        .pagination-link.disabled {
+          opacity: 0.5;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+          .page-title {
+            color: #f9fafb;
+          }
+          .page-description {
+            color: #9ca3af;
+          }
+          .pagination-link {
+            background: #374151;
+            color: #f9fafb;
+          }
+          .pagination-link:hover:not(.disabled) {
+            background: #4b5563;
+          }
+        }
+      </style>
+    </body>
+  </html>
+)}

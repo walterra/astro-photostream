@@ -1,0 +1,469 @@
+---
+/**
+ * Content-only individual photo page - for use with layout wrappers
+ * Handles URLs: /photos/2018-03-10_elasticon-0001, etc.
+ * Based on main photo route but extracting only content portion
+ */
+import { getCollection, getEntry } from 'astro:content';
+import { config } from 'virtual:astro-photostream/config';
+import { layoutConfig, shouldUseLayout, layoutWrapper, layoutProps } from 'virtual:astro-photostream/layout';
+import PhotoCard from '../../components/PhotoCard.astro';
+import MapImage from '../../components/MapImage.astro';
+import type { PhotoMetadata } from '../../types.js';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Get all photos for static generation
+  const allPhotos = await getCollection('photos', ({ data }) => !data.draft);
+  
+  // Sort photos by publish date for navigation context
+  const sortedPhotos = allPhotos
+    .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+
+  return sortedPhotos.map((photo, index) => {
+    // Calculate previous/next photos for navigation
+    const prevPhoto = sortedPhotos[index - 1] || null;
+    const nextPhoto = sortedPhotos[index + 1] || null;
+    
+    return {
+      params: { slug: photo.slug },
+      props: { 
+        photo,
+        prevPhoto: prevPhoto ? {
+          slug: prevPhoto.slug,
+          title: prevPhoto.data.title,
+          coverImage: prevPhoto.data.coverImage
+        } : null,
+        nextPhoto: nextPhoto ? {
+          slug: nextPhoto.slug,
+          title: nextPhoto.data.title,
+          coverImage: nextPhoto.data.coverImage
+        } : null,
+        photoIndex: index + 1,
+        totalPhotos: sortedPhotos.length,
+        layoutConfig,
+        layoutWrapper,
+        layoutProps
+      }
+    };
+  });
+};
+
+// Get props from static generation
+const { 
+  photo, 
+  prevPhoto, 
+  nextPhoto, 
+  photoIndex, 
+  totalPhotos, 
+  layoutConfig: passedLayoutConfig, 
+  layoutWrapper: passedLayoutWrapper, 
+  layoutProps: passedLayoutProps 
+} = Astro.props;
+
+// Photo metadata
+const photoMetadata: PhotoMetadata = {
+  id: photo.slug,
+  title: photo.data.title,
+  description: photo.data.description,
+  coverImage: photo.data.coverImage,
+  camera: photo.data.camera,
+  lens: photo.data.lens,
+  settings: photo.data.settings,
+  location: photo.data.location,
+  tags: photo.data.tags || [],
+  publishDate: new Date(photo.data.publishDate),
+  draft: photo.data.draft || false
+};
+
+// Page metadata
+const pageTitle = `${photo.data.title} - Photo Gallery - ${config.seo.siteName || 'Photo Stream'}`;
+const pageDescription = photo.data.description 
+  ? `${photo.data.description} Photo ${photoIndex} of ${totalPhotos}.`
+  : `Photo ${photoIndex} of ${totalPhotos} from the photo gallery.`;
+
+// Prepare props for layout wrapper
+const layoutWrapperProps = {
+  title: pageTitle,
+  description: pageDescription,
+  ...passedLayoutProps
+};
+
+// Try to load layout wrapper if provided
+const LayoutComponent = passedLayoutWrapper 
+  ? (await import(passedLayoutWrapper)).default
+  : null;
+---
+
+{LayoutComponent ? (
+  <LayoutComponent {...layoutWrapperProps}>
+    <main class="photo-page">
+      <!-- Navigation Header -->
+      <nav class="photo-nav">
+        <div class="nav-left">
+          <a href="/photos" class="back-link">← Back to Gallery</a>
+        </div>
+        <div class="nav-center">
+          <span class="photo-counter">{photoIndex} of {totalPhotos}</span>
+        </div>
+        <div class="nav-right">
+          {/* Photo Navigation */}
+          <div class="photo-navigation">
+            {prevPhoto ? (
+              <a href={`/photos/${prevPhoto.slug}`} class="nav-photo prev" aria-label="Previous photo">
+                <span class="nav-label">← Previous</span>
+                <span class="nav-title">{prevPhoto.title}</span>
+              </a>
+            ) : (
+              <div class="nav-photo disabled">
+                <span class="nav-label">← Previous</span>
+              </div>
+            )}
+            
+            {nextPhoto ? (
+              <a href={`/photos/${nextPhoto.slug}`} class="nav-photo next" aria-label="Next photo">
+                <span class="nav-label">Next →</span>
+                <span class="nav-title">{nextPhoto.title}</span>
+              </a>
+            ) : (
+              <div class="nav-photo disabled">
+                <span class="nav-label">Next →</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
+      
+      <!-- Photo Display -->
+      <section class="photo-section">
+        <PhotoCard 
+          photo={photoMetadata}
+          showTags={config.gallery.enableTags}
+          priority={true}
+          variant="hero"
+        />
+      </section>
+
+      <!-- Location Map -->
+      {photoMetadata.location?.latitude && photoMetadata.location?.longitude && (
+        <section class="location-section">
+          <h2 class="section-title">Photo Location</h2>
+          <div class="map-container">
+            <MapImage 
+              photo={photoMetadata}
+              width={800}
+              height={400}
+            />
+          </div>
+          {photoMetadata.location?.name && (
+            <p class="location-name">📍 {photoMetadata.location.name}</p>
+          )}
+        </section>
+      )}
+
+      <!-- Metadata Details -->
+      <section class="metadata-section">
+        <h2 class="section-title">Photo Details</h2>
+        <div class="metadata-grid">
+          {photoMetadata.camera && (
+            <div class="metadata-item">
+              <strong>Camera:</strong> {photoMetadata.camera}
+            </div>
+          )}
+          {photoMetadata.lens && (
+            <div class="metadata-item">
+              <strong>Lens:</strong> {photoMetadata.lens}
+            </div>
+          )}
+          {photoMetadata.settings && (
+            <div class="metadata-item">
+              <strong>Settings:</strong>
+              <div class="settings-details">
+                {photoMetadata.settings.aperture && <span>f/{photoMetadata.settings.aperture}</span>}
+                {photoMetadata.settings.shutterSpeed && <span>{photoMetadata.settings.shutterSpeed}s</span>}
+                {photoMetadata.settings.iso && <span>ISO {photoMetadata.settings.iso}</span>}
+                {photoMetadata.settings.focalLength && <span>{photoMetadata.settings.focalLength}mm</span>}
+              </div>
+            </div>
+          )}
+          <div class="metadata-item">
+            <strong>Published:</strong> {photoMetadata.publishDate.toLocaleDateString()}
+          </div>
+        </div>
+      </section>
+
+      <!-- Related Photos / Navigation Footer -->
+      <section class="related-section">
+        <h2 class="section-title">Continue Exploring</h2>
+        <div class="related-navigation">
+          {prevPhoto && (
+            <a href={`/photos/${prevPhoto.slug}`} class="related-photo">
+              <img src={prevPhoto.coverImage} alt={prevPhoto.title} loading="lazy" />
+              <div class="related-info">
+                <span class="related-label">← Previous</span>
+                <span class="related-title">{prevPhoto.title}</span>
+              </div>
+            </a>
+          )}
+          
+          <a href="/photos" class="back-to-gallery">
+            <span class="back-label">View All Photos</span>
+            <span class="back-count">({totalPhotos} total)</span>
+          </a>
+          
+          {nextPhoto && (
+            <a href={`/photos/${nextPhoto.slug}`} class="related-photo next">
+              <img src={nextPhoto.coverImage} alt={nextPhoto.title} loading="lazy" />
+              <div class="related-info">
+                <span class="related-label">Next →</span>
+                <span class="related-title">{nextPhoto.title}</span>
+              </div>
+            </a>
+          )}
+        </div>
+      </section>
+    </main>
+  </LayoutComponent>
+) : (
+  <!-- Minimal fallback when no layout wrapper is provided -->
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      <meta name="viewport" content="width=device-width" />
+      <meta name="generator" content={Astro.generator} />
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      
+      <!-- Open Graph -->
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      {photoMetadata.coverImage && (
+        <meta property="og:image" content={photoMetadata.coverImage} />
+      )}
+    </head>
+    <body>
+      <main class="photo-page">
+        <!-- Navigation Header -->
+        <nav class="photo-nav">
+          <div class="nav-left">
+            <a href="/photos" class="back-link">← Back to Gallery</a>
+          </div>
+          <div class="nav-center">
+            <span class="photo-counter">{photoIndex} of {totalPhotos}</span>
+          </div>
+          <div class="nav-right">
+            {/* Photo Navigation */}
+            <div class="photo-navigation">
+              {prevPhoto ? (
+                <a href={`/photos/${prevPhoto.slug}`} class="nav-photo prev" aria-label="Previous photo">
+                  <span class="nav-label">← Previous</span>
+                  <span class="nav-title">{prevPhoto.title}</span>
+                </a>
+              ) : (
+                <div class="nav-photo disabled">
+                  <span class="nav-label">← Previous</span>
+                </div>
+              )}
+              
+              {nextPhoto ? (
+                <a href={`/photos/${nextPhoto.slug}`} class="nav-photo next" aria-label="Next photo">
+                  <span class="nav-label">Next →</span>
+                  <span class="nav-title">{nextPhoto.title}</span>
+                </a>
+              ) : (
+                <div class="nav-photo disabled">
+                  <span class="nav-label">Next →</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </nav>
+        
+        <!-- Photo Display -->
+        <section class="photo-section">
+          <PhotoCard 
+            photo={photoMetadata}
+            showTags={config.gallery.enableTags}
+            priority={true}
+            variant="hero"
+          />
+        </section>
+
+        <!-- Location Map -->
+        {photoMetadata.location?.latitude && photoMetadata.location?.longitude && (
+          <section class="location-section">
+            <h2 class="section-title">Photo Location</h2>
+            <div class="map-container">
+              <MapImage 
+                photo={photoMetadata}
+                width={800}
+                height={400}
+              />
+            </div>
+            {photoMetadata.location?.name && (
+              <p class="location-name">📍 {photoMetadata.location.name}</p>
+            )}
+          </section>
+        )}
+
+        <!-- Metadata Details -->
+        <section class="metadata-section">
+          <h2 class="section-title">Photo Details</h2>
+          <div class="metadata-grid">
+            {photoMetadata.camera && (
+              <div class="metadata-item">
+                <strong>Camera:</strong> {photoMetadata.camera}
+              </div>
+            )}
+            {photoMetadata.lens && (
+              <div class="metadata-item">
+                <strong>Lens:</strong> {photoMetadata.lens}
+              </div>
+            )}
+            {photoMetadata.settings && (
+              <div class="metadata-item">
+                <strong>Settings:</strong>
+                <div class="settings-details">
+                  {photoMetadata.settings.aperture && <span>f/{photoMetadata.settings.aperture}</span>}
+                  {photoMetadata.settings.shutterSpeed && <span>{photoMetadata.settings.shutterSpeed}s</span>}
+                  {photoMetadata.settings.iso && <span>ISO {photoMetadata.settings.iso}</span>}
+                  {photoMetadata.settings.focalLength && <span>{photoMetadata.settings.focalLength}mm</span>}
+                </div>
+              </div>
+            )}
+            <div class="metadata-item">
+              <strong>Published:</strong> {photoMetadata.publishDate.toLocaleDateString()}
+            </div>
+          </div>
+        </section>
+
+        <!-- Related Photos / Navigation Footer -->
+        <section class="related-section">
+          <h2 class="section-title">Continue Exploring</h2>
+          <div class="related-navigation">
+            {prevPhoto && (
+              <a href={`/photos/${prevPhoto.slug}`} class="related-photo">
+                <img src={prevPhoto.coverImage} alt={prevPhoto.title} loading="lazy" />
+                <div class="related-info">
+                  <span class="related-label">← Previous</span>
+                  <span class="related-title">{prevPhoto.title}</span>
+                </div>
+              </a>
+            )}
+            
+            <a href="/photos" class="back-to-gallery">
+              <span class="back-label">View All Photos</span>
+              <span class="back-count">({totalPhotos} total)</span>
+            </a>
+            
+            {nextPhoto && (
+              <a href={`/photos/${nextPhoto.slug}`} class="related-photo next">
+                <img src={nextPhoto.coverImage} alt={nextPhoto.title} loading="lazy" />
+                <div class="related-info">
+                  <span class="related-label">Next →</span>
+                  <span class="related-title">{nextPhoto.title}</span>
+                </div>
+              </a>
+            )}
+          </div>
+        </section>
+      </main>
+      
+      <style>
+        /* Minimal styling for fallback mode */
+        .photo-page {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 1rem;
+        }
+        
+        .photo-nav {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 0;
+          border-bottom: 1px solid #e5e7eb;
+          margin-bottom: 2rem;
+        }
+        
+        .back-link {
+          color: #3b82f6;
+          text-decoration: none;
+        }
+        
+        .photo-counter {
+          color: #6b7280;
+          font-size: 0.9rem;
+        }
+        
+        .section-title {
+          font-size: 1.5rem;
+          margin: 2rem 0 1rem 0;
+          color: #1f2937;
+        }
+        
+        .metadata-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+        
+        .metadata-item {
+          padding: 1rem;
+          background: #f9fafb;
+          border-radius: 0.5rem;
+        }
+        
+        .settings-details {
+          display: flex;
+          gap: 1rem;
+          margin-top: 0.5rem;
+          font-family: monospace;
+        }
+        
+        .related-navigation {
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
+          gap: 2rem;
+          align-items: center;
+          margin-top: 2rem;
+        }
+        
+        .related-photo img {
+          width: 120px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 0.375rem;
+        }
+        
+        .back-to-gallery {
+          text-align: center;
+          text-decoration: none;
+          color: #3b82f6;
+          padding: 1rem;
+          background: #f3f4f6;
+          border-radius: 0.5rem;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+          .section-title {
+            color: #f9fafb;
+          }
+          .metadata-item {
+            background: #374151;
+            color: #f9fafb;
+          }
+          .photo-nav {
+            border-bottom-color: #4b5563;
+          }
+          .back-to-gallery {
+            background: #374151;
+            color: #f9fafb;
+          }
+        }
+      </style>
+    </body>
+  </html>
+)}
