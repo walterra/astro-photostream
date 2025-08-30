@@ -111,7 +111,7 @@ export default defineIntegration({
           addVitePlugin(params, {
             plugin: {
               name: 'astro-photostream-processor',
-              configResolved(config: unknown) {
+              configResolved(config: any) {
                 if (config.command === 'build') {
                   logger.info('Photo processing will run during build');
                 }

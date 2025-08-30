@@ -229,7 +229,8 @@ export class ConfigManager {
    * Load configuration from environment variables
    */
   private loadConfigFromEnv(): Partial<IntegrationOptions> {
-    const envConfig: Partial<IntegrationOptions> = {};
+    const envConfig: Partial<IntegrationOptions> =
+      {} as Partial<IntegrationOptions>;
 
     // AI configuration from environment
     if (process.env.ANTHROPIC_API_KEY) {
@@ -257,21 +258,23 @@ export class ConfigManager {
       envConfig.geolocation = {
         enabled: true,
         apiKey: process.env.OPENCAGE_API_KEY,
+        privacy: {
+          enabled: true,
+          radius: 1000,
+          method: 'blur',
+        },
       };
     }
 
     // Directory configuration from environment
     if (process.env.CONTENT_DIRECTORY) {
-      envConfig.photos = {
-        directory: process.env.CONTENT_DIRECTORY,
-      };
+      if (!envConfig.photos) envConfig.photos = {} as any;
+      (envConfig.photos as any).directory = process.env.CONTENT_DIRECTORY;
     }
 
     if (process.env.PHOTOS_DIRECTORY) {
-      envConfig.photos = {
-        ...envConfig.photos,
-        assetsDirectory: process.env.PHOTOS_DIRECTORY,
-      };
+      if (!envConfig.photos) envConfig.photos = {} as any;
+      (envConfig.photos as any).assetsDirectory = process.env.PHOTOS_DIRECTORY;
     }
 
     return envConfig;

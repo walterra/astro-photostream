@@ -529,18 +529,18 @@ export class PhotoMetadataGenerator {
   constructor(private options: IntegrationOptions) {
     this.exifProcessor = new ExifProcessor();
 
-    if (options.ai.enabled && options.ai.apiKey) {
-      switch (options.ai.provider) {
+    if (this.options.ai.enabled && this.options.ai.apiKey) {
+      switch (this.options.ai.provider) {
         case 'claude':
-          this.llmAnalyzer = new ClaudeAnalyzer(options.ai);
+          this.llmAnalyzer = new ClaudeAnalyzer(this.options.ai);
           break;
         // TODO: Add OpenAI and other providers
         default:
-          console.warn(`Unsupported AI provider: ${options.ai.provider}`);
+          console.warn(`Unsupported AI provider: ${this.options.ai.provider}`);
       }
     }
 
-    if (options.geolocation.enabled) {
+    if (this.options.geolocation.enabled) {
       // Get API key from environment variable for now
       // TODO: Add proper configuration system
       const geocodeApiKey = process.env.OPENCAGE_API_KEY;
