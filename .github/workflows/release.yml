@@ -36,7 +36,14 @@ jobs:
 
       - name: Get version for PR title
         run: |
-          echo "NEW_VERSION=$(pnpm changeset status --output=release.json && jq -r '.releases[0].newVersion' release.json && rm release.json)" >> "$GITHUB_ENV"
+          pnpm changeset status --output=release.json > /dev/null 2>&1 || true
+          if [ -f release.json ]; then
+            VERSION=$(jq -r '.releases[0].newVersion // "packages"' release.json)
+            echo "NEW_VERSION=$VERSION" >> "$GITHUB_ENV"
+            rm release.json
+          else
+            echo "NEW_VERSION=packages" >> "$GITHUB_ENV"
+          fi
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
