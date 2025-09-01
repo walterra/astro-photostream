@@ -1,5 +1,67 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- 3e069c2: Add layout wrapper integration for theme compatibility
+
+  This release introduces layout wrapper support, allowing the astro-photostream integration to seamlessly work with existing Astro themes and layouts.
+
+  **New Features:**
+  - Layout wrapper configuration in integration options
+  - Consuming projects can now provide their own layout components for photo routes
+  - Custom props can be passed to layout wrappers
+  - Content-only route templates that render within provided layouts
+  - Graceful fallback to minimal HTML structure when no layout is provided
+
+  **Configuration:**
+
+  ```javascript
+  // astro.config.mjs
+  export default defineConfig({
+    integrations: [
+      photoStream({
+        layout: {
+          enabled: true,
+          wrapper: './src/layouts/BaseLayout.astro',
+          props: {
+            author: 'Your Name',
+            siteName: 'My Photo Blog',
+          },
+        },
+      }),
+    ],
+  });
+  ```
+
+- a198892: Add Creative Commons photo fetch script for demo
+
+  Implements a new demo script that downloads high-quality Creative Commons photos from Wikimedia Commons with GPS coordinates for testing the photo stream integration features.
+
+  **Demo Script Features:**
+  - Fetches ~20 professional photos from Wikimedia Featured Pictures and Quality Images
+  - Filters for geolocated images with embedded GPS coordinates
+  - Uses deterministic timestamp-based sorting for reproducible results
+  - Includes retry logic and graceful error handling
+  - Downloads to `demo/src/assets/photos/` for metadata generation
+
+  **Usage:**
+
+  ```bash
+  cd demo
+  npm run fetch-photos
+  ```
+
+  The script provides a self-contained way to populate the demo with realistic Creative Commons content for testing AI metadata generation and geolocation features.
+
+### Patch Changes
+
+- 611e39d: Fix photo grid responsive layout to show single column on mobile screens.
+- c8e079f: Fix navigation thumbnails.
+- 6428135: Fix TypeScript compilation errors in core integration files.
+- 611e39d: Setup Git hooks and development workflow automation.
+
 ## 0.2.3
 
 ### Patch Changes
