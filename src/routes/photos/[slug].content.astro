@@ -5,6 +5,7 @@
  * Based on main photo route but extracting only content portion
  */
 import { getCollection, getEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
 import { config } from 'virtual:astro-photostream/config';
 import { layoutConfig, shouldUseLayout, layoutWrapper, layoutProps } from 'virtual:astro-photostream/layout';
 import PhotoCard from '../../components/PhotoCard.astro';
@@ -101,6 +102,29 @@ if (passedLayoutWrapper) {
     LayoutComponent = null;
   }
 }
+
+// Process thumbnail images for navigation
+const prevThumbnail = prevPhoto?.coverImage?.src ? await getImage({
+  src: prevPhoto.coverImage.src,
+  width: 120,
+  height: 120,
+  fit: 'cover',
+  format: 'webp'
+}).catch(error => {
+  console.warn('Failed to optimize previous photo thumbnail:', error);
+  return null;
+}) : null;
+
+const nextThumbnail = nextPhoto?.coverImage?.src ? await getImage({
+  src: nextPhoto.coverImage.src,
+  width: 120,
+  height: 120,
+  fit: 'cover',
+  format: 'webp'
+}).catch(error => {
+  console.warn('Failed to optimize next photo thumbnail:', error);
+  return null;
+}) : null;
 ---
 
 {LayoutComponent ? (
@@ -216,10 +240,12 @@ if (passedLayoutWrapper) {
               class="aps-related-photo"
             >
               <img 
-                src={prevPhoto.coverImage} 
-                alt={prevPhoto.title} 
+                src={prevThumbnail?.src || prevPhoto.coverImage.src} 
+                alt={prevPhoto.coverImage.alt || prevPhoto.title} 
                 loading="lazy" 
                 class="aps-related-image"
+                width={prevThumbnail?.attributes.width || 120}
+                height={prevThumbnail?.attributes.height || 120}
               />
               <div class="aps-related-content">
                 <span class="aps-related-label">← Previous</span>
@@ -246,10 +272,12 @@ if (passedLayoutWrapper) {
               class="aps-related-photo"
             >
               <img 
-                src={nextPhoto.coverImage} 
-                alt={nextPhoto.title} 
+                src={nextThumbnail?.src || nextPhoto.coverImage.src} 
+                alt={nextPhoto.coverImage.alt || nextPhoto.title} 
                 loading="lazy" 
                 class="aps-related-image"
+                width={nextThumbnail?.attributes.width || 120}
+                height={nextThumbnail?.attributes.height || 120}
               />
               <div class="aps-related-content">
                 <span class="aps-related-label">Next →</span>
@@ -383,7 +411,13 @@ if (passedLayoutWrapper) {
           <div class="related-navigation">
             {prevPhoto && (
               <a href={`/photos/${prevPhoto.slug}`} class="related-photo">
-                <img src={prevPhoto.coverImage} alt={prevPhoto.title} loading="lazy" />
+                <img 
+                  src={prevThumbnail?.src || prevPhoto.coverImage.src} 
+                  alt={prevPhoto.coverImage.alt || prevPhoto.title} 
+                  loading="lazy" 
+                  width={prevThumbnail?.attributes.width || 120}
+                  height={prevThumbnail?.attributes.height || 120}
+                />
                 <div class="related-info">
                   <span class="related-label">← Previous</span>
                   <span class="related-title">{prevPhoto.title}</span>
@@ -398,7 +432,13 @@ if (passedLayoutWrapper) {
             
             {nextPhoto && (
               <a href={`/photos/${nextPhoto.slug}`} class="related-photo next">
-                <img src={nextPhoto.coverImage} alt={nextPhoto.title} loading="lazy" />
+                <img 
+                  src={nextThumbnail?.src || nextPhoto.coverImage.src} 
+                  alt={nextPhoto.coverImage.alt || nextPhoto.title} 
+                  loading="lazy" 
+                  width={nextThumbnail?.attributes.width || 120}
+                  height={nextThumbnail?.attributes.height || 120}
+                />
                 <div class="related-info">
                   <span class="related-label">Next →</span>
                   <span class="related-title">{nextPhoto.title}</span>
