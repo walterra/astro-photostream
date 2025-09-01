@@ -2,6 +2,9 @@
 import type { PhotoGridProps } from '../types.js';
 import PhotoCard from './PhotoCard.astro';
 
+// Import consolidated CSS
+import '../styles/aps-core.css';
+
 interface Props extends PhotoGridProps {}
 
 const { 
@@ -15,9 +18,9 @@ const {
 } = Astro.props;
 
 // Extract column configuration
-const { mobile = 2, tablet = 3, desktop = 4 } = columns;
+const { desktop = 4 } = columns;
 
-// Map to aps- prefixed CSS classes
+// Map to consolidated CSS grid classes
 const gridClasses = {
   2: "aps-grid-2col",
   3: "aps-grid-3col", 
@@ -28,7 +31,7 @@ const gridClasses = {
 const gridClass = gridClasses[desktop as keyof typeof gridClasses] || gridClasses[3];
 ---
 
-<div class={`aps-photo-grid ${gridClass} ${className}`}>
+<div class={`aps-grid-responsive ${gridClass} ${className}`}>
   {photos.map(photo => (
     <PhotoCard 
       photo={photo}
@@ -38,91 +41,4 @@ const gridClass = gridClasses[desktop as keyof typeof gridClasses] || gridClasse
   ))}
 </div>
 
-<style>
-  .aps-photo-grid {
-    display: grid;
-    gap: 1rem;
-    width: 100%;
-    grid-template-columns: 1fr;
-  }
-  
-  .aps-grid-2col {
-    grid-template-columns: 1fr;
-  }
-  
-  .aps-grid-3col {
-    grid-template-columns: 1fr;
-  }
-  
-  .aps-grid-4col {
-    grid-template-columns: 1fr;
-  }
-  
-  /* Mobile breakpoint (640px+) */
-  @media (min-width: 640px) {
-    .aps-grid-2col {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .aps-grid-3col {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .aps-grid-4col {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  /* Tablet breakpoint (768px+) */
-  @media (min-width: 768px) {
-    .aps-grid-4col {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  /* Large breakpoint (1024px+) */
-  @media (min-width: 1024px) {
-    .aps-grid-3col {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    
-    .aps-grid-4col {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  
-  /* Extra large breakpoint (1280px+) */
-  @media (min-width: 1280px) {
-    .aps-grid-4col {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-  
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    .aps-photo-grid {
-      gap: 1.5rem;
-    }
-  }
-  
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    .aps-photo-grid * {
-      transition: none;
-    }
-  }
-  
-  /* Print styles */
-  @media print {
-    .aps-photo-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
-    }
-    
-    .aps-grid-2col,
-    .aps-grid-3col,
-    .aps-grid-4col {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-</style>
+<!-- PhotoGrid now uses consolidated CSS from aps-core.css - no custom styles needed -->

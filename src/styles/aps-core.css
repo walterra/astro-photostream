@@ -1,0 +1,585 @@
+/**
+ * APS Core Styles - Shared design system for astro-photostream
+ * Self-contained CSS with no external dependencies
+ * Uses CSS custom properties for theming and aps- prefixed classes
+ */
+
+/* ==========================================================================
+   CSS CUSTOM PROPERTIES (Design Tokens)
+   ========================================================================== */
+
+:root {
+  /* Colors - Light Theme */
+  --aps-color-text-primary: #1f2937;
+  --aps-color-text-secondary: #6b7280;
+  --aps-color-text-muted: #9ca3af;
+  --aps-color-text-inverse: #f9fafb;
+
+  --aps-color-bg-primary: #ffffff;
+  --aps-color-bg-secondary: #f9fafb;
+  --aps-color-bg-muted: #f3f4f6;
+  --aps-color-bg-elevated: #ffffff;
+  --aps-color-bg-placeholder: #e5e7eb;
+  --aps-color-bg-dark: #374151;
+
+  --aps-color-border-light: #e5e7eb;
+  --aps-color-border-medium: #d1d5db;
+  --aps-color-border-dark: #9ca3af;
+
+  --aps-color-accent: #3b82f6;
+  --aps-color-accent-hover: #2563eb;
+  --aps-color-accent-light: #60a5fa;
+
+  /* Spacing Scale */
+  --aps-space-xs: 0.25rem; /* 4px */
+  --aps-space-sm: 0.5rem; /* 8px */
+  --aps-space-md: 1rem; /* 16px */
+  --aps-space-lg: 1.5rem; /* 24px */
+  --aps-space-xl: 2rem; /* 32px */
+  --aps-space-2xl: 3rem; /* 48px */
+  --aps-space-3xl: 4rem; /* 64px */
+
+  /* Typography Scale */
+  --aps-font-size-xs: 0.6875rem; /* 11px */
+  --aps-font-size-sm: 0.75rem; /* 12px */
+  --aps-font-size-base: 0.875rem; /* 14px */
+  --aps-font-size-lg: 1rem; /* 16px */
+  --aps-font-size-xl: 1.125rem; /* 18px */
+  --aps-font-size-2xl: 1.25rem; /* 20px */
+  --aps-font-size-3xl: 1.5rem; /* 24px */
+
+  /* Font Weights */
+  --aps-font-weight-normal: 400;
+  --aps-font-weight-medium: 500;
+  --aps-font-weight-semibold: 600;
+  --aps-font-weight-bold: 700;
+
+  /* Border Radius */
+  --aps-radius-sm: 4px;
+  --aps-radius-md: 6px;
+  --aps-radius-lg: 8px;
+  --aps-radius-xl: 12px;
+
+  /* Shadows */
+  --aps-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --aps-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --aps-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --aps-transition-fast: 0.15s ease;
+  --aps-transition-normal: 0.2s ease;
+  --aps-transition-slow: 0.3s ease;
+
+  /* Breakpoints (for JavaScript) */
+  --aps-breakpoint-sm: 640px;
+  --aps-breakpoint-md: 768px;
+  --aps-breakpoint-lg: 1024px;
+  --aps-breakpoint-xl: 1280px;
+}
+
+/* Dark Theme Override */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --aps-color-text-primary: #f9fafb;
+    --aps-color-text-secondary: #d1d5db;
+    --aps-color-text-muted: #9ca3af;
+    --aps-color-text-inverse: #1f2937;
+
+    --aps-color-bg-primary: #111827;
+    --aps-color-bg-secondary: #1f2937;
+    --aps-color-bg-muted: #374151;
+    --aps-color-bg-elevated: #1f2937;
+    --aps-color-bg-placeholder: #374151;
+    --aps-color-bg-dark: #111827;
+
+    --aps-color-border-light: #374151;
+    --aps-color-border-medium: #4b5563;
+    --aps-color-border-dark: #6b7280;
+
+    --aps-color-accent-light: #60a5fa;
+
+    --aps-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --aps-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --aps-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+/* Layout Utilities */
+.aps-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--aps-space-md);
+}
+
+.aps-grid {
+  display: grid;
+  gap: var(--aps-space-md);
+}
+
+.aps-flex {
+  display: flex;
+}
+
+.aps-flex-col {
+  flex-direction: column;
+}
+
+.aps-items-center {
+  align-items: center;
+}
+
+.aps-justify-between {
+  justify-content: space-between;
+}
+
+.aps-justify-center {
+  justify-content: center;
+}
+
+/* Spacing Utilities */
+.aps-gap-xs {
+  gap: var(--aps-space-xs);
+}
+.aps-gap-sm {
+  gap: var(--aps-space-sm);
+}
+.aps-gap-md {
+  gap: var(--aps-space-md);
+}
+.aps-gap-lg {
+  gap: var(--aps-space-lg);
+}
+.aps-gap-xl {
+  gap: var(--aps-space-xl);
+}
+
+.aps-p-xs {
+  padding: var(--aps-space-xs);
+}
+.aps-p-sm {
+  padding: var(--aps-space-sm);
+}
+.aps-p-md {
+  padding: var(--aps-space-md);
+}
+.aps-p-lg {
+  padding: var(--aps-space-lg);
+}
+
+.aps-m-xs {
+  margin: var(--aps-space-xs);
+}
+.aps-m-sm {
+  margin: var(--aps-space-sm);
+}
+.aps-m-md {
+  margin: var(--aps-space-md);
+}
+.aps-m-lg {
+  margin: var(--aps-space-lg);
+}
+.aps-m-xl {
+  margin: var(--aps-space-xl);
+}
+.aps-m-2xl {
+  margin: var(--aps-space-2xl);
+}
+.aps-m-3xl {
+  margin: var(--aps-space-3xl);
+}
+
+.aps-mb-xs {
+  margin-bottom: var(--aps-space-xs);
+}
+.aps-mb-sm {
+  margin-bottom: var(--aps-space-sm);
+}
+.aps-mb-md {
+  margin-bottom: var(--aps-space-md);
+}
+.aps-mb-lg {
+  margin-bottom: var(--aps-space-lg);
+}
+.aps-mb-xl {
+  margin-bottom: var(--aps-space-xl);
+}
+.aps-mb-2xl {
+  margin-bottom: var(--aps-space-2xl);
+}
+
+.aps-mt-xs {
+  margin-top: var(--aps-space-xs);
+}
+.aps-mt-sm {
+  margin-top: var(--aps-space-sm);
+}
+.aps-mt-md {
+  margin-top: var(--aps-space-md);
+}
+.aps-mt-lg {
+  margin-top: var(--aps-space-lg);
+}
+
+/* Typography Utilities */
+.aps-text-xs {
+  font-size: var(--aps-font-size-xs);
+}
+.aps-text-sm {
+  font-size: var(--aps-font-size-sm);
+}
+.aps-text-base {
+  font-size: var(--aps-font-size-base);
+}
+.aps-text-lg {
+  font-size: var(--aps-font-size-lg);
+}
+.aps-text-xl {
+  font-size: var(--aps-font-size-xl);
+}
+.aps-text-2xl {
+  font-size: var(--aps-font-size-2xl);
+}
+.aps-text-3xl {
+  font-size: var(--aps-font-size-3xl);
+}
+
+.aps-font-normal {
+  font-weight: var(--aps-font-weight-normal);
+}
+.aps-font-medium {
+  font-weight: var(--aps-font-weight-medium);
+}
+.aps-font-semibold {
+  font-weight: var(--aps-font-weight-semibold);
+}
+.aps-font-bold {
+  font-weight: var(--aps-font-weight-bold);
+}
+
+.aps-text-primary {
+  color: var(--aps-color-text-primary);
+}
+.aps-text-secondary {
+  color: var(--aps-color-text-secondary);
+}
+.aps-text-muted {
+  color: var(--aps-color-text-muted);
+}
+.aps-text-center {
+  text-align: center;
+}
+
+/* Background Utilities */
+.aps-bg-primary {
+  background-color: var(--aps-color-bg-primary);
+}
+.aps-bg-secondary {
+  background-color: var(--aps-color-bg-secondary);
+}
+.aps-bg-muted {
+  background-color: var(--aps-color-bg-muted);
+}
+.aps-bg-placeholder {
+  background-color: var(--aps-color-bg-placeholder);
+}
+
+/* Border Utilities */
+.aps-border {
+  border: 1px solid var(--aps-color-border-light);
+}
+.aps-border-medium {
+  border: 1px solid var(--aps-color-border-medium);
+}
+.aps-border-t {
+  border-top: 1px solid var(--aps-color-border-light);
+}
+.aps-border-b {
+  border-bottom: 1px solid var(--aps-color-border-light);
+}
+
+.aps-rounded-sm {
+  border-radius: var(--aps-radius-sm);
+}
+.aps-rounded-md {
+  border-radius: var(--aps-radius-md);
+}
+.aps-rounded-lg {
+  border-radius: var(--aps-radius-lg);
+}
+.aps-rounded-xl {
+  border-radius: var(--aps-radius-xl);
+}
+
+/* Shadow Utilities */
+.aps-shadow-sm {
+  box-shadow: var(--aps-shadow-sm);
+}
+.aps-shadow-md {
+  box-shadow: var(--aps-shadow-md);
+}
+.aps-shadow-lg {
+  box-shadow: var(--aps-shadow-lg);
+}
+
+/* ==========================================================================
+   COMPONENT BASE CLASSES
+   ========================================================================== */
+
+/* Card Component Base */
+.aps-card {
+  background: var(--aps-color-bg-elevated);
+  border: 1px solid var(--aps-color-border-light);
+  border-radius: var(--aps-radius-lg);
+  box-shadow: var(--aps-shadow-sm);
+  overflow: hidden;
+  transition: box-shadow var(--aps-transition-normal);
+}
+
+.aps-card:hover {
+  box-shadow: var(--aps-shadow-md);
+}
+
+.aps-card-body {
+  padding: var(--aps-space-md);
+}
+
+/* Button Component Base */
+.aps-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aps-space-sm);
+  padding: var(--aps-space-sm) var(--aps-space-md);
+  background: var(--aps-color-bg-muted);
+  border: 1px solid var(--aps-color-border-medium);
+  border-radius: var(--aps-radius-md);
+  color: var(--aps-color-text-primary);
+  text-decoration: none;
+  font-size: var(--aps-font-size-base);
+  font-weight: var(--aps-font-weight-medium);
+  cursor: pointer;
+  transition: all var(--aps-transition-fast);
+}
+
+.aps-button:hover {
+  background: var(--aps-color-bg-secondary);
+  border-color: var(--aps-color-border-dark);
+}
+
+.aps-button:focus {
+  outline: 2px solid var(--aps-color-accent);
+  outline-offset: 2px;
+}
+
+.aps-button--primary {
+  background: var(--aps-color-accent);
+  border-color: var(--aps-color-accent);
+  color: var(--aps-color-text-inverse);
+}
+
+.aps-button--primary:hover {
+  background: var(--aps-color-accent-hover);
+  border-color: var(--aps-color-accent-hover);
+}
+
+/* Image Component Base */
+.aps-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--aps-transition-slow);
+}
+
+.aps-image--rounded {
+  border-radius: var(--aps-radius-lg);
+}
+
+.aps-image-container {
+  overflow: hidden;
+  border-radius: var(--aps-radius-lg);
+}
+
+.aps-image-container:hover .aps-image {
+  transform: scale(1.05);
+}
+
+/* Placeholder Component Base */
+.aps-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--aps-color-bg-placeholder);
+  border-radius: var(--aps-radius-lg);
+  color: var(--aps-color-text-muted);
+  font-size: var(--aps-font-size-base);
+}
+
+/* Link Component Base */
+.aps-link {
+  color: var(--aps-color-text-secondary);
+  text-decoration: none;
+  transition: color var(--aps-transition-fast);
+}
+
+.aps-link:hover {
+  color: var(--aps-color-accent);
+}
+
+.aps-link--primary {
+  color: var(--aps-color-text-primary);
+}
+
+/* ==========================================================================
+   RESPONSIVE GRID SYSTEM
+   ========================================================================== */
+
+.aps-grid-responsive {
+  display: grid;
+  gap: var(--aps-space-md);
+  grid-template-columns: 1fr;
+}
+
+.aps-grid-2col {
+  grid-template-columns: 1fr;
+}
+.aps-grid-3col {
+  grid-template-columns: 1fr;
+}
+.aps-grid-4col {
+  grid-template-columns: 1fr;
+}
+
+/* Mobile (640px+) */
+@media (min-width: 640px) {
+  .aps-grid-2col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .aps-grid-3col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .aps-grid-4col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+  .aps-container {
+    padding: var(--aps-space-lg);
+  }
+}
+
+/* Large (1024px+) */
+@media (min-width: 1024px) {
+  .aps-grid-3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .aps-grid-4col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Extra Large (1280px+) */
+@media (min-width: 1280px) {
+  .aps-grid-4col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY & PERFORMANCE
+   ========================================================================== */
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .aps-card,
+  .aps-image-container,
+  .aps-placeholder,
+  .aps-button {
+    border-width: 2px;
+  }
+
+  .aps-grid-responsive {
+    gap: var(--aps-space-lg);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .aps-image {
+    transition: none;
+  }
+
+  .aps-image-container:hover .aps-image {
+    transform: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .aps-grid-responsive {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--aps-space-sm);
+  }
+
+  .aps-card {
+    background: white;
+    border-color: #000;
+    box-shadow: none;
+  }
+
+  .aps-image {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   FOCUS MANAGEMENT
+   ========================================================================== */
+
+.aps-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.aps-focus-outline:focus {
+  outline: 2px solid var(--aps-color-accent);
+  outline-offset: 2px;
+}
+
+/* Skip Link for Accessibility */
+.aps-skip-link {
+  position: absolute;
+  top: -40px;
+  left: var(--aps-space-md);
+  background: var(--aps-color-accent);
+  color: var(--aps-color-text-inverse);
+  padding: var(--aps-space-sm);
+  text-decoration: none;
+  border-radius: 0 0 var(--aps-radius-sm) var(--aps-radius-sm);
+  z-index: 100;
+  font-size: var(--aps-font-size-base);
+}
+
+.aps-skip-link:focus {
+  top: 0;
+}

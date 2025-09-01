@@ -5,6 +5,9 @@
  * Uses Geoapify Static Map API for privacy-focused location display
  */
 
+// Import consolidated CSS
+import '../styles/aps-core.css';
+
 interface Props {
   latitude: number;
   longitude: number;
@@ -48,23 +51,23 @@ const altText = locationName
       alt={altText}
       width={width}
       height={height}
-      class="aps-map-img"
+      class="aps-image aps-rounded-lg aps-shadow-sm"
       loading="lazy"
     />
   ) : (
     <!-- Fallback when no API key available -->
     <div 
-      class="aps-map-fallback"
+      class="aps-placeholder aps-text-secondary aps-p-md aps-text-center"
       style={`width: ${width}px; height: ${height}px;`}
     >
-      <div class="aps-fallback-content">
-        <svg class="aps-location-icon" fill="currentColor" viewBox="0 0 20 20">
+      <div>
+        <svg class="aps-map-icon" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
         </svg>
-        <p class="aps-location-name">
+        <p class="aps-text-base aps-font-medium aps-mb-xs">
           {locationName || 'Location'}
         </p>
-        <p class="aps-coordinates">
+        <p class="aps-text-xs aps-text-muted">
           {latitude.toFixed(4)}, {longitude.toFixed(4)}
         </p>
       </div>
@@ -73,115 +76,26 @@ const altText = locationName
 </div>
 
 <style>
+  /* Component-specific styles that can't be utilities */
   .aps-map-image {
     display: block;
     width: fit-content;
     margin: 0 auto;
   }
   
-  .aps-map-img {
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .aps-map-fallback {
-    background-color: #e5e7eb;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #6b7280;
-    font-family: system-ui, -apple-system, sans-serif;
-  }
-  
-  .aps-fallback-content {
-    text-align: center;
-    padding: 1rem;
-  }
-  
-  .aps-location-icon {
+  .aps-map-icon {
     width: 32px;
     height: 32px;
-    margin: 0 auto 8px;
+    margin: 0 auto var(--aps-space-sm);
     display: block;
     opacity: 0.7;
   }
   
-  .aps-location-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin: 0 0 4px 0;
-    color: inherit;
-  }
-  
-  .aps-coordinates {
-    font-size: 0.75rem;
-    margin: 0;
-    opacity: 0.8;
-    font-family: monospace;
-  }
-  
-  /* Dark mode support */
-  @media (prefers-color-scheme: dark) {
-    .aps-map-fallback {
-      background-color: #374151;
-      color: #d1d5db;
-    }
-    
-    .aps-map-img {
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
-  }
-  
   /* Responsive adjustments */
   @media (max-width: 768px) {
-    .aps-map-img,
-    .aps-map-fallback {
-      border-radius: 6px;
-    }
-    
-    .aps-location-icon {
+    .aps-map-icon {
       width: 28px;
       height: 28px;
-    }
-    
-    .aps-location-name {
-      font-size: 0.8125rem;
-    }
-    
-    .aps-coordinates {
-      font-size: 0.6875rem;
-    }
-  }
-  
-  /* High contrast mode */
-  @media (prefers-contrast: high) {
-    .aps-map-img,
-    .aps-map-fallback {
-      border: 2px solid currentColor;
-    }
-    
-    .aps-location-icon {
-      opacity: 1;
-    }
-  }
-  
-  /* Print styles */
-  @media print {
-    .aps-map-img {
-      box-shadow: none;
-      border: 1px solid #000;
-    }
-    
-    .aps-map-fallback {
-      background-color: #f5f5f5;
-      color: #000;
-      box-shadow: none;
-      border: 1px solid #000;
     }
   }
 </style>

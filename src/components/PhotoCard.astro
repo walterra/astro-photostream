@@ -2,6 +2,9 @@
 import type { PhotoCardProps } from '../types.js';
 import { Image, getImage } from 'astro:assets';
 
+// Import consolidated CSS
+import '../styles/aps-core.css';
+
 interface Props extends PhotoCardProps {
   size?: "small" | "medium" | "large";
 }
@@ -15,9 +18,9 @@ const {
 
 // Size-specific classes using aps- prefix
 const sizeClasses = {
-  small: "aps-card aps-card--small",
-  medium: "aps-card aps-card--medium", 
-  large: "aps-card aps-card--large",
+  small: "aps-photo-card--small",
+  medium: "aps-photo-card--medium", 
+  large: "aps-photo-card--large",
 };
 
 // Size-specific image dimensions
@@ -43,13 +46,13 @@ const optimizedImage = photo.coverImage?.src ? await getImage({
 ---
 
 <article class="aps-photo-card">
-  <a href={`/photos/${photo.id}`} class="aps-photo-link">
+  <a href={`/photos/${photo.id}`} class="aps-link">
     <div class={`aps-image-container ${sizeClasses[size]}`}>
       {optimizedImage ? (
         <img
           src={optimizedImage.src}
           alt={photo.coverImage.alt || photo.title || `Photo ${photo.id}`}
-          class="aps-photo-image"
+          class="aps-image aps-image--rounded"
           loading={loading}
           width={optimizedImage.attributes.width}
           height={optimizedImage.attributes.height}
@@ -58,21 +61,21 @@ const optimizedImage = photo.coverImage?.src ? await getImage({
         <img
           src={photo.coverImage.src}
           alt={photo.coverImage?.alt || photo.title || `Photo ${photo.id}`}
-          class="aps-photo-image"
+          class="aps-image aps-image--rounded"
           loading={loading}
           width={dimensions.width}
           height={dimensions.height}
         />
       ) : (
         <div class="aps-placeholder">
-          <span class="aps-placeholder-text">No image</span>
+          <span class="aps-text-muted aps-text-base">No image</span>
         </div>
       )}
     </div>
     
     {photo.publishDate && (
-      <div class="aps-date-container">
-        <time class="aps-date-text" datetime={photo.publishDate.toISOString()}>
+      <div class="aps-mt-sm">
+        <time class="aps-text-xs aps-text-secondary" datetime={photo.publishDate.toISOString()}>
           {photo.publishDate.toLocaleDateString()}
         </time>
       </div>
@@ -81,137 +84,29 @@ const optimizedImage = photo.coverImage?.src ? await getImage({
 </article>
 
 <style>
+  /* Component-specific styles that can't be utilities */
   .aps-photo-card {
     display: block;
     width: 100%;
   }
   
-  .aps-photo-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  .aps-image-container {
-    overflow: hidden;
-    border-radius: 8px;
-    transition: transform 0.2s ease;
-  }
-  
-  .aps-photo-card:hover .aps-image-container {
-    transform: scale(1.02);
-  }
-  
-  .aps-card {
-    width: 100%;
-    position: relative;
-  }
-  
-  .aps-card--small {
+  .aps-photo-card--small {
     aspect-ratio: 1;
     max-width: 384px;
   }
   
-  .aps-card--medium {
+  .aps-photo-card--medium {
     aspect-ratio: 4/3;
   }
   
-  .aps-card--large {
+  .aps-photo-card--large {
     aspect-ratio: 3/2;
-  }
-  
-  .aps-photo-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-  }
-  
-  .aps-photo-card:hover .aps-photo-image {
-    transform: scale(1.05);
-  }
-  
-  .aps-placeholder {
-    width: 100%;
-    height: 100%;
-    background-color: #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-  }
-  
-  .aps-placeholder-text {
-    color: #9ca3af;
-    font-size: 0.875rem;
-  }
-  
-  .aps-date-container {
-    margin-top: 0.5rem;
-  }
-  
-  .aps-date-text {
-    font-size: 0.75rem;
-    color: #6b7280;
-    font-weight: 400;
-  }
-  
-  /* Dark mode support */
-  @media (prefers-color-scheme: dark) {
-    .aps-placeholder {
-      background-color: #374151;
-    }
-    
-    .aps-placeholder-text {
-      color: #9ca3af;
-    }
-    
-    .aps-date-text {
-      color: #9ca3af;
-    }
   }
   
   /* Responsive adjustments */
   @media (max-width: 768px) {
-    .aps-card--small {
+    .aps-photo-card--small {
       max-width: none;
-    }
-    
-    .aps-image-container {
-      border-radius: 6px;
-    }
-    
-    .aps-photo-image {
-      border-radius: 6px;
-    }
-    
-    .aps-placeholder {
-      border-radius: 6px;
-    }
-  }
-  
-  /* High contrast mode */
-  @media (prefers-contrast: high) {
-    .aps-image-container {
-      border: 2px solid currentColor;
-    }
-    
-    .aps-placeholder {
-      border: 2px solid currentColor;
-    }
-  }
-  
-  /* Reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    .aps-image-container,
-    .aps-photo-image {
-      transition: none;
-    }
-    
-    .aps-photo-card:hover .aps-image-container,
-    .aps-photo-card:hover .aps-photo-image {
-      transform: none;
     }
   }
 </style>
