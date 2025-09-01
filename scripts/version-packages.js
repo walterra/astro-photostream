@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
 
 // Run changeset version
-execSync('changeset version', { stdio: 'inherit' });
+execSync('pnpm changeset version', { stdio: 'inherit' });
 
 // Read the package.json to get the new version
 const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
