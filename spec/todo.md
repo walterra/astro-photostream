@@ -1,2 +1,24 @@
-- this astro integration now provides certain routes, for example for the photo index page and individual index pages. what are astro best practice ways to make use of templates, styles, themes that the consuming astro project might want to provide. for example, for my blog i have astro with cactus theme. when i install the photo stream integration, the provided routes will not pick up the cactus theme.
-- review this repo in the style of /Users/walterra/dev/eddoapp/dev/REVIEW-2025-06-18.md
+- photo description are not showing up on the individual photo page
+
+## Checklist for Production Readiness
+
+- [ ] **Implement comprehensive test suite** (unit, integration, and CLI tests)
+- [ ] **Add input validation and sanitization** for all user data
+- [ ] **Configure security scanning** in CI/CD pipeline
+- [ ] **Implement proper error boundaries** for AI processing pipeline
+- [ ] **Add structured logging** with configurable levels
+- [ ] **Implement API rate limiting** and retry logic
+- [ ] **Add health check endpoints** for monitoring
+- [ ] **Create performance benchmarks** and optimization
+- [ ] **Implement memory management** for batch operations
+- [ ] **Add configuration validation** with helpful error messages
+- [ ] **Create debugging tools** with verbose modes
+- [ ] **Add parallel processing** for AI operations
+- [ ] **Implement caching strategy** for metadata
+- [ ] **Add bundle size analysis** and optimization
+- [ ] **Create migration guides** and troubleshooting docs
+- [ ] **Add architectural documentation** with diagrams
+- [ ] **Implement hot reload support** for config changes
+- [ ] **Add performance monitoring** and metrics
+- [ ] **Configure automated dependency updates**
+- [ ] **Add accessibility testing** for web components
