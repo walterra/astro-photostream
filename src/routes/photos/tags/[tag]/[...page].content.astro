@@ -301,16 +301,16 @@ if (passedLayoutWrapper) {
 
         <!-- Map Section -->
         {photos.length > 0 && photosWithLocation.length > 0 && config.gallery.enableMap && (
-          <section class="map-section">
+          <section class="aps-map-section">
             <h2 class="section-title">Photo Locations</h2>
-            <div class="map-container">
+            <div class="aps-map-container-inner">
               <MultiMarkerMap 
                 photos={photosWithLocation} 
                 height="400px" 
               />
             </div>
             {photosWithLocation.length < photos.length && (
-              <p class="map-note">
+              <p class="aps-map-note">
                 Showing {photosWithLocation.length} of {photos.length} photos with location data
               </p>
             )}
@@ -565,7 +565,12 @@ if (passedLayoutWrapper) {
   background: #e5e7eb;
 }
 
-.aps-map-container {
+.aps-map-section {
+  margin: 3rem 0;
+}
+
+.aps-map-container,
+.aps-map-container-inner {
   border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);

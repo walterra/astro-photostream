@@ -41,30 +41,30 @@ const altText = locationName
   : `Map showing location at coordinates ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
 ---
 
-<div class={`map-image-container ${className}`}>
+<div class={`aps-map-image ${className}`}>
   {mapUrl ? (
     <img
       src={mapUrl}
       alt={altText}
       width={width}
       height={height}
-      class="rounded-lg shadow-sm"
+      class="aps-map-img"
       loading="lazy"
     />
   ) : (
     <!-- Fallback when no API key available -->
     <div 
-      class="bg-gray-200 dark:bg-gray-700 rounded-lg shadow-sm flex items-center justify-center text-gray-500 dark:text-gray-400"
+      class="aps-map-fallback"
       style={`width: ${width}px; height: ${height}px;`}
     >
-      <div class="text-center">
-        <svg class="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+      <div class="aps-fallback-content">
+        <svg class="aps-location-icon" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
         </svg>
-        <p class="text-sm">
+        <p class="aps-location-name">
           {locationName || 'Location'}
         </p>
-        <p class="text-xs mt-1">
+        <p class="aps-coordinates">
           {latitude.toFixed(4)}, {longitude.toFixed(4)}
         </p>
       </div>
@@ -72,12 +72,116 @@ const altText = locationName
   )}
 </div>
 
-<!-- 
-  Aligned with reference implementation:
-  - Uses Geoapify Static Map API with same parameters
-  - Fixed zoom level of 8 for privacy protection
-  - Red marker styling matching reference
-  - Fallback display when API key unavailable
-  - Lazy loading for performance
-  - Rounded corners and shadow matching reference design
--->
+<style>
+  .aps-map-image {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+  }
+  
+  .aps-map-img {
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .aps-map-fallback {
+    background-color: #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  
+  .aps-fallback-content {
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .aps-location-icon {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 8px;
+    display: block;
+    opacity: 0.7;
+  }
+  
+  .aps-location-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    color: inherit;
+  }
+  
+  .aps-coordinates {
+    font-size: 0.75rem;
+    margin: 0;
+    opacity: 0.8;
+    font-family: monospace;
+  }
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .aps-map-fallback {
+      background-color: #374151;
+      color: #d1d5db;
+    }
+    
+    .aps-map-img {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .aps-map-img,
+    .aps-map-fallback {
+      border-radius: 6px;
+    }
+    
+    .aps-location-icon {
+      width: 28px;
+      height: 28px;
+    }
+    
+    .aps-location-name {
+      font-size: 0.8125rem;
+    }
+    
+    .aps-coordinates {
+      font-size: 0.6875rem;
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .aps-map-img,
+    .aps-map-fallback {
+      border: 2px solid currentColor;
+    }
+    
+    .aps-location-icon {
+      opacity: 1;
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .aps-map-img {
+      box-shadow: none;
+      border: 1px solid #000;
+    }
+    
+    .aps-map-fallback {
+      background-color: #f5f5f5;
+      color: #000;
+      box-shadow: none;
+      border: 1px solid #000;
+    }
+  }
+</style>

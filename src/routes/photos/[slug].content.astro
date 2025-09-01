@@ -333,7 +333,7 @@ if (passedLayoutWrapper) {
         {photoMetadata.location?.latitude && photoMetadata.location?.longitude && (
           <section class="location-section">
             <h2 class="section-title">Photo Location</h2>
-            <div class="map-container">
+            <div class="aps-map-container-inner">
               <MapImage 
                 photo={photoMetadata}
                 width={800}
@@ -349,7 +349,7 @@ if (passedLayoutWrapper) {
         <!-- Metadata Details -->
         <section class="metadata-section">
           <h2 class="section-title">Photo Details</h2>
-          <div class="metadata-grid">
+          <div class="aps-metadata-grid-inner">
             {photoMetadata.camera && (
               <div class="metadata-item">
                 <strong>Camera:</strong> {photoMetadata.camera}
@@ -571,7 +571,8 @@ if (passedLayoutWrapper) {
   margin-bottom: 1.5rem;
 }
 
-.aps-map-container {
+.aps-map-container,
+.aps-map-container-inner {
   border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -583,7 +584,8 @@ if (passedLayoutWrapper) {
   color: #6b7280;
 }
 
-.aps-metadata-grid {
+.aps-metadata-grid,
+.aps-metadata-grid-inner {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
