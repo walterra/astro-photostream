@@ -221,6 +221,40 @@ The system uses a sophisticated 4-layer configuration cascade:
 - **Integration** - Test via demo site or direct import
 - **Components** - Can be imported individually for testing
 
+## Visual Testing with Playwright MCP
+
+### **Mandatory Screenshot Validation Process**
+
+When using Playwright MCP tools for visual verification:
+
+1. **Always Read Screenshots Immediately**: After taking any screenshot, MUST use Read tool to examine visual content
+2. **Explicit Visual Validation**: Document what you see vs. what you expected
+3. **Never Declare Success Without Visual Confirmation**: DOM changes ≠ visual success
+4. **Screenshot Assertion Pattern**: Use this format:
+
+```
+⏺ playwright - Take screenshot (filename: "feature-test.png")
+⏺ Read(.playwright-mcp/feature-test.png)
+⏺ VISUAL VERIFICATION:
+  - Expected: [specific visual outcome]
+  - Actual: [what screenshot shows]
+  - Result: ✅ PASS / ❌ FAIL with details
+```
+
+### **Visual Testing Quality Gates**
+
+- **Before claiming "working"**: Take screenshot + read + verify
+- **UI Component Changes**: Screenshot before/after comparison required
+- **Image/Media Features**: Visual validation mandatory
+- **Layout/Styling Changes**: Screenshot verification required
+
+### **Anti-Patterns to Avoid**
+
+- Taking screenshots without reading them
+- Declaring success based only on code/DOM changes
+- Using phrases like "Perfect!" without visual verification
+- Relying on user correction for visual validation
+
 ## Coding Styles
 
 ### Positive Prompt

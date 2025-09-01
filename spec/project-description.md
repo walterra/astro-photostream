@@ -54,6 +54,13 @@ This allows photo routes to inherit the consuming project's theme, navigation, a
 - **Lint**: `pnpm lint`
 - **Format**: `pnpm format`
 
+## Visual Testing
+
+**UI Components**: PhotoCard, PhotoGrid, PhotoStream, MultiMarkerMap, MapImage
+**Test Server**: http://localhost:4321 (demo site)
+**Screenshot Directory**: .playwright-mcp/
+**Visual Test Patterns**: Image thumbnails, responsive grids, map displays, navigation elements
+
 ## Structure
 
 **Reference Implementation**: `/Users/walterra/dev/walterra-dev` (Cactus theme integration)
