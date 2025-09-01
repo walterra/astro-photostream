@@ -34,6 +34,10 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Get version for PR title
+        run: |
+          echo "NEW_VERSION=$(pnpm changeset status --output=release.json && jq -r '.releases[0].newVersion' release.json && rm release.json)" >> "$GITHUB_ENV"
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
@@ -41,6 +45,7 @@ jobs:
           publish: pnpm release
           createGithubReleases: true
           version: node scripts/version-packages.js
+          title: "chore: release v${{env.NEW_VERSION}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
