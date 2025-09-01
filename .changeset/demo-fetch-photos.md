@@ -1,5 +1,5 @@
 ---
-'astro-photostream': patch
+'astro-photostream': minor
 ---
 
 Add Creative Commons photo fetch script for demo
