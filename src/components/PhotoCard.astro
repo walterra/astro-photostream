@@ -2,6 +2,9 @@
 import type { PhotoCardProps } from '../types.js';
 import { Image, getImage } from 'astro:assets';
 
+// Import consolidated CSS
+import '../styles/aps-core.css';
+
 interface Props extends PhotoCardProps {
   size?: "small" | "medium" | "large";
 }
@@ -13,11 +16,11 @@ const {
   class: className = ''
 } = Astro.props;
 
-// Size-specific classes aligned with reference implementation
+// Size-specific classes using aps- prefix
 const sizeClasses = {
-  small: "aspect-square w-full max-w-sm",
-  medium: "aspect-[4/3] w-full", 
-  large: "aspect-[3/2] w-full",
+  small: "aps-photo-card--small",
+  medium: "aps-photo-card--medium", 
+  large: "aps-photo-card--large",
 };
 
 // Size-specific image dimensions
@@ -42,14 +45,14 @@ const optimizedImage = photo.coverImage?.src ? await getImage({
 }) : null;
 ---
 
-<article class="group">
-  <a href={`/photos/${photo.id}`} class="block">
-    <div class={`overflow-hidden rounded-lg ${sizeClasses[size]}`}>
+<article class="aps-photo-card">
+  <a href={`/photos/${photo.id}`} class="aps-link">
+    <div class={`aps-image-container ${sizeClasses[size]}`}>
       {optimizedImage ? (
         <img
           src={optimizedImage.src}
           alt={photo.coverImage.alt || photo.title || `Photo ${photo.id}`}
-          class="h-full w-full object-cover rounded-lg transition-transform group-hover:scale-105"
+          class="aps-image aps-image--rounded"
           loading={loading}
           width={optimizedImage.attributes.width}
           height={optimizedImage.attributes.height}
@@ -58,21 +61,21 @@ const optimizedImage = photo.coverImage?.src ? await getImage({
         <img
           src={photo.coverImage.src}
           alt={photo.coverImage?.alt || photo.title || `Photo ${photo.id}`}
-          class="h-full w-full object-cover rounded-lg transition-transform group-hover:scale-105"
+          class="aps-image aps-image--rounded"
           loading={loading}
           width={dimensions.width}
           height={dimensions.height}
         />
       ) : (
-        <div class="h-full w-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-          <span class="text-gray-400">No image</span>
+        <div class="aps-placeholder">
+          <span class="aps-text-muted aps-text-base">No image</span>
         </div>
       )}
     </div>
     
     {photo.publishDate && (
-      <div class="mt-2">
-        <time class="text-xs text-gray-600 dark:text-gray-400" datetime={photo.publishDate.toISOString()}>
+      <div class="aps-mt-sm">
+        <time class="aps-text-xs aps-text-secondary" datetime={photo.publishDate.toISOString()}>
           {photo.publishDate.toLocaleDateString()}
         </time>
       </div>
@@ -80,11 +83,30 @@ const optimizedImage = photo.coverImage?.src ? await getImage({
   </a>
 </article>
 
-<!-- 
-  Aligned with reference implementation:
-  - Uses Tailwind classes exclusively (no custom CSS)
-  - Clean card design with hover effects
-  - Aspect ratio variants (square, 4:3, 3:2)
-  - Minimal metadata display (just publish date)
-  - Group hover pattern for image scaling
--->
+<style>
+  /* Component-specific styles that can't be utilities */
+  .aps-photo-card {
+    display: block;
+    width: 100%;
+  }
+  
+  .aps-photo-card--small {
+    aspect-ratio: 1;
+    max-width: 384px;
+  }
+  
+  .aps-photo-card--medium {
+    aspect-ratio: 4/3;
+  }
+  
+  .aps-photo-card--large {
+    aspect-ratio: 3/2;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .aps-photo-card--small {
+      max-width: none;
+    }
+  }
+</style>

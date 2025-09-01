@@ -1,0 +1,329 @@
+---
+/**
+ * Minimal fallback layout for astro-photostream
+ * Used when no custom layout wrapper is provided by the consuming project
+ * Provides basic document structure with responsive design and dark mode support
+ */
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  author?: string;
+  publishDate?: Date;
+  [key: string]: unknown;
+}
+
+const { 
+  title, 
+  description, 
+  image, 
+  author, 
+  publishDate,
+  ...additionalProps 
+} = Astro.props as Props;
+
+// Use site URL if available from Astro config
+const siteUrl = Astro.site?.toString() || '';
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={image} />}
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    {image && <meta property="twitter:image" content={image} />}
+    
+    <!-- Author and Date -->
+    {author && <meta name="author" content={author} />}
+    {publishDate && (
+      <>
+        <meta property="article:published_time" content={publishDate.toISOString()} />
+        <meta name="date" content={publishDate.toISOString()} />
+      </>
+    )}
+    
+    <!-- Preload critical fonts for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  
+  <body>
+    <div id="page-container">
+      <!-- Skip to main content for accessibility -->
+      <a href="#main-content" class="skip-link">Skip to main content</a>
+      
+      <header class="site-header">
+        <nav class="site-nav">
+          <a href="/" class="site-logo">Photo Stream</a>
+          <div class="nav-links">
+            <a href="/photos" class="nav-link">Photos</a>
+          </div>
+        </nav>
+      </header>
+      
+      <main id="main-content">
+        <slot />
+      </main>
+      
+      <footer class="site-footer">
+        <p>&copy; {new Date().getFullYear()} Photo Stream. Powered by Astro.</p>
+      </footer>
+    </div>
+  </body>
+</html>
+
+<style>
+  /* Modern CSS Reset */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  
+  * {
+    margin: 0;
+  }
+  
+  html,
+  body {
+    height: 100%;
+  }
+  
+  body {
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  }
+  
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+  
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+  
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+  
+  /* Layout Structure */
+  #page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    color: #1f2937;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  main {
+    flex-grow: 1;
+    width: 100%;
+  }
+  
+  /* Skip Link for Accessibility */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #3b82f6;
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 0 0 4px 4px;
+    z-index: 100;
+    font-size: 14px;
+  }
+  
+  .skip-link:focus {
+    top: 0;
+  }
+  
+  /* Header Styles */
+  .site-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  
+  .site-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+  }
+  
+  .site-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .site-logo:hover {
+    color: #3b82f6;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+  
+  .nav-link {
+    color: #6b7280;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .nav-link:hover {
+    color: #3b82f6;
+  }
+  
+  /* Footer Styles */
+  .site-footer {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .site-nav {
+      padding: 0.75rem 1rem;
+    }
+    
+    .nav-links {
+      gap: 1rem;
+    }
+    
+    .site-footer {
+      padding: 1.5rem 1rem;
+    }
+  }
+  
+  /* Dark Mode Support */
+  @media (prefers-color-scheme: dark) {
+    #page-container {
+      background-color: #111827;
+      color: #f9fafb;
+    }
+    
+    .site-header {
+      background: rgba(17, 24, 39, 0.95);
+      border-bottom-color: #374151;
+    }
+    
+    .site-logo {
+      color: #f9fafb;
+    }
+    
+    .nav-link {
+      color: #9ca3af;
+    }
+    
+    .nav-link:hover {
+      color: #60a5fa;
+    }
+    
+    .site-footer {
+      background: #1f2937;
+      border-top-color: #374151;
+      color: #9ca3af;
+    }
+  }
+  
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    .site-header {
+      border-bottom-width: 2px;
+    }
+    
+    .site-footer {
+      border-top-width: 2px;
+    }
+    
+    .nav-link:focus,
+    .site-logo:focus,
+    .skip-link:focus {
+      outline: 3px solid currentColor;
+      outline-offset: 2px;
+    }
+  }
+  
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  
+  /* Print Styles */
+  @media print {
+    .site-header,
+    .site-footer {
+      display: none;
+    }
+    
+    #page-container {
+      background: white;
+      color: black;
+    }
+    
+    .skip-link {
+      display: none;
+    }
+  }
+</style>

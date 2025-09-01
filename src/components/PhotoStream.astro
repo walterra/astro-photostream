@@ -1,5 +1,8 @@
 ---
 import type { PhotoStreamProps } from '../types.js';
+
+// Import consolidated CSS
+import '../styles/aps-core.css';
 import PhotoGrid from './PhotoGrid.astro';
 import MultiMarkerMap from './MultiMarkerMap.astro';
 import { createPagination } from '../utils/routing.js';
@@ -36,7 +39,7 @@ const generatePageUrl = (page: number) =>
   page === 1 ? basePath : `${basePath}/page/${page}`;
 ---
 
-<div class={`photo-stream ${className}`}>
+<div class={`aps-container photo-stream ${className}`}>
   <!-- Stream Header -->
   <header class="photo-stream__header">
     <div class="photo-stream__stats">
@@ -79,7 +82,7 @@ const generatePageUrl = (page: number) =>
   <!-- Photo Grid -->
   <div class="photo-stream__grid">
     <PhotoGrid 
-      photos={paginatedPhotos}
+      photos={photos}
       columns={{ mobile: 2, tablet: 3, desktop: 4 }}
       gap="1.5rem"
     />

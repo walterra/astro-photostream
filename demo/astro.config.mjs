@@ -1,10 +1,18 @@
-import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
-// import photoStream from "astro-photo-stream";
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import photoStream from 'astro-photostream';
 
 export default defineConfig({
-  integrations: [tailwind()],
-  // Note: astro-photo-stream integration is currently in development
-  // The main package needs several fixes before it can be used
-  // integrations: [tailwind(), photoStream({})],
+  integrations: [
+    tailwind(),
+    photoStream({
+      layout: {
+        enabled: true,
+        wrapper: './src/layouts/Layout.astro',
+        props: {
+          customProp: 'layout-integration-working'
+        }
+      }
+    }),
+  ],
 });

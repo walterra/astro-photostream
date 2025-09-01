@@ -23,13 +23,18 @@ export default defineIntegration({
     return {
       hooks: {
         'astro:config:setup': async params => {
-          const { updateConfig, injectRoute, command, logger } = params;
+          const { updateConfig, injectRoute, command, logger, config } = params;
           if (!options.enabled) {
             logger.info('Astro Photo Stream integration is disabled');
             return;
           }
 
           logger.info('Setting up Astro Photo Stream integration...');
+
+          // Resolve layout wrapper path relative to project root
+          const resolvedLayoutWrapper = options.layout?.wrapper
+            ? new URL(options.layout.wrapper, config.root).pathname
+            : null;
 
           // Add virtual imports for configuration
           addVirtualImports(params, {
@@ -43,21 +48,34 @@ export default defineIntegration({
                 export { processPhotoCollection } from '${resolve('./utils/collection.js')}';
                 export { createPhotoRoutes } from '${resolve('./utils/routing.js')}';
               `,
+              'virtual:astro-photostream/layout': `
+                export const layoutConfig = ${JSON.stringify(options.layout || {}, null, 2)};
+                export const shouldUseLayout = ${options.layout?.enabled || false};
+                export const layoutWrapper = ${resolvedLayoutWrapper ? `"${resolvedLayoutWrapper}"` : 'null'};
+                export const layoutProps = ${JSON.stringify(options.layout?.props || {}, null, 2)};
+              `,
             },
           });
 
           // Inject photo gallery routes
           if (command === 'dev' || command === 'build') {
+            // Determine route template suffix based on layout configuration
+            const routeSuffix = options.layout?.enabled
+              ? '.content.astro'
+              : '.astro';
+
             // Main photo stream with pagination (Astro convention)
             injectRoute({
               pattern: '/photos/[...page]',
-              entrypoint: resolveSource('routes/photos/[...page].astro'),
+              entrypoint: resolveSource(
+                `routes/photos/[...page]${routeSuffix}`
+              ),
             });
 
             // Individual photo pages
             injectRoute({
               pattern: '/photos/[slug]',
-              entrypoint: resolveSource('routes/photos/[slug].astro'),
+              entrypoint: resolveSource(`routes/photos/[slug]${routeSuffix}`),
             });
 
             // Tag-based photo filtering with pagination
@@ -65,7 +83,7 @@ export default defineIntegration({
               injectRoute({
                 pattern: '/photos/tags/[tag]/[...page]',
                 entrypoint: resolveSource(
-                  'routes/photos/tags/[tag]/[...page].astro'
+                  `routes/photos/tags/[tag]/[...page]${routeSuffix}`
                 ),
               });
             }

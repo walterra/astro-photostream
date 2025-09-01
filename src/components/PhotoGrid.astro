@@ -2,6 +2,9 @@
 import type { PhotoGridProps } from '../types.js';
 import PhotoCard from './PhotoCard.astro';
 
+// Import consolidated CSS
+import '../styles/aps-core.css';
+
 interface Props extends PhotoGridProps {}
 
 const { 
@@ -15,20 +18,20 @@ const {
 } = Astro.props;
 
 // Extract column configuration
-const { mobile = 2, tablet = 3, desktop = 4 } = columns;
+const { desktop = 4 } = columns;
 
-// Map to Tailwind classes like reference implementation
+// Map to consolidated CSS grid classes
 const gridClasses = {
-  2: "grid-cols-1 sm:grid-cols-2",
-  3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3", 
-  4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+  2: "aps-grid-2col",
+  3: "aps-grid-3col", 
+  4: "aps-grid-4col",
 };
 
 // Use desktop columns as primary setting
 const gridClass = gridClasses[desktop as keyof typeof gridClasses] || gridClasses[3];
 ---
 
-<div class={`grid gap-4 ${gridClass} ${className}`}>
+<div class={`aps-grid-responsive ${gridClass} ${className}`}>
   {photos.map(photo => (
     <PhotoCard 
       photo={photo}
@@ -37,3 +40,5 @@ const gridClass = gridClasses[desktop as keyof typeof gridClasses] || gridClasse
     />
   ))}
 </div>
+
+<!-- PhotoGrid now uses consolidated CSS from aps-core.css - no custom styles needed -->

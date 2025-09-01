@@ -18,6 +18,30 @@ An open-source Astro.js integration for creating sophisticated photo galleries a
 - **SEO & Social**: Dynamic OG images and metadata generation
 - **Performance Optimized**: Static generation with image optimization
 
+## Layout Integration
+
+**Theme Compatibility**: The integration now supports layout wrappers for seamless theme integration:
+
+```javascript
+// astro.config.mjs
+export default defineConfig({
+  integrations: [
+    photoStream({
+      layout: {
+        enabled: true,
+        wrapper: './src/layouts/BaseLayout.astro',
+        props: {
+          author: 'Your Name',
+          siteName: 'My Photo Blog',
+        },
+      },
+    }),
+  ],
+});
+```
+
+This allows photo routes to inherit the consuming project's theme, navigation, and styling.
+
 ## Commands
 
 **Note**: Project is in planning phase - no commands currently available. Planned commands:

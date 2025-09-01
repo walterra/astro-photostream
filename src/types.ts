@@ -49,7 +49,7 @@ export const integrationOptionsSchema = z
     // Gallery display options
     gallery: z
       .object({
-        itemsPerPage: z.number().default(20),
+        itemsPerPage: z.number().default(12),
         gridCols: z
           .object({
             mobile: z.number().default(2),
@@ -69,6 +69,15 @@ export const integrationOptionsSchema = z
         generateOpenGraph: z.boolean().default(true),
         siteName: z.string().optional(),
         twitterHandle: z.string().optional(),
+      })
+      .default({}),
+
+    // Layout wrapper integration
+    layout: z
+      .object({
+        enabled: z.boolean().default(false),
+        wrapper: z.string().optional(), // Path to layout component
+        props: z.record(z.unknown()).default({}), // Props to pass to layout
       })
       .default({}),
   })
