@@ -23,13 +23,18 @@ export default defineIntegration({
     return {
       hooks: {
         'astro:config:setup': async params => {
-          const { updateConfig, injectRoute, command, logger } = params;
+          const { updateConfig, injectRoute, command, logger, config } = params;
           if (!options.enabled) {
             logger.info('Astro Photo Stream integration is disabled');
             return;
           }
 
           logger.info('Setting up Astro Photo Stream integration...');
+
+          // Resolve layout wrapper path relative to project root
+          const resolvedLayoutWrapper = options.layout?.wrapper
+            ? new URL(options.layout.wrapper, config.root).pathname
+            : null;
 
           // Add virtual imports for configuration
           addVirtualImports(params, {
@@ -46,7 +51,7 @@ export default defineIntegration({
               'virtual:astro-photostream/layout': `
                 export const layoutConfig = ${JSON.stringify(options.layout || {}, null, 2)};
                 export const shouldUseLayout = ${options.layout?.enabled || false};
-                export const layoutWrapper = ${options.layout?.wrapper ? `"${options.layout.wrapper}"` : 'null'};
+                export const layoutWrapper = ${resolvedLayoutWrapper ? `"${resolvedLayoutWrapper}"` : 'null'};
                 export const layoutProps = ${JSON.stringify(options.layout?.props || {}, null, 2)};
               `,
             },
