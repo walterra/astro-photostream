@@ -49,7 +49,7 @@ export const integrationOptionsSchema = z
     // Gallery display options
     gallery: z
       .object({
-        itemsPerPage: z.number().default(20),
+        itemsPerPage: z.number().default(12),
         gridCols: z
           .object({
             mobile: z.number().default(2),

@@ -37,10 +37,9 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
     draft: photo.data.draft || false
   }));
 
-  // Use Astro's built-in paginate function
+  // Use Astro's built-in paginate function (matching reference implementation)
   return paginate(photos, { 
     pageSize: config.gallery.itemsPerPage,
-    params: {},
     props: {
       totalPhotos: photos.length,
       config,
@@ -60,6 +59,8 @@ const { page, totalPhotos, layoutConfig: passedLayoutConfig, layoutWrapper: pass
   layoutProps: any
 };
 const photos = page.data;
+
+
 
 // Get photos with location data for map
 const photosWithLocation = photos.filter((photo: PhotoMetadata) => 
