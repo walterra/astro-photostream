@@ -1,4 +1,4 @@
-# 📸 Astro Photo Stream
+# Astro Photo Stream
 
 [![npm version](https://badge.fury.io/js/astro-photostream.svg)](https://badge.fury.io/js/astro-photostream)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -6,20 +6,20 @@
 
 An **Astro integration** for creating sophisticated photo galleries and streams with **AI-powered metadata generation**, **geolocation features**, and **responsive design**. Transform your photos into beautiful, SEO-optimized galleries with minimal configuration.
 
-## ✨ Features
+## Features
 
-🤖 **AI-Powered Metadata** - Automatic titles, descriptions, and tags using Claude/OpenAI  
-📍 **Smart Geolocation** - Location name resolution with privacy-focused blur/offset options  
-🗺️ **Static Maps** - Single and multi-marker maps with intelligent location consolidation  
-📱 **Responsive Design** - 2/3/4 column layouts that work perfectly on all devices  
-🔍 **SEO Optimized** - Dynamic OpenGraph images and structured data  
-⚡ **Performance First** - Static generation with lazy loading and image optimization  
-🏷️ **Tag System** - Automatic tag-based filtering and navigation  
-📄 **Pagination** - Built-in pagination with keyboard navigation  
-📊 **EXIF Processing** - Comprehensive camera metadata extraction  
-🎨 **Theme Independent** - Works with any Astro theme or site
+**AI-Powered Metadata** - Automatic titles, descriptions, and tags using Claude/OpenAI  
+**Smart Geolocation** - Location name resolution with privacy-focused blur/offset options  
+**Static Maps** - Single and multi-marker maps with intelligent location consolidation  
+**Responsive Design** - 2/3/4 column layouts that work perfectly on all devices  
+**SEO Optimized** - Dynamic OpenGraph images and structured data  
+**Performance First** - Static generation with lazy loading and image optimization  
+**Tag System** - Automatic tag-based filtering and navigation  
+**Pagination** - Built-in pagination with keyboard navigation  
+**EXIF Processing** - Comprehensive camera metadata extraction  
+**Theme Independent** - Works with any Astro theme or site
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -99,7 +99,7 @@ A perfect evening capturing the golden hour at Malibu Beach.
 
 5. **Your photo gallery is ready!** Visit `/photos` on your site.
 
-## 🛠️ Advanced Configuration
+## Advanced Configuration
 
 ### Complete Configuration Example
 
@@ -198,7 +198,7 @@ export default {
 };
 ```
 
-## 📋 CLI Commands
+## CLI Commands
 
 The package includes powerful CLI tools for metadata generation:
 
@@ -237,7 +237,7 @@ npx astro-photostream --batch --progress
 npx astro-photostream --help
 ```
 
-## 🧩 Components
+## Components
 
 Import and use components directly in your Astro pages:
 
@@ -286,7 +286,7 @@ import { MultiMarkerMap } from 'astro-photostream/components';
 />
 ```
 
-## 🗺️ Routing
+## Routing
 
 The integration automatically creates these routes:
 
@@ -297,7 +297,7 @@ The integration automatically creates these routes:
 - `/photos/tags/[tag]/2` - Tag pagination
 - `/api/og/photo/[slug].png` - Dynamic OG images
 
-## 🔧 Utilities
+## Utilities
 
 ### Photo Data Processing
 
@@ -333,14 +333,14 @@ const metadata = await generatePhotoMetadata('/path/to/photo.jpg', {
 });
 ```
 
-## 📱 Mobile Support
+## Mobile Support
 
 - **Responsive Design**: Automatically adapts to all screen sizes
 - **Touch Navigation**: Swipe gestures for photo browsing
 - **Performance**: Optimized loading and lazy loading for mobile
 - **Accessibility**: Full keyboard and screen reader support
 
-## 🎨 Styling
+## Styling
 
 The components use minimal CSS classes that you can easily override:
 
@@ -361,7 +361,7 @@ The components use minimal CSS classes that you can easily override:
 }
 ```
 
-## 📊 Photo Schema
+## Photo Schema
 
 The content collection schema includes:
 
@@ -392,14 +392,14 @@ The content collection schema includes:
 }
 ```
 
-## 🔒 Privacy & Security
+## Privacy & Security
 
 - **Location Privacy**: Configurable blur radius and offset for GPS coordinates
 - **API Key Security**: Environment variable configuration
 - **EXIF Stripping**: Optional removal of sensitive metadata
 - **Content Security**: Safe handling of user-generated content
 
-## 🚀 Performance
+## Performance
 
 - **Static Generation**: All pages are statically generated at build time
 - **Image Optimization**: Automatic image optimization and responsive images
@@ -407,7 +407,7 @@ The content collection schema includes:
 - **Code Splitting**: Minimal JavaScript bundle sizes
 - **CDN Ready**: Perfect for deployment to any CDN or static host
 
-## 🔧 Development
+## Development
 
 ### Local Development
 
@@ -436,7 +436,7 @@ pnpm link --global
 pnpm link --global astro-photostream
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
@@ -446,7 +446,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -454,7 +454,7 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 The OG image generation feature downloads and uses [Roboto Mono](https://fonts.google.com/specimen/Roboto+Mono) font files during installation, which are licensed under the [SIL Open Font License v1.1](https://openfontlicense.org/). The font files are automatically downloaded from the official Google Fonts repository and are used solely for generating OpenGraph images.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [Astro](https://astro.build/) and [astro-integration-kit](https://github.com/florian-lefebvre/astro-integration-kit)
 - EXIF processing powered by [exifr](https://github.com/MikeKovarik/exifr)
@@ -465,8 +465,8 @@ The OG image generation feature downloads and uses [Roboto Mono](https://fonts.g
 
 ---
 
-## 📚 Resources
+## Resources
 
-- [🐛 Report Issues](https://github.com/walterra/astro-photostream/issues)
+- [Report Issues](https://github.com/walterra/astro-photostream/issues)
 
-**Star ⭐ this repo if you find it useful!**
+**Star this repo if you find it useful!**
