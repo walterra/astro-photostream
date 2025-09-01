@@ -12,9 +12,14 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     environment: ci-release
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
