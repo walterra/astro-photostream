@@ -79,18 +79,18 @@ export default defineIntegration({
               ? '.content.astro'
               : '.astro';
 
-            // Main photo stream with pagination (Astro convention)
+            // Individual photo pages (inject first for priority)
+            injectRoute({
+              pattern: '/photos/[slug]',
+              entrypoint: resolveSource(`routes/photos/[slug]${routeSuffix}`),
+            });
+
+            // Main photo stream with pagination (inject after for catch-all)
             injectRoute({
               pattern: '/photos/[...page]',
               entrypoint: resolveSource(
                 `routes/photos/[...page]${routeSuffix}`
               ),
-            });
-
-            // Individual photo pages
-            injectRoute({
-              pattern: '/photos/[slug]',
-              entrypoint: resolveSource(`routes/photos/[slug]${routeSuffix}`),
             });
 
             // Tag-based photo filtering with pagination
