@@ -36,6 +36,13 @@ export default defineIntegration({
             ? new URL(options.layout.wrapper, config.root).pathname
             : null;
 
+          // Debug logging
+          if (options.layout?.enabled) {
+            logger.info(
+              `Layout wrapper enabled: ${options.layout.wrapper} -> ${resolvedLayoutWrapper}`
+            );
+          }
+
           // Add virtual imports for configuration
           addVirtualImports(params, {
             name: 'astro-photostream',
@@ -53,6 +60,14 @@ export default defineIntegration({
                 export const shouldUseLayout = ${options.layout?.enabled || false};
                 export const layoutWrapper = ${resolvedLayoutWrapper ? `"${resolvedLayoutWrapper}"` : 'null'};
                 export const layoutProps = ${JSON.stringify(options.layout?.props || {}, null, 2)};
+              `,
+              'virtual:astro-photostream/layout-wrapper': resolvedLayoutWrapper
+                ? `
+                import LayoutComponent from "${resolvedLayoutWrapper}";
+                export { LayoutComponent };
+              `
+                : `
+                export const LayoutComponent = null;
               `,
             },
           });

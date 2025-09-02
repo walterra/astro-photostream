@@ -130,17 +130,11 @@ const layoutWrapperProps = {
   ...passedLayoutProps
 };
 
-// Try to load layout wrapper if provided (path is already resolved by integration)
+// Conditionally import layout wrapper if enabled
 let LayoutComponent = null;
-if (passedLayoutWrapper) {
-  try {
-    // Use /* @vite-ignore */ to suppress Vite analysis warning  
-    const layoutModule = await import(/* @vite-ignore */ passedLayoutWrapper);
-    LayoutComponent = layoutModule.default || layoutModule;
-  } catch (error) {
-    console.warn(`[astro-photostream] Failed to load layout component: ${passedLayoutWrapper}`, error);
-    LayoutComponent = null;
-  }
+if (shouldUseLayout && passedLayoutWrapper) {
+  const { LayoutComponent: ImportedLayoutComponent } = await import('virtual:astro-photostream/layout-wrapper');
+  LayoutComponent = ImportedLayoutComponent;
 }
 ---
 
