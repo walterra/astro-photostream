@@ -77,7 +77,7 @@ src/
 ├── routes/              # Route templates for integration injection
 │   ├── photos.astro         # Main photo stream page
 │   ├── photo.astro          # Individual photo pages
-│   └── [...page].astro      # Pagination routes
+│   └── [page].astro      # Pagination routes
 ├── utils/               # Core functionality
 │   ├── metadata.ts          # EXIF extraction and AI generation
 │   ├── collection.ts        # Content collection utilities

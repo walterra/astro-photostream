@@ -110,7 +110,7 @@ Astro components in `src/components/`:
 
 Pre-built page templates in `src/routes/`:
 
-- **`photos/[...page].astro`** - Main gallery with pagination (`/photos`, `/photos/2`)
+- **`photos/[page].astro`** - Main gallery with pagination (`/photos`, `/photos/2`)
 - **`photos/[slug].astro`** - Individual photo pages with navigation
 - **`photos/tags/[tag]/[...page].astro`** - Tag-based filtering with pagination
 - **`og-image.ts`** - Dynamic OpenGraph image generation endpoint

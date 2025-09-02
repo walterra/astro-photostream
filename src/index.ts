@@ -85,7 +85,7 @@ export default defineIntegration({
               entrypoint: resolveSource(`routes/photos/[slug]${routeSuffix}`),
             });
 
-            // Main photo stream with pagination (inject after for catch-all)
+            // Main photo gallery with pagination (handles /photos and /photos/2)
             injectRoute({
               pattern: '/photos/[...page]',
               entrypoint: resolveSource(

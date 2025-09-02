@@ -21,7 +21,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const sortedPhotos = allPhotos
     .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
 
-  return sortedPhotos.map((photo, index) => {
+  // Filter out photos with numeric-only slugs to avoid conflicts with pagination
+  const filteredPhotos = sortedPhotos.filter(photo => !/^\d+$/.test(photo.slug));
+
+  return filteredPhotos.map((photo, index) => {
     // Calculate previous/next photos for navigation
     const prevPhoto = sortedPhotos[index - 1] || null;
     const nextPhoto = sortedPhotos[index + 1] || null;
