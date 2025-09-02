@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- e29cf3e: fix(cli): correct build output path for CLI binaries.
+- 0545ae6: refactor(integration): replace dynamic layout wrapper imports with virtual imports.
+
 ## 0.3.0
 
 ### Minor Changes
