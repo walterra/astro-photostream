@@ -239,6 +239,30 @@ The system uses a sophisticated 4-layer configuration cascade:
 
 ## Visual Testing with Playwright MCP
 
+### **Browser Session Management**
+
+**Critical Process for Playwright MCP:**
+
+1. **Handle Browser Conflicts**: If encountering "Browser is already in use" errors:
+
+   ```bash
+   # Kill existing chrome processes if needed
+   pkill -f "chrome.*mcp" || true
+   ```
+
+2. **Proper Session Flow**:
+   - Use `mcp__playwright__browser_close` to clean up existing sessions
+   - Always use `mcp__playwright__browser_navigate` before taking screenshots
+   - Check browser tabs with `mcp__playwright__browser_tabs` if needed
+
+3. **Error Recovery Pattern**:
+   ```
+   ❌ Error: Browser is already in use
+   → mcp__playwright__browser_close
+   → mcp__playwright__browser_navigate(url)
+   → mcp__playwright__browser_take_screenshot
+   ```
+
 ### **Mandatory Screenshot Validation Process**
 
 When using Playwright MCP tools for visual verification:
@@ -249,7 +273,8 @@ When using Playwright MCP tools for visual verification:
 4. **Screenshot Assertion Pattern**: Use this format:
 
 ```
-⏺ playwright - Take screenshot (filename: "feature-test.png")
+⏺ mcp__playwright__browser_navigate(url)
+⏺ mcp__playwright__browser_take_screenshot(filename: "feature-test.png")
 ⏺ Read(.playwright-mcp/feature-test.png)
 ⏺ VISUAL VERIFICATION:
   - Expected: [specific visual outcome]
@@ -259,10 +284,13 @@ When using Playwright MCP tools for visual verification:
 
 ### **Visual Testing Quality Gates**
 
-- **Before claiming "working"**: Take screenshot + read + verify
+**Mandatory for UI Changes:**
+
+- **Before claiming "working"**: Navigate → Screenshot → Read → Verify sequence required
 - **UI Component Changes**: Screenshot before/after comparison required
 - **Image/Media Features**: Visual validation mandatory
 - **Layout/Styling Changes**: Screenshot verification required
+- **Browser Session Management**: Handle conflicts proactively, never ignore browser errors
 
 ### **Anti-Patterns to Avoid**
 
