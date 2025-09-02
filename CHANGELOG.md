@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.4
+
+### Patch Changes
+
+- b45327c: fix(components): correct MapImage component prop structure for individual photo pages (#11)
+
 ## 0.3.3
 
 ### Patch Changes
