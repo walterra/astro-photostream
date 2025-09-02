@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.3
+
+### Patch Changes
+
+- bb95082: fix(integration): resolve route conflicts with dynamic getStaticPaths
+
 ## 0.3.2
 
 ### Patch Changes
