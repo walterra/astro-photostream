@@ -179,7 +179,9 @@ const nextThumbnail = nextPhoto?.coverImage?.src ? await getImage({
           <h2 class="aps-section-title">Photo Location</h2>
           <div class="aps-map-container">
             <MapImage 
-              photo={photoMetadata}
+              latitude={photoMetadata.location.latitude}
+              longitude={photoMetadata.location.longitude}
+              locationName={photoMetadata.location.name}
               width={800}
               height={400}
             />
@@ -357,7 +359,9 @@ const nextThumbnail = nextPhoto?.coverImage?.src ? await getImage({
             <h2 class="section-title">Photo Location</h2>
             <div class="aps-map-container-inner">
               <MapImage 
-                photo={photoMetadata}
+                latitude={photoMetadata.location.latitude}
+                longitude={photoMetadata.location.longitude}
+                locationName={photoMetadata.location.name}
                 width={800}
                 height={400}
               />

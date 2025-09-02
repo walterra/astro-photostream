@@ -1,4 +1,5 @@
 - photo description are not showing up on the individual photo page
+- clean up duplicate MapImage component in [slug].content.astro (should only have layout wrapper version)
 
 ## Checklist for Production Readiness
 

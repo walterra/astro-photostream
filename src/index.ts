@@ -4,7 +4,8 @@ import {
   addVirtualImports,
   addVitePlugin,
 } from 'astro-integration-kit';
-import { integrationOptionsSchema } from './types.js';
+import type { AstroIntegrationLogger } from 'astro';
+import { integrationOptionsSchema, type IntegrationOptions } from './types.js';
 
 /**
  * Astro Photo Stream Integration
@@ -15,14 +16,14 @@ import { integrationOptionsSchema } from './types.js';
 export default defineIntegration({
   name: 'astro-photostream',
   optionsSchema: integrationOptionsSchema,
-  setup({ options }) {
+  setup({ options }: { options: IntegrationOptions }) {
     const { resolve } = createResolver(import.meta.url);
     // Create a resolver for the source files (routes/components) relative to package root
     const resolveSource = (path: string) => resolve(`../src/${path}`);
 
     return {
       hooks: {
-        'astro:config:setup': async params => {
+        'astro:config:setup': async (params: any) => {
           const { updateConfig, injectRoute, command, logger, config } = params;
           if (!options.enabled) {
             logger.info('Astro Photo Stream integration is disabled');
@@ -144,7 +145,7 @@ export default defineIntegration({
           addVitePlugin(params, {
             plugin: {
               name: 'astro-photostream-processor',
-              configResolved(config: any) {
+              configResolved(config: Record<string, any>) {
                 if (config.command === 'build') {
                   logger.info('Photo processing will run during build');
                 }
@@ -162,7 +163,11 @@ export default defineIntegration({
           logger.info('Astro Photo Stream integration setup complete');
         },
 
-        'astro:config:done': ({ logger }) => {
+        'astro:config:done': ({
+          logger,
+        }: {
+          logger: AstroIntegrationLogger;
+        }) => {
           if (!options.enabled) return;
 
           // Validate configuration
@@ -188,14 +193,22 @@ export default defineIntegration({
           }
         },
 
-        'astro:build:start': ({ logger }) => {
+        'astro:build:start': ({
+          logger,
+        }: {
+          logger: AstroIntegrationLogger;
+        }) => {
           if (!options.enabled) return;
 
           logger.info('Starting photo processing for build...');
           // Photo processing logic will be implemented in Phase 2
         },
 
-        'astro:build:done': ({ logger }) => {
+        'astro:build:done': ({
+          logger,
+        }: {
+          logger: AstroIntegrationLogger;
+        }) => {
           if (!options.enabled) return;
 
           logger.info('Photo stream build complete!');

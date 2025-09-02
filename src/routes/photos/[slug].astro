@@ -307,7 +307,9 @@ if (photoData.settings?.focalLength) cameraSettings.push(photoData.settings.foca
           <section class="location-section">
             <h2 class="section-title">Where this photo was taken</h2>
             <MapImage 
-              photo={photoData}
+              latitude={photoData.location.latitude}
+              longitude={photoData.location.longitude}
+              locationName={photoData.location.name}
               width="100%"
               height="300px"
               zoom={12}
