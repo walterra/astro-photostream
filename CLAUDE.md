@@ -39,6 +39,22 @@ This is an **Astro integration** called `astro-photostream` that creates sophist
 - Pre-commit hooks automatically run `lint-staged` (ESLint + Prettier on staged files only)
 - Commit-msg hooks validate conventional commit format with custom scopes
 
+### Commit Message Format Requirements
+
+**CRITICAL:** This project enforces conventional commits via commitlint.
+
+**Format:** `type(scope): description`
+
+- **Types:** build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
+- **Scopes:** components, cli, docs, demo, deps, integration, utils, types, config
+- **Max length:** 72 lower case characters
+
+**Examples:**
+
+- `fix(cli): correct build output path for binary installation`
+- `feat(components): add responsive photo grid breakpoints`
+- `docs: update api documentation`
+
 ### Release Management (Changesets)
 
 **User Commands Only:**
