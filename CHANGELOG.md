@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2
+
+### Patch Changes
+
+- 13bf11c: fix(integration): correct route injection order for pagination
+
 ## 0.3.1
 
 ### Patch Changes
