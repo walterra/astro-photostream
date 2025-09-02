@@ -67,7 +67,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build:cli": "tsc src/scripts/photo-metadata-generator.ts --outDir dist/scripts --moduleResolution bundler --target ES2022 --module ESNext --allowSyntheticDefaultImports --esModuleInterop --skipLibCheck",
+    "build:cli": "tsc src/scripts/photo-metadata-generator.ts --outDir dist --moduleResolution bundler --target ES2022 --module ESNext --allowSyntheticDefaultImports --esModuleInterop --skipLibCheck",
     "dev": "astro check --watch",
     "check": "astro check",
     "lint": "eslint src",
