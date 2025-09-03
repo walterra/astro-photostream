@@ -70,7 +70,11 @@ function generateMarkdownContent(
   metadata: PhotoMetadata,
   imagePath: string
 ): string {
-  const filename = path.basename(imagePath);
+  // Use regex replacement to preserve directory structure (same as reference implementation)
+  const relativeImagePath = imagePath.replace(
+    /^(\.\/)?src\/assets\/photos\//,
+    '../../assets/photos/'
+  );
 
   // Build frontmatter object
   const frontmatter: Record<string, unknown> = {
@@ -78,7 +82,7 @@ function generateMarkdownContent(
     publishDate: metadata.publishDate.toISOString().split('T')[0],
     coverImage: {
       alt: metadata.coverImage.alt,
-      src: `../../assets/photos/${filename}`,
+      src: relativeImagePath,
     },
     tags: metadata.tags,
     draft: metadata.draft,
