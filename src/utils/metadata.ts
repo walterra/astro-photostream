@@ -107,9 +107,6 @@ export class ExifProcessor {
             latitude: gpsData.latitude,
             longitude: gpsData.longitude,
           };
-          console.log(
-            `   Found GPS: ${gpsData.latitude.toFixed(6)}, ${gpsData.longitude.toFixed(6)}`
-          );
         }
       } catch {
         console.log('   No GPS data found');

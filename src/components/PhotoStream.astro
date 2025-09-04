@@ -40,33 +40,6 @@ const generatePageUrl = (page: number) =>
 ---
 
 <div class={`aps-container photo-stream ${className}`}>
-  <!-- Stream Header -->
-  <header class="photo-stream__header">
-    <div class="photo-stream__stats">
-      <span class="photo-stream__count">
-        {photos.length} photo{photos.length !== 1 ? 's' : ''}
-      </span>
-      {photosWithLocation.length > 0 && (
-        <span class="photo-stream__location-count">
-          • {photosWithLocation.length} with location data
-        </span>
-      )}
-    </div>
-
-    {showMap && photosWithLocation.length > 0 && (
-      <button
-        class="photo-stream__map-toggle"
-        data-toggle-map
-        aria-expanded="false"
-        aria-controls="photo-stream-map"
-      >
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-        </svg>
-        Show Map
-      </button>
-    )}
-  </header>
 
   <!-- Interactive Map -->
   {showMap && photosWithLocation.length > 0 && (
