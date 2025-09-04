@@ -49,13 +49,20 @@ const totalPages = page.lastPage;
   
   <!-- Location Map (if enabled and photos have location data) -->
   {showMap && config.gallery.enableMap && photosWithLocation.length > 0 && (
-    <section class="map-section">
-      <MultiMarkerMap 
-        photos={photosWithLocation}
-        zoom={2}
-        class="photo-locations-map"
-      />
-    </section>
+    <div class="map-wrapper">
+      <section class="map-section">
+        <MultiMarkerMap 
+          photos={photosWithLocation}
+          zoom={2}
+          class="photo-locations-map"
+          hideCaption={true}
+        />
+      </section>
+      <!-- Caption outside the drop shadow -->
+      <p class="map-caption">
+        Map showing {photosWithLocation.length} photo location{photosWithLocation.length !== 1 ? 's' : ''}
+      </p>
+    </div>
   )}
   
   <!-- Photo Grid -->
@@ -169,11 +176,21 @@ const totalPages = page.lastPage;
     margin: 0;
   }
 
-  .map-section {
+  .map-wrapper {
     margin-bottom: 3rem;
+  }
+
+  .map-section {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .map-caption {
+    color: var(--aps-text-secondary, #666);
+    font-size: 0.875rem;
+    text-align: center;
+    margin: 0.5rem 0 0 0;
   }
 
   .photos-section {

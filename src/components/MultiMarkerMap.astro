@@ -7,7 +7,8 @@ interface Props extends MultiMarkerMapProps {}
 const { 
   photos, 
   zoom = 10,
-  class: className = ''
+  class: className = '',
+  hideCaption = false
 } = Astro.props;
 
 // Filter photos with valid coordinates
@@ -93,9 +94,11 @@ if (shouldShowMap) {
         class="aps-image aps-rounded-lg aps-shadow-sm"
         loading="lazy"
       />
-      <p class="aps-multi-marker-map__caption aps-text-secondary aps-text-sm aps-mt-xs aps-text-center">
-        Map showing {validPhotos.length} photo location{validPhotos.length !== 1 ? 's' : ''}
-      </p>
+      {!hideCaption && (
+        <p class="aps-multi-marker-map__caption aps-text-secondary aps-text-sm aps-mt-xs aps-text-center">
+          Map showing {validPhotos.length} photo location{validPhotos.length !== 1 ? 's' : ''}
+        </p>
+      )}
     </div>
   ) : (
     <div class="aps-placeholder aps-text-secondary aps-p-md aps-text-center">

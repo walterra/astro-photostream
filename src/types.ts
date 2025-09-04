@@ -143,6 +143,7 @@ export interface MultiMarkerMapProps {
   photos: PhotoMetadata[];
   zoom?: number;
   class?: string;
+  hideCaption?: boolean;
 }
 
 // Content collection types
