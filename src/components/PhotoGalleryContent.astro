@@ -1,0 +1,197 @@
+---
+/**
+ * Reusable photo gallery content component
+ * Extracts shared content logic from gallery route files
+ */
+
+import PhotoStream from './PhotoStream.astro';
+import MultiMarkerMap from './MultiMarkerMap.astro';
+import { getPhotosWithLocation, calculateDateRange } from '../utils/photo-data.js';
+import type { PhotoMetadata } from '../types.js';
+
+// Import consolidated CSS
+import '../styles/aps-core.css';
+
+export interface Props {
+  photos: PhotoMetadata[];
+  page: any;
+  totalPhotos: number;
+  config: any;
+  showMap?: boolean;
+  showRelated?: boolean;
+}
+
+const { photos, page, totalPhotos, config, showMap = true, showRelated = false } = Astro.props;
+
+// Get photos with location data for map
+const photosWithLocation = getPhotosWithLocation(photos);
+
+// Calculate date range for this page
+const dateRange = calculateDateRange(photos);
+
+// Page metadata
+const isFirstPage = page.currentPage === 1;
+const currentPage = page.currentPage;
+const totalPages = page.lastPage;
+---
+
+<main class="aps-container">
+  <!-- Header -->
+  <header class="aps-text-center aps-mb-xl aps-mt-lg">
+    <h1 class="aps-text-3xl aps-font-bold aps-mb-sm aps-text-primary">
+      {isFirstPage ? 'Photo Gallery' : `Photo Gallery - Page ${currentPage}`}
+    </h1>
+
+    <p class="aps-text-xl aps-text-secondary">
+      Page {currentPage} of {totalPages} • {totalPhotos} total photos
+    </p>
+  </header>
+
+  <!-- Location Map (if enabled and photos have location data) -->
+  {showMap && config.gallery.enableMap && photosWithLocation.length > 0 && (
+    <div class="aps-mb-lg aps-p-sm">
+      <section class="aps-rounded-xl aps-shadow-md">
+        <MultiMarkerMap
+          photos={photosWithLocation}
+          zoom={2}
+          class="photo-locations-map"
+          hideCaption={true}
+        />
+      </section>
+      <!-- Caption outside the drop shadow -->
+      <p class="aps-text-secondary aps-text-sm aps-text-center aps-mt-sm">
+        Map showing {photosWithLocation.length} photo location{photosWithLocation.length !== 1 ? 's' : ''}
+      </p>
+    </div>
+  )}
+
+  <!-- Photo Grid -->
+  <section>
+    <PhotoStream
+      photos={photos}
+      itemsPerPage={config.gallery.itemsPerPage}
+      showPagination={false}
+      showMap={false}
+      class="main-photo-stream"
+    />
+  </section>
+
+  <!-- Astro's Built-in Pagination -->
+  {page.lastPage > 1 && (
+    <nav class="aps-flex aps-flex-col aps-items-center aps-gap-sm aps-p-sm" aria-label="Photo gallery pagination">
+      <div class="aps-text-secondary aps-text-sm">
+        Showing {page.start + 1}–{page.end + 1} of {page.total} photos
+      </div>
+
+      <div class="aps-flex aps-items-center aps-gap-md aps-justify-center">
+        {page.url.prev && (
+          <a
+            href={page.url.prev}
+            class="aps-button"
+            aria-label="Previous page"
+          >
+            ← Previous
+          </a>
+        )}
+
+        <div class="aps-flex aps-items-center aps-gap-xs">
+          {/* First page */}
+          {page.currentPage > 3 && (
+            <>
+              <a href="/photos" class="aps-page-number" aria-label="Page 1">1</a>
+              {page.currentPage > 4 && <span class="aps-text-secondary aps-p-sm">…</span>}
+            </>
+          )}
+
+          {/* Current page range */}
+          {Array.from({ length: Math.min(5, page.lastPage) }, (_, i) => {
+            const pageNum = Math.max(1, Math.min(page.lastPage - 4, page.currentPage - 2)) + i;
+            if (pageNum > page.lastPage) return null;
+
+            return pageNum === page.currentPage ?
+              <span class="aps-page-number aps-page-number--current" aria-current="page">
+                {pageNum}
+              </span>
+            :
+              <a
+                href={pageNum === 1 ? '/photos' : `/photos/${pageNum}`}
+                class="aps-page-number"
+                aria-label={`Page ${pageNum}`}
+              >
+                {pageNum}
+              </a>;
+          })}
+
+          {/* Last page */}
+          {page.currentPage < page.lastPage - 2 && (
+            <>
+              {page.currentPage < page.lastPage - 3 && <span class="aps-text-secondary aps-p-sm">…</span>}
+              <a
+                href={`/photos/${page.lastPage}`}
+                class="aps-page-number"
+                aria-label={`Page ${page.lastPage}`}
+              >
+                {page.lastPage}
+              </a>
+            </>
+          )}
+        </div>
+
+        {page.url.next && (
+          <a
+            href={page.url.next}
+            class="aps-button"
+            aria-label="Next page"
+          >
+            Next →
+          </a>
+        )}
+      </div>
+    </nav>
+  )}
+</main>
+
+<style>
+  /* Map section specific overflow */
+  .aps-rounded-xl img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+
+  /* Page number button styling using aps system */
+  .aps-page-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    text-decoration: none;
+    color: var(--aps-color-text-secondary);
+    border: 1px solid var(--aps-color-border-light);
+    border-radius: var(--aps-radius-md);
+    transition: all var(--aps-transition-fast);
+    background: var(--aps-color-bg-primary);
+  }
+
+  .aps-page-number:hover {
+    background: var(--aps-color-bg-secondary);
+    border-color: var(--aps-color-accent);
+    color: var(--aps-color-accent);
+  }
+
+  .aps-page-number--current {
+    background: var(--aps-color-accent);
+    color: var(--aps-color-text-inverse);
+    border-color: var(--aps-color-accent);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .aps-page-number {
+      width: 2rem;
+      height: 2rem;
+      font-size: var(--aps-font-size-sm);
+    }
+  }
+</style>

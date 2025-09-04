@@ -141,9 +141,9 @@ export interface PhotoStreamProps {
 
 export interface MultiMarkerMapProps {
   photos: PhotoMetadata[];
-  height?: string;
   zoom?: number;
   class?: string;
+  hideCaption?: boolean;
 }
 
 // Content collection types

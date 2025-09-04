@@ -1,0 +1,434 @@
+---
+/**
+ * Reusable tag page content component
+ * Extracts shared content logic from tag filtering route files
+ */
+
+import PhotoStream from './PhotoStream.astro';
+import MultiMarkerMap from './MultiMarkerMap.astro';
+import { getPhotosWithLocation, calculateDateRange } from '../utils/photo-data.js';
+import type { PhotoMetadata } from '../types.js';
+
+export interface Props {
+  photos: PhotoMetadata[];
+  page: any;
+  tag: string;
+  totalPhotos: number;
+  relatedTags: string[];
+  config: any;
+}
+
+const { photos, page, tag, totalPhotos, relatedTags, config } = Astro.props;
+
+// Get photos with location data for map
+const photosWithLocation = getPhotosWithLocation(photos);
+
+// Calculate date range for this page
+const dateRange = calculateDateRange(photos);
+
+// Page metadata
+const isFirstPage = page.currentPage === 1;
+const currentPage = page.currentPage;
+const totalPages = page.lastPage;
+---
+
+<main class="tag-page">
+  <!-- Navigation -->
+  <nav class="page-nav">
+    <a href="/photos" class="nav-link">Gallery</a>
+    <span class="nav-separator">•</span>
+    {!isFirstPage && (
+      <>
+        <a href={`/photos/tags/${tag}`} class="nav-link">#{tag}</a>
+        <span class="nav-separator">•</span>
+      </>
+    )}
+    <span class="current-page">
+      {isFirstPage ? `#${tag}` : `Page ${currentPage}`}
+    </span>
+  </nav>
+
+  <header class="page-header">
+    <div class="tag-badge">#{tag}</div>
+    <h1 class="page-title">
+      {isFirstPage ? `Photos tagged "${tag}"` : `"${tag}" Photos - Page ${currentPage}`}
+    </h1>
+    <p class="page-description">
+      {isFirstPage
+        ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
+        : `Page ${currentPage} of ${totalPages} • ${totalPhotos} total photos with this tag`
+      }
+    </p>
+
+    {photos.length > 0 && photosWithLocation.length > 0 && (
+      <div class="gallery-stats">
+        <span class="location-count">
+          {photosWithLocation.length} with locations{!isFirstPage ? ' on this page' : ''}
+        </span>
+      </div>
+    )}
+  </header>
+
+  {photos.length === 0 ? (
+    <div class="empty-tag">
+      <h2>No photos found</h2>
+      <p>No photos are tagged with "{tag}".</p>
+      <a href="/photos" class="back-link">← Browse all photos</a>
+    </div>
+  ) : (
+    <>
+      <!-- Location Map (if enabled and photos have location data) -->
+      {config.gallery.enableMap && photosWithLocation.length > 0 && (
+        <section class="map-section">
+          <h2 class="section-title">
+            {isFirstPage
+              ? `Where "${tag}" photos were taken`
+              : `"${tag}" Photo Locations (Page ${currentPage})`
+            }
+          </h2>
+          <MultiMarkerMap
+            photos={photosWithLocation}
+            zoom={2}
+            class="tag-locations-map"
+          />
+        </section>
+      )}
+
+      <!-- Photo Grid -->
+      <section class="photos-section">
+        <PhotoStream
+          photos={photos}
+          itemsPerPage={config.gallery.itemsPerPage}
+          showPagination={false}
+          showMap={false}
+          class="tag-photo-stream"
+        />
+      </section>
+
+      <!-- Astro's Built-in Pagination -->
+      {page.lastPage > 1 && (
+        <nav class="pagination" aria-label={`"${tag}" photos pagination`}>
+          <div class="pagination-info">
+            Showing {page.start + 1}–{page.end + 1} of {page.total} photos tagged "{tag}"
+          </div>
+          
+          <div class="pagination-controls">
+            {page.url.prev && (
+              <a 
+                href={page.url.prev} 
+                class="pagination-link previous"
+                aria-label="Previous page"
+              >
+                ← Previous
+              </a>
+            )}
+            
+            <div class="page-numbers">
+              {/* First page */}
+              {currentPage > 3 && (
+                <>
+                  <a href={`/photos/tags/${tag}`} class="page-number" aria-label="Page 1">1</a>
+                  {currentPage > 4 && <span class="ellipsis">…</span>}
+                </>
+              )}
+              
+              {/* Current page range */}
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                if (pageNum > totalPages) return null;
+                
+                return pageNum === currentPage ? 
+                  <span class="page-number current" aria-current="page">
+                    {pageNum}
+                  </span>
+                : 
+                  <a 
+                    href={pageNum === 1 ? `/photos/tags/${tag}` : `/photos/tags/${tag}/${pageNum}`}
+                    class="page-number"
+                    aria-label={`Page ${pageNum}`}
+                  >
+                    {pageNum}
+                  </a>;
+              })}
+              
+              {/* Last page */}
+              {currentPage < totalPages - 2 && (
+                <>
+                  {currentPage < totalPages - 3 && <span class="ellipsis">…</span>}
+                  <a 
+                    href={`/photos/tags/${tag}/${totalPages}`} 
+                    class="page-number"
+                    aria-label={`Page ${totalPages}`}
+                  >
+                    {totalPages}
+                  </a>
+                </>
+              )}
+            </div>
+            
+            {page.url.next && (
+              <a 
+                href={page.url.next} 
+                class="pagination-link next"
+                aria-label="Next page"
+              >
+                Next →
+              </a>
+            )}
+          </div>
+        </nav>
+      )}
+
+      <!-- Related Tags -->
+      {relatedTags.length > 0 && (
+        <section class="related-tags-section">
+          <h2 class="section-title">Related Tags</h2>
+          <div class="related-tags">
+            {relatedTags.map(relatedTag => (
+              <a href={`/photos/tags/${relatedTag}`} class="related-tag">
+                #{relatedTag}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+    </>
+  )}
+</main>
+
+<style>
+  .tag-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .page-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+
+  .nav-link {
+    color: var(--aps-link, #2563eb);
+    text-decoration: none;
+  }
+
+  .nav-link:hover {
+    text-decoration: underline;
+  }
+
+  .nav-separator {
+    color: var(--aps-text-tertiary, #999);
+  }
+
+  .current-page {
+    color: var(--aps-text-secondary, #666);
+    font-weight: 500;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .tag-badge {
+    display: inline-block;
+    background: var(--aps-tag-bg, #dbeafe);
+    color: var(--aps-tag-text, #1e40af);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--aps-text-primary, #1a1a1a);
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--aps-text-secondary, #666);
+    margin: 0 0 1rem 0;
+  }
+
+  .gallery-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .location-count {
+    color: var(--aps-text-tertiary, #999);
+    font-size: 0.9rem;
+  }
+
+  .empty-tag {
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  .empty-tag h2 {
+    font-size: 1.5rem;
+    color: var(--aps-text-primary, #1a1a1a);
+    margin-bottom: 1rem;
+  }
+
+  .empty-tag p {
+    color: var(--aps-text-secondary, #666);
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    color: var(--aps-link, #2563eb);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .map-section,
+  .related-tags-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--aps-text-primary, #1a1a1a);
+    text-align: center;
+  }
+
+  .map-section {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .photos-section {
+    margin-bottom: 3rem;
+  }
+
+  .pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--aps-border, #e5e5e5);
+  }
+
+  .pagination-info {
+    color: var(--aps-text-secondary, #666);
+    font-size: 0.9rem;
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pagination-link {
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: var(--aps-link, #2563eb);
+    border: 1px solid var(--aps-border, #e5e5e5);
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .pagination-link:hover {
+    background: var(--aps-hover-bg, #f8fafc);
+    border-color: var(--aps-link, #2563eb);
+  }
+
+  .page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .page-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    text-decoration: none;
+    color: var(--aps-link, #2563eb);
+    border: 1px solid var(--aps-border, #e5e5e5);
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .page-number:hover {
+    background: var(--aps-hover-bg, #f8fafc);
+    border-color: var(--aps-link, #2563eb);
+  }
+
+  .page-number.current {
+    background: var(--aps-link, #2563eb);
+    color: white;
+    border-color: var(--aps-link, #2563eb);
+  }
+
+  .ellipsis {
+    padding: 0 0.5rem;
+    color: var(--aps-text-secondary, #666);
+  }
+
+  .related-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .related-tag {
+    background: var(--aps-tag-bg, #dbeafe);
+    color: var(--aps-tag-text, #1e40af);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+
+  .related-tag:hover {
+    background: var(--aps-tag-hover-bg, #bfdbfe);
+  }
+
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: 2rem;
+    }
+    
+    .pagination-controls {
+      gap: 0.5rem;
+    }
+    
+    .page-numbers {
+      gap: 0.125rem;
+    }
+    
+    .page-number {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.875rem;
+    }
+  }
+</style>

@@ -12,8 +12,8 @@ interface Props {
   latitude: number;
   longitude: number;
   locationName?: string;
-  width?: number;
-  height?: number;
+  width?: number | string;
+  height?: number | string;
   zoom?: number;
   style?: string;
   class?: string;
@@ -23,19 +23,30 @@ const {
   latitude,
   longitude,
   locationName,
-  width = 400,
-  height = 300,
+  width = 1200,
+  height = 600,
   zoom = 8, // Fixed zoom for privacy (as per reference)
-  style = "osm-bright-smooth",
+  style = "klokantech-basic",
   class: className = ""
 } = Astro.props;
+
+// Convert width/height to numeric values for API (handle percentage strings)
+const numericWidth = typeof width === 'string' && width.includes('%') ? 1200 : 
+                     typeof width === 'string' ? parseInt(width.replace('px', '')) : 
+                     width;
+const numericHeight = typeof height === 'string' && height.includes('px') ? parseInt(height.replace('px', '')) : 
+                      typeof height === 'string' ? parseInt(height) : 
+                      height;
 
 // Geoapify API key from environment
 const apiKey = import.meta.env.GEOAPIFY_API_KEY;
 
+// Build single marker (match reference implementation)
+const marker = apiKey ? `lonlat:${longitude},${latitude};type:material;color:%23cb2a42;size:medium` : '';
+
 // Generate static map URL (aligned with reference implementation)
 const mapUrl = apiKey 
-  ? `https://maps.geoapify.com/v1/staticmap?style=${style}&width=${width}&height=${height}&center=lonlat:${longitude},${latitude}&zoom=${zoom}&marker=lonlat:${longitude},${latitude};color:%23ff0000;size:medium&apiKey=${apiKey}`
+  ? `https://maps.geoapify.com/v1/staticmap?style=${style}&width=${numericWidth}&height=${numericHeight}&center=lonlat:${longitude},${latitude}&zoom=${zoom}&marker=${marker}&scaleFactor=1&format=png&apiKey=${apiKey}`
   : null;
 
 // Generate alt text for accessibility
@@ -44,43 +55,54 @@ const altText = locationName
   : `Map showing location at coordinates ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
 ---
 
-<div class={`aps-map-image ${className}`}>
-  {mapUrl ? (
+{mapUrl ? (
+  <div class={`aps-map-container ${className}`}>
     <img
       src={mapUrl}
       alt={altText}
-      width={width}
-      height={height}
-      class="aps-image aps-rounded-lg aps-shadow-sm"
+      width={typeof width === 'string' ? undefined : width}
+      height={typeof height === 'string' ? undefined : height}
+      style={typeof width === 'string' || typeof height === 'string' ? 
+        `${typeof width === 'string' ? `width: ${width};` : ''}${typeof height === 'string' ? `height: ${height};` : ''}` : 
+        undefined}
+      class="aps-image aps-rounded-lg aps-shadow-sm aps-border aps-border-secondary"
       loading="lazy"
     />
-  ) : (
-    <!-- Fallback when no API key available -->
-    <div 
-      class="aps-placeholder aps-text-secondary aps-p-md aps-text-center"
-      style={`width: ${width}px; height: ${height}px;`}
-    >
-      <div>
-        <svg class="aps-map-icon" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-        </svg>
-        <p class="aps-text-base aps-font-medium aps-mb-xs">
-          {locationName || 'Location'}
-        </p>
-        <p class="aps-text-xs aps-text-muted">
-          {latitude.toFixed(4)}, {longitude.toFixed(4)}
-        </p>
-      </div>
+  </div>
+) : (
+  <!-- Fallback when no API key available -->
+  <div 
+    class={`aps-placeholder aps-text-secondary aps-p-md aps-text-center ${className}`}
+    style={typeof width === 'string' || typeof height === 'string' ? 
+      `${typeof width === 'string' ? `width: ${width};` : `width: ${width}px;`}${typeof height === 'string' ? `height: ${height};` : `height: ${height}px;`}` : 
+      `width: ${width}px; height: ${height}px;`}
+  >
+    <div>
+      <svg class="aps-map-icon" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+      </svg>
+      <p class="aps-text-base aps-font-medium aps-mb-xs">
+        {locationName || 'Location'}
+      </p>
+      <p class="aps-text-xs aps-text-muted">
+        {latitude.toFixed(4)}, {longitude.toFixed(4)}
+      </p>
     </div>
-  )}
-</div>
+  </div>
+)}
 
 <style>
   /* Component-specific styles that can't be utilities */
-  .aps-map-image {
-    display: block;
-    width: fit-content;
-    margin: 0 auto;
+  .aps-map-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .aps-map-container img {
+    max-width: 100%;
+    height: auto;
   }
   
   .aps-map-icon {

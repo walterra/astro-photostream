@@ -32,7 +32,7 @@ import { defineConfig } from 'astro/config';
 import photoStream from 'astro-photostream';
 
 export default defineConfig({
-  integrations: [photoStream()]
+  integrations: [photoStream()],
 });
 ```
 
@@ -57,16 +57,16 @@ interface IntegrationOptions {
 interface PhotoOptions {
   /** Directory containing photo content */
   directory?: string; // default: 'src/content/photos'
-  
+
   /** Supported image formats */
   formats?: Array<'jpg' | 'jpeg' | 'png' | 'webp' | 'avif'>; // default: ['jpg', 'jpeg', 'png', 'webp']
-  
+
   /** Maximum image width for optimization */
   maxWidth?: number; // default: 1920
-  
+
   /** Maximum image height for optimization */
   maxHeight?: number; // default: 1080
-  
+
   /** Image quality (1-100) */
   quality?: number; // default: 85
 }
@@ -78,16 +78,16 @@ interface PhotoOptions {
 interface AIOptions {
   /** Enable AI metadata generation */
   enabled?: boolean; // default: false
-  
+
   /** AI provider to use */
   provider?: 'claude' | 'openai' | 'custom'; // default: 'claude'
-  
+
   /** API key for the chosen provider */
   apiKey?: string;
-  
+
   /** Model to use for generation */
   model?: string;
-  
+
   /** Custom prompt template */
   prompt?: string;
 }
@@ -99,15 +99,15 @@ interface AIOptions {
 interface GeolocationOptions {
   /** Enable geolocation processing */
   enabled?: boolean; // default: true
-  
+
   /** Privacy protection settings */
   privacy?: {
     /** Enable privacy protection */
     enabled?: boolean; // default: true
-    
+
     /** Blur radius in meters */
     radius?: number; // default: 1000
-    
+
     /** Privacy method */
     method?: 'blur' | 'offset' | 'disable'; // default: 'blur'
   };
@@ -120,20 +120,20 @@ interface GeolocationOptions {
 interface GalleryOptions {
   /** Number of photos per page */
   itemsPerPage?: number; // default: 20
-  
+
   /** Grid column configuration */
   gridCols?: {
     mobile?: number; // default: 2
     tablet?: number; // default: 3
     desktop?: number; // default: 4
   };
-  
+
   /** Enable map display */
   enableMap?: boolean; // default: true
-  
+
   /** Enable tag-based filtering */
   enableTags?: boolean; // default: true
-  
+
   /** Enable search functionality */
   enableSearch?: boolean; // default: false
 }
@@ -145,10 +145,10 @@ interface GalleryOptions {
 interface SEOOptions {
   /** Generate OpenGraph images */
   generateOpenGraph?: boolean; // default: true
-  
+
   /** Site name for metadata */
   siteName?: string;
-  
+
   /** Twitter handle for metadata */
   twitterHandle?: string;
 }
@@ -162,46 +162,46 @@ interface SEOOptions {
 interface PhotoMetadata {
   /** Unique identifier */
   id: string;
-  
+
   /** Photo title */
   title: string;
-  
+
   /** Optional description */
   description?: string;
-  
+
   /** Cover image configuration */
   coverImage: {
     alt: string;
     src: any; // ImageMetadata | string
   };
-  
+
   /** Camera information */
   camera?: string;
-  
+
   /** Lens information */
   lens?: string;
-  
+
   /** Camera settings */
   settings?: CameraSettings;
-  
+
   /** Location data */
   location?: LocationData;
-  
+
   /** Photo tags */
   tags: string[];
-  
+
   /** Publication date */
   publishDate: Date;
-  
+
   /** Draft status */
   draft: boolean;
 }
 
 interface CameraSettings {
-  aperture?: string;     // e.g., "f/2.8"
-  shutter?: string;      // e.g., "1/250s"
-  iso?: string;          // e.g., "ISO 100"
-  focalLength?: string;  // e.g., "85mm"
+  aperture?: string; // e.g., "f/2.8"
+  shutter?: string; // e.g., "1/250s"
+  iso?: string; // e.g., "ISO 100"
+  focalLength?: string; // e.g., "85mm"
 }
 
 interface LocationData {
@@ -295,7 +295,7 @@ Display a single photo with metadata.
 import { PhotoCard } from 'astro-photostream/components';
 ---
 
-<PhotoCard 
+<PhotoCard
   photo={photo}
   loading="lazy"
   sizes="(max-width: 768px) 100vw, 50vw"
@@ -304,6 +304,7 @@ import { PhotoCard } from 'astro-photostream/components';
 ```
 
 **Props:**
+
 - `photo` (required): PhotoMetadata object
 - `loading`: Image loading strategy
 - `sizes`: Responsive image sizes
@@ -318,7 +319,7 @@ Display a responsive grid of photos.
 import { PhotoGrid } from 'astro-photostream/components';
 ---
 
-<PhotoGrid 
+<PhotoGrid
   photos={photos}
   columns={{ mobile: 2, tablet: 3, desktop: 4 }}
   class="my-photo-grid"
@@ -326,6 +327,7 @@ import { PhotoGrid } from 'astro-photostream/components';
 ```
 
 **Props:**
+
 - `photos` (required): Array of PhotoMetadata objects
 - `columns`: Grid column configuration
 - `class`: Additional CSS classes
@@ -339,7 +341,7 @@ Full photo stream with pagination.
 import { PhotoStream } from 'astro-photostream/components';
 ---
 
-<PhotoStream 
+<PhotoStream
   photos={photos}
   currentPage={1}
   totalPages={5}
@@ -349,6 +351,7 @@ import { PhotoStream } from 'astro-photostream/components';
 ```
 
 **Props:**
+
 - `photos` (required): Array of PhotoMetadata objects
 - `currentPage`: Current page number
 - `totalPages`: Total number of pages
@@ -364,15 +367,15 @@ Interactive map with multiple photo locations.
 import { MultiMarkerMap } from 'astro-photostream/components';
 ---
 
-<MultiMarkerMap 
+<MultiMarkerMap
   photos={photosWithLocation}
-  height="400px"
   consolidationRadius={5000}
   class="photo-map"
 />
 ```
 
 **Props:**
+
 - `photos` (required): Array of PhotoMetadata objects with location data
 - `height`: Map container height
 - `consolidationRadius`: Distance in meters for grouping nearby photos
@@ -387,7 +390,7 @@ Static map image for a single photo location.
 import { MapImage } from 'astro-photostream/components';
 ---
 
-<MapImage 
+<MapImage
   photo={photo}
   width={300}
   height={200}
@@ -397,6 +400,7 @@ import { MapImage } from 'astro-photostream/components';
 ```
 
 **Props:**
+
 - `photo` (required): PhotoMetadata object with location data
 - `width`: Map image width
 - `height`: Map image height
@@ -408,11 +412,11 @@ import { MapImage } from 'astro-photostream/components';
 ### Photo Data Processing
 
 ```ts
-import { 
-  getAllPhotos, 
-  getPhotosByTag, 
+import {
+  getAllPhotos,
+  getPhotosByTag,
   getFeaturedLocations,
-  getPhotoStatistics 
+  getPhotoStatistics,
 } from 'astro-photostream/utils';
 
 // Get all published photos
@@ -434,25 +438,25 @@ const stats: PhotoStatistics = await getPhotoStatistics();
 import { generatePhotoMetadata } from 'astro-photostream/utils';
 
 const metadata = await generatePhotoMetadata('/path/to/photo.jpg', {
-  ai: { 
-    enabled: true, 
-    provider: 'claude',
-    apiKey: 'your-api-key'
-  },
-  geolocation: { 
+  ai: {
     enabled: true,
-    privacy: { enabled: true, radius: 1000 }
-  }
+    provider: 'claude',
+    apiKey: 'your-api-key',
+  },
+  geolocation: {
+    enabled: true,
+    privacy: { enabled: true, radius: 1000 },
+  },
 });
 ```
 
 ### Collection Utilities
 
 ```ts
-import { 
+import {
   processPhotoCollection,
   validatePhotoMetadata,
-  sortPhotosByDate
+  sortPhotosByDate,
 } from 'astro-photostream/utils';
 
 // Process and validate entire photo collection
@@ -518,20 +522,20 @@ export default {
     enabled: true,
     provider: 'claude',
     model: 'claude-3-sonnet-20240229',
-    prompt: 'Custom prompt template...'
+    prompt: 'Custom prompt template...',
   },
   geolocation: {
     enabled: true,
     privacy: {
       enabled: true,
       radius: 2000,
-      method: 'blur'
-    }
+      method: 'blur',
+    },
   },
   photos: {
     directory: 'src/content/photos',
-    quality: 90
-  }
+    quality: 90,
+  },
 };
 ```
 
@@ -564,11 +568,11 @@ The integration uses Astro's official hooks:
 
 ```ts
 // Available in development mode
-document.addEventListener('astro-photostream:ready', (event) => {
+document.addEventListener('astro-photostream:ready', event => {
   console.log('Photo stream initialized');
 });
 
-document.addEventListener('astro-photostream:metadata-generated', (event) => {
+document.addEventListener('astro-photostream:metadata-generated', event => {
   console.log('Metadata generated for:', event.detail.photoPath);
 });
 ```

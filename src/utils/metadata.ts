@@ -3,6 +3,7 @@ import path from 'path';
 import exifr from 'exifr';
 import sharp from 'sharp';
 import type { PhotoMetadata, IntegrationOptions } from '../types.js';
+import { photoValidation } from '../schema.js';
 
 // ============================================================================
 // TYPES
@@ -97,20 +98,18 @@ export class ExifProcessor {
         settings.focalLength = `${focal}mm`;
       }
 
-      // Extract GPS coordinates if available
+      // Extract GPS coordinates using exifr.gps()
       let location;
-      if (exifData.GPS || (exifData.latitude && exifData.longitude)) {
-        try {
-          const coords = await exifr.gps(imagePath);
-          if (coords) {
-            location = {
-              latitude: coords.latitude,
-              longitude: coords.longitude,
-            };
-          }
-        } catch (error) {
-          console.warn('Failed to extract GPS coordinates:', error);
+      try {
+        const gpsData = await exifr.gps(imagePath);
+        if (gpsData?.latitude && gpsData.longitude) {
+          location = {
+            latitude: gpsData.latitude,
+            longitude: gpsData.longitude,
+          };
         }
+      } catch {
+        console.log('   No GPS data found');
       }
 
       // Extract description from various EXIF fields
@@ -203,12 +202,10 @@ export abstract class LLMAnalyzer {
       title: filename.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
       description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ''}.`,
       altText: `Photograph: ${filename}`,
-      suggestedTags: [
+      suggestedTags: photoValidation.sanitizeTags([
         'photography',
-        ...(exifData?.dateTime
-          ? [exifData.dateTime.getFullYear().toString()]
-          : []),
-      ],
+        ...(exifData?.dateTime ? [`y${exifData.dateTime.getFullYear()}`] : []),
+      ]),
     };
   }
 
@@ -307,7 +304,7 @@ Generate JSON with these fields:
 - title: 30-60 chars, engaging and descriptive, SEO-friendly
 - description: 200-250 chars, engaging description
 - altText: Concise accessibility description
-- suggestedTags: Array of relevant tags (include year if determinable)
+- suggestedTags: Array of 3-5 relevant tags (single words, lowercase, no spaces)
 
 Focus on what makes this photo interesting or worth sharing. Avoid generic descriptions.`;
 
@@ -353,8 +350,8 @@ Focus on what makes this photo interesting or worth sharing. Avoid generic descr
           description: parsed.description || fallback.description,
           altText: parsed.altText || fallback.altText,
           suggestedTags: Array.isArray(parsed.suggestedTags)
-            ? parsed.suggestedTags
-            : fallback.suggestedTags,
+            ? photoValidation.sanitizeTags(parsed.suggestedTags)
+            : photoValidation.sanitizeTags(fallback.suggestedTags),
         };
 
         this.storeInMemory(analysis, exifData);
@@ -541,11 +538,12 @@ export class PhotoMetadataGenerator {
     }
 
     if (this.options.geolocation.enabled) {
-      // Get API key from environment variable for now
-      // TODO: Add proper configuration system
-      const geocodeApiKey = process.env.OPENCAGE_API_KEY;
+      // Get API key from configuration (which handles environment variables and config file)
+      const geocodeApiKey = this.options.geolocation.apiKey;
       if (geocodeApiKey) {
         this.geocodeProcessor = new GeocodeProcessor(geocodeApiKey);
+      } else {
+        console.warn('Geolocation enabled but no API key provided');
       }
     }
   }
@@ -558,12 +556,20 @@ export class PhotoMetadataGenerator {
 
     // Process location if GPS data available
     if (exifData.location && this.geocodeProcessor) {
+      console.log('   🗺️  Geocoding location...');
       const locationName = await this.geocodeProcessor.reverseGeocode(
         exifData.location.latitude!,
         exifData.location.longitude!
       );
       if (locationName) {
+        console.log(`   Found location: ${locationName}`);
         exifData.location.name = locationName;
+      } else {
+        console.log('   No location name returned from geocoder');
+      }
+    } else {
+      if (exifData.location && !this.geocodeProcessor) {
+        console.log('   GPS data available but geocoder not initialized');
       }
     }
 
@@ -578,12 +584,12 @@ export class PhotoMetadataGenerator {
         title: filename.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
         description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ''}.`,
         altText: `Photograph: ${filename}`,
-        suggestedTags: [
+        suggestedTags: photoValidation.sanitizeTags([
           'photography',
           ...(exifData?.dateTime
-            ? [exifData.dateTime.getFullYear().toString()]
+            ? [`y${exifData.dateTime.getFullYear()}`]
             : []),
-        ],
+        ]),
       };
     }
 
@@ -607,7 +613,11 @@ export class PhotoMetadataGenerator {
       lens: exifData.lens,
       settings: exifData.settings,
       location: exifData.location,
-      tags: llmAnalysis.suggestedTags,
+      tags: photoValidation.sanitizeTags([
+        ...llmAnalysis.suggestedTags,
+        // Add year tag based on photo date (matching reference implementation)
+        ...(publishDate ? [`y${publishDate.getFullYear()}`] : []),
+      ]),
       publishDate,
       draft: false,
     };
@@ -667,6 +677,6 @@ export async function generateAIMetadata(
   return {
     title: analysis.title,
     description: analysis.description,
-    tags: analysis.suggestedTags,
+    tags: photoValidation.sanitizeTags(analysis.suggestedTags),
   };
 }

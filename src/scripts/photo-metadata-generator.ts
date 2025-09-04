@@ -14,6 +14,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import readline from 'readline';
 import matter from 'gray-matter';
+import { config as dotenvConfig } from 'dotenv';
 import {
   PhotoMetadataGenerator,
   ExifProcessor,
@@ -70,7 +71,11 @@ function generateMarkdownContent(
   metadata: PhotoMetadata,
   imagePath: string
 ): string {
-  const filename = path.basename(imagePath);
+  // Use regex replacement to preserve directory structure (same as reference implementation)
+  const relativeImagePath = imagePath.replace(
+    /^(\.\/)?src\/assets\/photos\//,
+    '../../assets/photos/'
+  );
 
   // Build frontmatter object
   const frontmatter: Record<string, unknown> = {
@@ -78,7 +83,7 @@ function generateMarkdownContent(
     publishDate: metadata.publishDate.toISOString().split('T')[0],
     coverImage: {
       alt: metadata.coverImage.alt,
-      src: `../../assets/photos/${filename}`,
+      src: relativeImagePath,
     },
     tags: metadata.tags,
     draft: metadata.draft,
@@ -360,6 +365,34 @@ async function updateLocationStrings(
 // ============================================================================
 
 async function main() {
+  // Load environment variables from .env file
+  // In production: user's project root (where they run the CLI)
+  // In development: demo/.env (for testing)
+  const possibleEnvPaths = [
+    '.env', // User's project root (production)
+    './.env', // User's project root (explicit)
+    './demo/.env', // Development: when run from astro-photostream root
+  ];
+
+  let envLoaded = false;
+  for (const envPath of possibleEnvPaths) {
+    try {
+      const result = dotenvConfig({ path: envPath });
+      if (result.parsed && Object.keys(result.parsed).length > 0) {
+        envLoaded = true;
+        break;
+      }
+    } catch {
+      // Continue to next path
+    }
+  }
+
+  if (!envLoaded) {
+    // Load from default location without specifying path
+    // This will use dotenv's default behavior (look for .env in cwd)
+    dotenvConfig();
+  }
+
   console.log('🚀 Astro Photo Stream - Metadata Generator');
   console.log('==========================================\n');
 
@@ -406,7 +439,7 @@ async function main() {
     `🤖 Claude API: ${integrationOptions.ai.enabled ? '✅ Configured' : '❌ Missing'}`
   );
   console.log(
-    `🗺️  OpenCage API: ${integrationOptions.geolocation.enabled ? '✅ Configured' : '❌ Missing'}`
+    `🗺️  OpenCage API: ${integrationOptions.geolocation.enabled && integrationOptions.geolocation.apiKey ? '✅ Configured' : '❌ Missing'}`
   );
   console.log('');
 
