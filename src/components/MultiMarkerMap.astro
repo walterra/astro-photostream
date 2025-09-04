@@ -12,37 +12,66 @@ const {
 
 // Filter photos with valid coordinates
 const validPhotos = photos.filter(photo => 
-  photo.location?.coordinates?.latitude && 
-  photo.location?.coordinates?.longitude
+  photo.location?.latitude && photo.location?.longitude
 );
 
-// Calculate map center from photo coordinates
-const calculateCenter = () => {
-  if (validPhotos.length === 0) return { lat: 0, lng: 0 };
-  
-  const bounds = validPhotos.reduce((acc, photo) => {
-    const { latitude, longitude } = photo.location!.coordinates!;
-    return {
-      minLat: Math.min(acc.minLat, latitude),
-      maxLat: Math.max(acc.maxLat, latitude),
-      minLng: Math.min(acc.minLng, longitude),
-      maxLng: Math.max(acc.maxLng, longitude)
-    };
-  }, {
-    minLat: validPhotos[0].location!.coordinates!.latitude,
-    maxLat: validPhotos[0].location!.coordinates!.latitude,
-    minLng: validPhotos[0].location!.coordinates!.longitude,
-    maxLng: validPhotos[0].location!.coordinates!.longitude
-  });
-  
-  return {
-    lat: (bounds.minLat + bounds.maxLat) / 2,
-    lng: (bounds.minLng + bounds.maxLng) / 2
-  };
-};
+// Generate static map with GEOAPIFY_API_KEY
+let mapUrl = "";
+const shouldShowMap = validPhotos.length > 0 && import.meta.env.GEOAPIFY_API_KEY;
 
-const mapCenter = calculateCenter();
-const mapId = `map-${Math.random().toString(36).substr(2, 9)}`;
+if (shouldShowMap) {
+  // Calculate bounds for static map
+  const latitudes = validPhotos.map(p => p.location!.latitude!);
+  const longitudes = validPhotos.map(p => p.location!.longitude!);
+
+  const bounds = {
+    north: Math.max(...latitudes),
+    south: Math.min(...latitudes),
+    east: Math.max(...longitudes),
+    west: Math.min(...longitudes),
+  };
+
+  // Add padding
+  const latSpan = bounds.north - bounds.south;
+  const lonSpan = bounds.east - bounds.west;
+  const padding = 0.1;
+
+  const paddedLatSpan = Math.max(latSpan * (1 + padding), 0.01);
+  const paddedLonSpan = Math.max(lonSpan * (1 + padding), 0.01);
+
+  const centerLat = (bounds.north + bounds.south) / 2;
+  const centerLon = (bounds.east + bounds.west) / 2;
+
+  const finalBounds = {
+    north: centerLat + paddedLatSpan / 2,
+    south: centerLat - paddedLatSpan / 2,
+    east: centerLon + paddedLonSpan / 2,
+    west: centerLon - paddedLonSpan / 2,
+  };
+
+  // Build markers - match the working single photo format 
+  const markers = validPhotos
+    .filter((photo) => photo.location?.longitude && photo.location?.latitude)
+    .map(
+      (photo) =>
+        `lonlat:${photo.location!.longitude},${photo.location!.latitude};type:circle;color:#cb2a42;size:16`
+    )
+    .join("|");
+
+  // Build Geoapify URL - exactly like reference implementation
+  const params = new URLSearchParams({
+    style: "klokantech-basic",
+    width: "800",
+    height: "400",
+    bbox: `${finalBounds.west},${finalBounds.south},${finalBounds.east},${finalBounds.north}`,
+    marker: markers,
+    scaleFactor: "1",
+    format: "png",
+    apiKey: import.meta.env.GEOAPIFY_API_KEY,
+  });
+
+  mapUrl = `https://maps.geoapify.com/v1/staticmap?${params.toString()}`;
+}
 ---
 
 <div class={`multi-marker-map ${className}`}>
@@ -53,120 +82,30 @@ const mapId = `map-${Math.random().toString(36).substr(2, 9)}`;
       </svg>
       <p>No location data available for these photos</p>
     </div>
+  ) : shouldShowMap && mapUrl ? (
+    <!-- Static Geoapify Map (matches reference style) -->
+    <div class="multi-marker-map__static">
+      <img
+        src={mapUrl}
+        alt={`Map showing ${validPhotos.length} photo location${validPhotos.length !== 1 ? 's' : ''}`}
+        width={800}
+        height={400}
+        class="multi-marker-map__image"
+        loading="lazy"
+      />
+      <p class="multi-marker-map__caption">
+        Map showing {validPhotos.length} photo location{validPhotos.length !== 1 ? 's' : ''}
+      </p>
+    </div>
   ) : (
-    <div 
-      id={mapId}
-      class="multi-marker-map__container"
-      data-photos={JSON.stringify(validPhotos)}
-      data-center={JSON.stringify(mapCenter)}
-      data-zoom={zoom}
-    >
-      <!-- Fallback for when JavaScript is disabled -->
-      <noscript>
-        <div class="multi-marker-map__fallback">
-          <p>Interactive map requires JavaScript</p>
-          <ul class="multi-marker-map__locations">
-            {validPhotos.map(photo => (
-              <li>
-                <a href={`/photos/${photo.id}`}>
-                  {photo.title || `Photo ${photo.id}`}
-                </a>
-                {photo.location?.name && (
-                  <span> - {photo.location.name}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </noscript>
+    <div class="multi-marker-map__no-data">
+      <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+      </svg>
+      <p>Map requires GEOAPIFY_API_KEY</p>
     </div>
   )}
 </div>
-
-<script>
-  declare global {
-    interface Window {
-      initPhotoMap?: (mapId: string) => void;
-    }
-  }
-  
-  // Initialize map when DOM is ready
-  document.addEventListener('DOMContentLoaded', function() {
-    const mapContainers = document.querySelectorAll('.multi-marker-map__container');
-    
-    mapContainers.forEach((container) => {
-      const mapId = container.id;
-      const photosData = container.getAttribute('data-photos');
-      const centerData = container.getAttribute('data-center');
-      const zoom = parseInt(container.getAttribute('data-zoom') || '10');
-      
-      if (!photosData || !centerData) return;
-      
-      const photos = JSON.parse(photosData);
-      const center = JSON.parse(centerData);
-      
-      // Use Leaflet for the map (lightweight and no API key required)
-      loadLeafletMap(mapId, photos, center, zoom);
-    });
-  });
-  
-  async function loadLeafletMap(mapId: string, photos: any[], center: {lat: number, lng: number}, zoom: number) {
-    // Dynamically load Leaflet CSS and JS
-    if (!document.querySelector('link[href*="leaflet"]')) {
-      const leafletCSS = document.createElement('link');
-      leafletCSS.rel = 'stylesheet';
-      leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(leafletCSS);
-    }
-    
-    if (!window.L) {
-      await new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-    
-    // Initialize the map
-    const map = window.L.map(mapId).setView([center.lat, center.lng], zoom);
-    
-    // Add tile layer (OpenStreetMap)
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19
-    }).addTo(map);
-    
-    // Create markers for each photo
-    photos.forEach(photo => {
-      const { latitude, longitude } = photo.location.coordinates;
-      const marker = window.L.marker([latitude, longitude]).addTo(map);
-      
-      // Create popup content
-      const popupContent = `
-        <div class="photo-popup">
-          <h4>${photo.title || `Photo ${photo.id}`}</h4>
-          ${photo.description ? `<p>${photo.description}</p>` : ''}
-          ${photo.location.name ? `<p><strong>📍 ${photo.location.name}</strong></p>` : ''}
-          <a href="/photos/${photo.id}" class="photo-popup__link">View Photo</a>
-        </div>
-      `;
-      
-      marker.bindPopup(popupContent);
-    });
-    
-    // Fit map to show all markers if there are multiple
-    if (photos.length > 1) {
-      const group = new window.L.featureGroup(
-        photos.map(photo => 
-          window.L.marker([photo.location.coordinates.latitude, photo.location.coordinates.longitude])
-        )
-      );
-      map.fitBounds(group.getBounds().pad(0.1));
-    }
-  }
-</script>
 
 <style define:vars={{ height }}>
   .multi-marker-map {
@@ -177,10 +116,24 @@ const mapId = `map-${Math.random().toString(36).substr(2, 9)}`;
     background: #f3f4f6;
   }
   
-  .multi-marker-map__container {
+  .multi-marker-map__static {
     width: 100%;
     height: 100%;
     position: relative;
+  }
+  
+  .multi-marker-map__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .multi-marker-map__caption {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: center;
   }
   
   .multi-marker-map__no-data {
@@ -204,83 +157,6 @@ const mapId = `map-${Math.random().toString(36).substr(2, 9)}`;
     font-size: 0.875rem;
   }
   
-  .multi-marker-map__fallback {
-    padding: 2rem;
-    text-align: center;
-  }
-  
-  .multi-marker-map__fallback p {
-    margin-bottom: 1rem;
-    color: #6b7280;
-  }
-  
-  .multi-marker-map__locations {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-    display: inline-block;
-  }
-  
-  .multi-marker-map__locations li {
-    margin-bottom: 0.5rem;
-  }
-  
-  .multi-marker-map__locations a {
-    color: #3b82f6;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .multi-marker-map__locations a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Leaflet popup custom styles */
-  :global(.photo-popup) {
-    min-width: 200px;
-  }
-  
-  :global(.photo-popup h4) {
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
-    font-weight: 600;
-  }
-  
-  :global(.photo-popup p) {
-    margin: 0.25rem 0;
-    font-size: 0.875rem;
-    color: #6b7280;
-  }
-  
-  :global(.photo-popup__link) {
-    display: inline-block;
-    margin-top: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: #3b82f6;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-  }
-  
-  :global(.photo-popup__link:hover) {
-    background: #2563eb;
-  }
-  
-  /* Loading state */
-  .multi-marker-map__container:empty::after {
-    content: 'Loading map...';
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: #6b7280;
-    font-size: 0.875rem;
-  }
-  
   @media (prefers-color-scheme: dark) {
     .multi-marker-map {
       background: #374151;
@@ -290,7 +166,7 @@ const mapId = `map-${Math.random().toString(36).substr(2, 9)}`;
       color: #d1d5db;
     }
     
-    .multi-marker-map__fallback p {
+    .multi-marker-map__caption {
       color: #d1d5db;
     }
   }
@@ -302,10 +178,6 @@ const mapId = `map-${Math.random().toString(36).substr(2, 9)}`;
     }
     
     .multi-marker-map__no-data {
-      padding: 1rem;
-    }
-    
-    .multi-marker-map__fallback {
       padding: 1rem;
     }
   }
