@@ -26,7 +26,7 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
 
   // Create paginated paths for each tag
   const paths = [];
-  
+
   for (const tag of allTags) {
     // Filter photos by this tag
     const taggedPhotos = allPhotos
@@ -80,18 +80,18 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
 };
 
 // Get paginated data
-const { 
-  page, 
-  tag, 
-  totalPhotos, 
-  relatedTags, 
-  layoutConfig: passedLayoutConfig, 
-  layoutWrapper: passedLayoutWrapper, 
-  layoutProps: passedLayoutProps 
-} = Astro.props as { 
-  page: Page<PhotoMetadata>, 
-  tag: string, 
-  totalPhotos: number, 
+const {
+  page,
+  tag,
+  totalPhotos,
+  relatedTags,
+  layoutConfig: passedLayoutConfig,
+  layoutWrapper: passedLayoutWrapper,
+  layoutProps: passedLayoutProps
+} = Astro.props as {
+  page: Page<PhotoMetadata>,
+  tag: string,
+  totalPhotos: number,
   relatedTags: string[],
   layoutConfig: any,
   layoutWrapper: string | null,
@@ -100,7 +100,7 @@ const {
 const photos = page.data;
 
 // Get photos with location data for map
-const photosWithLocation = photos.filter((photo: PhotoMetadata) => 
+const photosWithLocation = photos.filter((photo: PhotoMetadata) =>
   photo.location?.latitude && photo.location?.longitude
 );
 
@@ -115,7 +115,7 @@ const dateRange = newestDate && oldestDate && newestDate !== oldestDate
 // Page metadata
 const isFirstPage = page.currentPage === 1;
 const capitalizedTag = tag.charAt(0).toUpperCase() + tag.slice(1);
-const pageTitle = isFirstPage 
+const pageTitle = isFirstPage
   ? `"${capitalizedTag}" Photos - ${config.seo.siteName || 'Photo Stream'}`
   : `"${capitalizedTag}" Photos - Page ${page.currentPage} - ${config.seo.siteName || 'Photo Stream'}`;
 
@@ -145,7 +145,7 @@ if (shouldUseLayout && passedLayoutWrapper) {
       <nav class="aps-nav">
         <a href="/photos" class="aps-nav-link">← All Photos</a>
       </nav>
-      
+
       <header class="aps-header">
         <h1 class="aps-title">
           <span class="aps-tag-label">
@@ -154,7 +154,7 @@ if (shouldUseLayout && passedLayoutWrapper) {
           {!isFirstPage && <span class="aps-page-info">- Page {page.currentPage}</span>}
         </h1>
         <p class="aps-description">
-          {isFirstPage 
+          {isFirstPage
             ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
             : `Page ${page.currentPage} of ${page.lastPage} • ${totalPhotos} total photos`
           }
@@ -167,8 +167,8 @@ if (shouldUseLayout && passedLayoutWrapper) {
           <h2 class="aps-section-title">Related Tags</h2>
           <div class="aps-tag-cloud">
             {relatedTags.map(relatedTag => (
-              <a 
-                href={`/photos/tags/${relatedTag}`} 
+              <a
+                href={`/photos/tags/${relatedTag}`}
                 class="aps-tag-link"
               >
                 #{relatedTag}
@@ -183,9 +183,8 @@ if (shouldUseLayout && passedLayoutWrapper) {
         <section class="aps-section">
           <h2 class="aps-section-title">Photo Locations</h2>
           <div class="aps-map-container">
-            <MultiMarkerMap 
-              photos={photosWithLocation} 
-              height="400px" 
+            <MultiMarkerMap
+              photos={photosWithLocation}
             />
           </div>
           {photosWithLocation.length < photos.length && (
@@ -206,9 +205,9 @@ if (shouldUseLayout && passedLayoutWrapper) {
         <nav class="aps-pagination" aria-label="Tag photos pagination">
           <div class="aps-pagination-controls">
             {page.url.prev ? (
-              <a 
-                href={page.url.prev} 
-                class="aps-pagination-link" 
+              <a
+                href={page.url.prev}
+                class="aps-pagination-link"
                 rel="prev"
               >
                 ← Previous
@@ -218,17 +217,17 @@ if (shouldUseLayout && passedLayoutWrapper) {
                 ← Previous
               </span>
             )}
-            
+
             <div class="aps-pagination-info">
               <span class="aps-pagination-current">{page.currentPage}</span>
               <span class="aps-pagination-separator">of</span>
               <span class="aps-pagination-total">{page.lastPage}</span>
             </div>
-            
+
             {page.url.next ? (
-              <a 
-                href={page.url.next} 
-                class="aps-pagination-link" 
+              <a
+                href={page.url.next}
+                class="aps-pagination-link"
                 rel="next"
               >
                 Next →
@@ -253,7 +252,7 @@ if (shouldUseLayout && passedLayoutWrapper) {
       <meta name="generator" content={Astro.generator} />
       <title>{pageTitle}</title>
       <meta name="description" content={pageDescription} />
-      
+
       <!-- Open Graph -->
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={pageDescription} />
@@ -265,14 +264,14 @@ if (shouldUseLayout && passedLayoutWrapper) {
         <nav class="page-nav">
           <a href="/photos" class="nav-link">← All Photos</a>
         </nav>
-        
+
         <header class="page-header">
           <h1 class="page-title">
             <span class="tag-label">#{tag}</span>
             {!isFirstPage && <span class="page-info">- Page {page.currentPage}</span>}
           </h1>
           <p class="page-description">
-            {isFirstPage 
+            {isFirstPage
               ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
               : `Page ${page.currentPage} of ${page.lastPage} • ${totalPhotos} total photos`
             }
@@ -298,9 +297,8 @@ if (shouldUseLayout && passedLayoutWrapper) {
           <section class="aps-map-section">
             <h2 class="section-title">Photo Locations</h2>
             <div class="aps-map-container-inner">
-              <MultiMarkerMap 
-                photos={photosWithLocation} 
-                height="400px" 
+              <MultiMarkerMap
+                photos={photosWithLocation}
               />
             </div>
             {photosWithLocation.length < photos.length && (
@@ -327,13 +325,13 @@ if (shouldUseLayout && passedLayoutWrapper) {
               ) : (
                 <span class="pagination-link pagination-prev disabled">← Previous</span>
               )}
-              
+
               <div class="pagination-info">
                 <span class="current-page">{page.currentPage}</span>
                 <span class="separator">of</span>
                 <span class="total-pages">{page.lastPage}</span>
               </div>
-              
+
               {page.url.next ? (
                 <a href={page.url.next} class="pagination-link pagination-next" rel="next">
                   Next →
@@ -345,7 +343,7 @@ if (shouldUseLayout && passedLayoutWrapper) {
           </nav>
         )}
       </main>
-      
+
       <style>
         /* Minimal styling for fallback mode */
         .tag-photos-page {
@@ -353,27 +351,27 @@ if (shouldUseLayout && passedLayoutWrapper) {
           margin: 0 auto;
           padding: 2rem 1rem;
         }
-        
+
         .page-nav {
           margin-bottom: 2rem;
         }
-        
+
         .nav-link {
           color: #3b82f6;
           text-decoration: none;
         }
-        
+
         .page-header {
           text-align: center;
           margin-bottom: 2rem;
         }
-        
+
         .page-title {
           font-size: 2rem;
           margin-bottom: 0.5rem;
           color: #1f2937;
         }
-        
+
         .tag-label {
           background: #3b82f6;
           color: white;
@@ -381,25 +379,25 @@ if (shouldUseLayout && passedLayoutWrapper) {
           border-radius: 0.5rem;
           font-size: 0.9em;
         }
-        
+
         .page-description {
           color: #6b7280;
           font-size: 1.1rem;
         }
-        
+
         .section-title {
           font-size: 1.5rem;
           margin: 2rem 0 1rem 0;
           color: #1f2937;
         }
-        
+
         .tag-cloud {
           display: flex;
           flex-wrap: wrap;
           gap: 0.5rem;
           margin-bottom: 2rem;
         }
-        
+
         .tag-link {
           background: #f3f4f6;
           color: #374151;
@@ -408,23 +406,23 @@ if (shouldUseLayout && passedLayoutWrapper) {
           text-decoration: none;
           font-size: 0.9rem;
         }
-        
+
         .tag-link:hover {
           background: #e5e7eb;
         }
-        
+
         .pagination {
           margin-top: 3rem;
           display: flex;
           justify-content: center;
         }
-        
+
         .pagination-links {
           display: flex;
           align-items: center;
           gap: 1rem;
         }
-        
+
         .pagination-link {
           padding: 0.5rem 1rem;
           background: #f3f4f6;
@@ -432,15 +430,15 @@ if (shouldUseLayout && passedLayoutWrapper) {
           text-decoration: none;
           color: #374151;
         }
-        
+
         .pagination-link:hover:not(.disabled) {
           background: #e5e7eb;
         }
-        
+
         .pagination-link.disabled {
           opacity: 0.5;
         }
-        
+
         @media (prefers-color-scheme: dark) {
           .page-title {
             color: #f9fafb;
@@ -631,7 +629,7 @@ if (shouldUseLayout && passedLayoutWrapper) {
   .aps-container {
     padding: 2rem 1.5rem;
   }
-  
+
   .aps-title {
     font-size: 3rem;
   }
@@ -648,54 +646,54 @@ if (shouldUseLayout && passedLayoutWrapper) {
   .aps-nav-link {
     color: #9ca3af;
   }
-  
+
   .aps-nav-link:hover {
     color: #f9fafb;
   }
-  
+
   .aps-title {
     color: #f9fafb;
   }
-  
+
   .aps-page-info {
     color: #9ca3af;
   }
-  
+
   .aps-description {
     color: #9ca3af;
   }
-  
+
   .aps-section-title {
     color: #f9fafb;
   }
-  
+
   .aps-tag-link {
     background: #374151;
     color: #f9fafb;
   }
-  
+
   .aps-tag-link:hover {
     background: #4b5563;
   }
-  
+
   .aps-map-note {
     color: #9ca3af;
   }
-  
+
   .aps-pagination-link {
     background: #374151;
     color: #f9fafb;
   }
-  
+
   .aps-pagination-link:hover:not(.aps-pagination-link--disabled) {
     background: #4b5563;
   }
-  
+
   .aps-pagination-link--disabled {
     background: #1f2937;
     color: #6b7280;
   }
-  
+
   .aps-pagination-info {
     color: #9ca3af;
   }

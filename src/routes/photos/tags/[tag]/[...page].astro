@@ -27,7 +27,7 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
 
   // Create paginated paths for each tag
   const paths = [];
-  
+
   for (const tag of allTags) {
     // Filter photos by this tag
     const taggedPhotos = allPhotos
@@ -88,7 +88,7 @@ const { page, tag, totalPhotos, relatedTags, config } = Astro.props;
 const photos = page.data;
 
 // Get photos with location data for map
-const photosWithLocation = photos.filter((photo: PhotoMetadata) => 
+const photosWithLocation = photos.filter((photo: PhotoMetadata) =>
   photo.location?.latitude && photo.location?.longitude
 );
 
@@ -102,7 +102,7 @@ const dateRange = newestDate && oldestDate && newestDate !== oldestDate
 
 // Page metadata
 const isFirstPage = page.currentPage === 1;
-const pageTitle = isFirstPage 
+const pageTitle = isFirstPage
   ? `Photos tagged "${tag}" - ${config.seo.siteName || 'Photo Gallery'}`
   : `Photos tagged "${tag}" - Page ${page.currentPage} - ${config.seo.siteName || 'Photo Gallery'}`;
 
@@ -119,28 +119,28 @@ const pageDescription = isFirstPage
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    
+
     <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={Astro.url} />
     {config.seo.siteName && <meta property="og:site_name" content={config.seo.siteName} />}
-    
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
     {config.seo.twitterHandle && <meta name="twitter:creator" content={config.seo.twitterHandle} />}
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href={Astro.url} />
-    
+
     <!-- Pagination SEO -->
     {page.url.prev && <link rel="prev" href={page.url.prev} />}
     {page.url.next && <link rel="next" href={page.url.next} />}
     {!isFirstPage && <meta name="robots" content="noindex" />}
-    
+
     <!-- JSON-LD structured data -->
     <script type="application/ld+json">
       {
@@ -169,7 +169,7 @@ const pageDescription = isFirstPage
       }
     </script>
   </head>
-  
+
   <body>
     <main class="tag-page">
       <!-- Navigation -->
@@ -186,19 +186,19 @@ const pageDescription = isFirstPage
           {isFirstPage ? `#${tag}` : `Page ${page.currentPage}`}
         </span>
       </nav>
-      
+
       <header class="page-header">
         <div class="tag-badge">#{tag}</div>
         <h1 class="page-title">
           {isFirstPage ? `Photos tagged "${tag}"` : `"${tag}" Photos - Page ${page.currentPage}`}
         </h1>
         <p class="page-description">
-          {isFirstPage 
+          {isFirstPage
             ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
             : `Page ${page.currentPage} of ${page.lastPage} • ${totalPhotos} total photos with this tag`
           }
         </p>
-        
+
         {photos.length > 0 && photosWithLocation.length > 0 && (
           <div class="gallery-stats">
             <span class="location-count">
@@ -207,7 +207,7 @@ const pageDescription = isFirstPage
           </div>
         )}
       </header>
-      
+
       {photos.length === 0 ? (
         <div class="empty-tag">
           <h2>No photos found</h2>
@@ -220,23 +220,22 @@ const pageDescription = isFirstPage
           {config.gallery.enableMap && photosWithLocation.length > 0 && (
             <section class="map-section">
               <h2 class="section-title">
-                {isFirstPage 
-                  ? `Where "${tag}" photos were taken` 
+                {isFirstPage
+                  ? `Where "${tag}" photos were taken`
                   : `"${tag}" Photo Locations (Page ${page.currentPage})`
                 }
               </h2>
-              <MultiMarkerMap 
+              <MultiMarkerMap
                 photos={photosWithLocation}
-                height="400px"
                 zoom={2}
                 class="tag-locations-map"
               />
             </section>
           )}
-          
+
           <!-- Photo Grid -->
           <section class="photos-section">
-            <PhotoStream 
+            <PhotoStream
               photos={photos}
               itemsPerPage={config.gallery.itemsPerPage}
               showPagination={false}
@@ -244,25 +243,25 @@ const pageDescription = isFirstPage
               class="tag-photo-stream"
             />
           </section>
-          
+
           <!-- Astro's Built-in Pagination -->
           {page.lastPage > 1 && (
             <nav class="pagination" aria-label={`"${tag}" photos pagination`}>
               <div class="pagination-info">
                 Showing {page.start + 1}–{page.end + 1} of {page.total} "{tag}" photos
               </div>
-              
+
               <div class="pagination-controls">
                 {page.url.prev && (
-                  <a 
-                    href={page.url.prev} 
+                  <a
+                    href={page.url.prev}
                     class="pagination-link previous"
                     aria-label="Previous page"
                   >
                     ← Previous
                   </a>
                 )}
-                
+
                 <div class="page-numbers">
                   {/* First page */}
                   {page.currentPage > 3 && (
@@ -271,18 +270,18 @@ const pageDescription = isFirstPage
                       {page.currentPage > 4 && <span class="ellipsis">…</span>}
                     </>
                   )}
-                  
+
                   {/* Current page range */}
                   {Array.from({ length: Math.min(5, page.lastPage) }, (_, i) => {
                     const pageNum = Math.max(1, Math.min(page.lastPage - 4, page.currentPage - 2)) + i;
                     if (pageNum > page.lastPage) return null;
-                    
-                    return pageNum === page.currentPage ? 
+
+                    return pageNum === page.currentPage ?
                       <span class="page-number current" aria-current="page">
                         {pageNum}
                       </span>
-                    : 
-                      <a 
+                    :
+                      <a
                         href={pageNum === 1 ? `/photos/tags/${tag}` : `/photos/tags/${tag}/${pageNum}`}
                         class="page-number"
                         aria-label={`Page ${pageNum}`}
@@ -290,13 +289,13 @@ const pageDescription = isFirstPage
                         {pageNum}
                       </a>;
                   })}
-                  
+
                   {/* Last page */}
                   {page.currentPage < page.lastPage - 2 && (
                     <>
                       {page.currentPage < page.lastPage - 3 && <span class="ellipsis">…</span>}
-                      <a 
-                        href={`/photos/tags/${tag}/${page.lastPage}`} 
+                      <a
+                        href={`/photos/tags/${tag}/${page.lastPage}`}
                         class="page-number"
                         aria-label={`Page ${page.lastPage}`}
                       >
@@ -305,10 +304,10 @@ const pageDescription = isFirstPage
                     </>
                   )}
                 </div>
-                
+
                 {page.url.next && (
-                  <a 
-                    href={page.url.next} 
+                  <a
+                    href={page.url.next}
                     class="pagination-link next"
                     aria-label="Next page"
                   >
@@ -318,7 +317,7 @@ const pageDescription = isFirstPage
               </div>
             </nav>
           )}
-          
+
           <!-- Related Tags (if first page) -->
           {isFirstPage && relatedTags.length > 0 && (
             <aside class="related-tags">
@@ -328,7 +327,7 @@ const pageDescription = isFirstPage
               </p>
               <div class="tags-cloud">
                 {relatedTags.map(relatedTag => (
-                  <a 
+                  <a
                     href={`/photos/tags/${encodeURIComponent(relatedTag)}`}
                     class="tag-link"
                     data-tag={relatedTag}
@@ -342,7 +341,7 @@ const pageDescription = isFirstPage
         </>
       )}
     </main>
-    
+
     <style>
       /* Tag page styling */
       .tag-page {
@@ -350,39 +349,39 @@ const pageDescription = isFirstPage
         margin: 0 auto;
         padding: 2rem 1rem;
       }
-      
+
       .page-nav {
         margin-bottom: 1rem;
         font-size: 0.875rem;
         color: #6b7280;
       }
-      
+
       .nav-link {
         color: #6b7280;
         text-decoration: none;
         font-weight: 500;
         transition: color 0.2s;
       }
-      
+
       .nav-link:hover {
         color: #374151;
       }
-      
+
       .nav-separator {
         margin: 0 0.5rem;
         color: #d1d5db;
       }
-      
+
       .current-page {
         color: #374151;
         font-weight: 600;
       }
-      
+
       .page-header {
         text-align: center;
         margin-bottom: 3rem;
       }
-      
+
       .tag-badge {
         display: inline-block;
         padding: 0.5rem 1rem;
@@ -394,7 +393,7 @@ const pageDescription = isFirstPage
         margin-bottom: 1rem;
         letter-spacing: 0.05em;
       }
-      
+
       .page-title {
         font-size: 2.25rem;
         font-weight: 700;
@@ -402,19 +401,19 @@ const pageDescription = isFirstPage
         color: #1f2937;
         line-height: 1.1;
       }
-      
+
       .page-description {
         font-size: 1rem;
         color: #6b7280;
         margin-bottom: 1rem;
       }
-      
+
       .gallery-stats {
         font-size: 0.875rem;
         color: #9ca3af;
         margin-top: 1rem;
       }
-      
+
       .empty-tag {
         text-align: center;
         padding: 4rem 1rem;
@@ -422,59 +421,59 @@ const pageDescription = isFirstPage
         border-radius: 0.5rem;
         margin: 2rem 0;
       }
-      
+
       .empty-tag h2 {
         font-size: 1.5rem;
         color: #374151;
         margin-bottom: 1rem;
       }
-      
+
       .empty-tag p {
         color: #6b7280;
         margin-bottom: 1.5rem;
       }
-      
+
       .back-link {
         color: #3b82f6;
         text-decoration: none;
         font-weight: 500;
       }
-      
+
       .back-link:hover {
         color: #2563eb;
       }
-      
+
       .section-title {
         font-size: 1.5rem;
         font-weight: 600;
         margin-bottom: 1.5rem;
         color: #1f2937;
       }
-      
+
       .map-section, .photos-section {
         margin-bottom: 3rem;
       }
-      
+
       .pagination {
         margin-top: 3rem;
         padding-top: 2rem;
         border-top: 1px solid #e5e7eb;
       }
-      
+
       .pagination-info {
         text-align: center;
         font-size: 0.875rem;
         color: #6b7280;
         margin-bottom: 2rem;
       }
-      
+
       .pagination-controls {
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 1rem;
       }
-      
+
       .pagination-link {
         display: inline-block;
         padding: 0.75rem 1rem;
@@ -487,18 +486,18 @@ const pageDescription = isFirstPage
         min-width: 100px;
         text-align: center;
       }
-      
+
       .pagination-link:hover {
         background: #e5e7eb;
         color: #1f2937;
       }
-      
+
       .page-numbers {
         display: flex;
         gap: 0.5rem;
         align-items: center;
       }
-      
+
       .page-number {
         display: inline-block;
         padding: 0.5rem 0.75rem;
@@ -509,48 +508,48 @@ const pageDescription = isFirstPage
         font-weight: 500;
         transition: all 0.2s;
       }
-      
+
       .page-number:not(.current) {
         color: #6b7280;
         background: #f9fafb;
       }
-      
+
       .page-number:not(.current):hover {
         color: #374151;
         background: #f3f4f6;
       }
-      
+
       .page-number.current {
         background: #3b82f6;
         color: white;
         cursor: default;
       }
-      
+
       .ellipsis {
         color: #9ca3af;
         padding: 0 0.25rem;
       }
-      
+
       .related-tags {
         background: #f9fafb;
         border-radius: 0.5rem;
         padding: 2rem;
         margin-top: 3rem;
       }
-      
+
       .related-description {
         color: #6b7280;
         margin-bottom: 1.5rem;
         font-size: 0.875rem;
       }
-      
+
       .tags-cloud {
         display: flex;
         flex-wrap: wrap;
         gap: 0.75rem;
         justify-content: center;
       }
-      
+
       .tag-link {
         display: inline-block;
         padding: 0.5rem 1rem;
@@ -562,52 +561,52 @@ const pageDescription = isFirstPage
         font-weight: 500;
         transition: all 0.2s;
       }
-      
+
       .tag-link:hover {
         background: #d1d5db;
         color: #1f2937;
         transform: translateY(-1px);
       }
-      
+
       /* Responsive design */
       @media (max-width: 768px) {
         .tag-page {
           padding: 1rem;
         }
-        
+
         .page-title {
           font-size: 1.75rem;
         }
-        
+
         .pagination-controls {
           flex-direction: column;
           gap: 1.5rem;
         }
-        
+
         .pagination-link {
           min-width: auto;
           width: 100%;
         }
-        
+
         .page-numbers {
           order: -1;
         }
-        
+
         .related-tags {
           padding: 1.5rem;
         }
-        
+
         .tags-cloud {
           justify-content: flex-start;
         }
       }
-      
+
       @media (max-width: 480px) {
         .page-numbers {
           flex-wrap: wrap;
           justify-content: center;
         }
-        
+
         .page-number {
           min-width: 2rem;
           padding: 0.5rem;

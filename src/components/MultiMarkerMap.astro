@@ -1,11 +1,11 @@
 ---
 import type { MultiMarkerMapProps } from '../types.js';
+import '../styles/aps-core.css';
 
 interface Props extends MultiMarkerMapProps {}
 
 const { 
   photos, 
-  height = '400px',
   zoom = 10,
   class: className = ''
 } = Astro.props;
@@ -31,13 +31,13 @@ if (shouldShowMap) {
     west: Math.min(...longitudes),
   };
 
-  // Add padding
+  // Add padding - more generous to ensure no markers are cut off
   const latSpan = bounds.north - bounds.south;
   const lonSpan = bounds.east - bounds.west;
-  const padding = 0.1;
+  const padding = 0.3; // Increased from 0.1 to 0.3 for better marker visibility
 
-  const paddedLatSpan = Math.max(latSpan * (1 + padding), 0.01);
-  const paddedLonSpan = Math.max(lonSpan * (1 + padding), 0.01);
+  const paddedLatSpan = Math.max(latSpan * (1 + padding), 0.05); // Minimum span increased
+  const paddedLonSpan = Math.max(lonSpan * (1 + padding), 0.05);
 
   const centerLat = (bounds.north + bounds.south) / 2;
   const centerLon = (bounds.east + bounds.west) / 2;
@@ -61,7 +61,7 @@ if (shouldShowMap) {
   // Build Geoapify URL - exactly like reference implementation
   const params = new URLSearchParams({
     style: "klokantech-basic",
-    width: "800",
+    width: "1200",
     height: "400",
     bbox: `${finalBounds.west},${finalBounds.south},${finalBounds.east},${finalBounds.north}`,
     marker: markers,
@@ -74,111 +74,66 @@ if (shouldShowMap) {
 }
 ---
 
-<div class={`multi-marker-map ${className}`}>
+<div class={`aps-multi-marker-map ${className}`}>
   {validPhotos.length === 0 ? (
-    <div class="multi-marker-map__no-data">
-      <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
+    <div class="aps-placeholder aps-text-secondary aps-p-md aps-text-center">
+      <svg class="aps-map-icon aps-mb-sm" width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
       </svg>
-      <p>No location data available for these photos</p>
+      <p class="aps-text-sm">No location data available for these photos</p>
     </div>
   ) : shouldShowMap && mapUrl ? (
     <!-- Static Geoapify Map (matches reference style) -->
-    <div class="multi-marker-map__static">
+    <div class="aps-multi-marker-map__static">
       <img
         src={mapUrl}
         alt={`Map showing ${validPhotos.length} photo location${validPhotos.length !== 1 ? 's' : ''}`}
-        width={800}
+        width={1200}
         height={400}
-        class="multi-marker-map__image"
+        class="aps-image aps-rounded-lg aps-shadow-sm"
         loading="lazy"
       />
-      <p class="multi-marker-map__caption">
+      <p class="aps-multi-marker-map__caption aps-text-secondary aps-text-sm aps-mt-xs aps-text-center">
         Map showing {validPhotos.length} photo location{validPhotos.length !== 1 ? 's' : ''}
       </p>
     </div>
   ) : (
-    <div class="multi-marker-map__no-data">
-      <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
+    <div class="aps-placeholder aps-text-secondary aps-p-md aps-text-center">
+      <svg class="aps-map-icon aps-mb-sm" width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
       </svg>
-      <p>Map requires GEOAPIFY_API_KEY</p>
+      <p class="aps-text-sm">Map requires GEOAPIFY_API_KEY</p>
     </div>
   )}
 </div>
 
-<style define:vars={{ height }}>
-  .multi-marker-map {
+<style>
+  /* Component-specific styles that can't be utilities */
+  .aps-multi-marker-map {
     width: 100%;
-    height: var(--height);
-    border-radius: 8px;
+    border-radius: var(--aps-border-radius, 8px);
     overflow: hidden;
-    background: #f3f4f6;
+    background: var(--aps-color-bg-secondary, #f3f4f6);
   }
   
-  .multi-marker-map__static {
+  .aps-multi-marker-map__static {
     width: 100%;
-    height: 100%;
     position: relative;
   }
   
-  .multi-marker-map__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .multi-marker-map__caption {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: #6b7280;
-    text-align: center;
-  }
-  
-  .multi-marker-map__no-data {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: #6b7280;
-    text-align: center;
-    padding: 2rem;
-  }
-  
-  .multi-marker-map__no-data svg {
-    margin-bottom: 1rem;
-    opacity: 0.5;
-  }
-  
-  .multi-marker-map__no-data p {
-    margin: 0;
-    font-size: 0.875rem;
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    .multi-marker-map {
-      background: #374151;
-    }
-    
-    .multi-marker-map__no-data {
-      color: #d1d5db;
-    }
-    
-    .multi-marker-map__caption {
-      color: #d1d5db;
-    }
+  .aps-map-icon {
+    width: 32px;
+    height: 32px;
+    display: block;
+    opacity: 0.7;
+    margin: 0 auto var(--aps-space-sm);
   }
   
   /* Responsive adjustments */
   @media (max-width: 768px) {
-    .multi-marker-map {
-      height: 300px;
-    }
-    
-    .multi-marker-map__no-data {
-      padding: 1rem;
+    .aps-map-icon {
+      width: 28px;
+      height: 28px;
     }
   }
 </style>

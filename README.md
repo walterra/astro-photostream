@@ -281,7 +281,6 @@ import { MultiMarkerMap } from 'astro-photostream/components';
 
 <MultiMarkerMap
   photos={photosWithLocation}
-  height="400px"
   consolidationRadius={5000}
 />
 ```
