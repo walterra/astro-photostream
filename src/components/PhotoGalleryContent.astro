@@ -40,10 +40,7 @@ const totalPages = page.lastPage;
     </h1>
     
     <p class="page-description">
-      {isFirstPage 
-        ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
-        : `Page ${currentPage} of ${totalPages} • ${totalPhotos} total photos`
-      }
+      Page {currentPage} of {totalPages} • {totalPhotos} total photos
     </p>
   </header>
   
