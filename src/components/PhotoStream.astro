@@ -108,23 +108,20 @@ const generatePageUrl = (page: number) =>
 
         <!-- Page numbers -->
         <div class="photo-stream__pagination-numbers">
-          {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-            const pageNum = Math.max(1, pagination.currentPage - 2) + i;
-            if (pageNum > pagination.totalPages) return null;
-
-            return (
-              <a
+          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(pageNum => 
+            pageNum === pagination.currentPage ? 
+              <span class="photo-stream__pagination-number photo-stream__pagination-number--current" aria-current="page">
+                {pageNum}
+              </span>
+            : 
+              <a 
                 href={generatePageUrl(pageNum)}
-                class={`photo-stream__pagination-number ${
-                  pageNum === pagination.currentPage ? 'photo-stream__pagination-number--current' : ''
-                }`}
+                class="photo-stream__pagination-number"
                 aria-label={`Page ${pageNum}`}
-                aria-current={pageNum === pagination.currentPage ? 'page' : undefined}
               >
                 {pageNum}
               </a>
-            );
-          })}
+          )}
         </div>
 
         {pagination.hasNext && (

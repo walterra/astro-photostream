@@ -139,20 +139,8 @@ const pageDescription = isFirstPage
           )}
 
           <div class="page-numbers">
-            {/* First page */}
-            {page.currentPage > 3 && (
-              <>
-                <a href="/photos" class="page-number" aria-label="Page 1">1</a>
-                {page.currentPage > 4 && <span class="ellipsis">…</span>}
-              </>
-            )}
-
-            {/* Current page range */}
-            {Array.from({ length: Math.min(5, page.lastPage) }, (_, i) => {
-              const pageNum = Math.max(1, Math.min(page.lastPage - 4, page.currentPage - 2)) + i;
-              if (pageNum > page.lastPage) return null;
-
-              return pageNum === page.currentPage ?
+            {[...Array(page.lastPage)].map((_, i) => i + 1).map(pageNum => 
+              pageNum === page.currentPage ?
                 <span class="page-number current" aria-current="page">
                   {pageNum}
                 </span>
@@ -163,21 +151,7 @@ const pageDescription = isFirstPage
                   aria-label={`Page ${pageNum}`}
                 >
                   {pageNum}
-                </a>;
-            })}
-
-            {/* Last page */}
-            {page.currentPage < page.lastPage - 2 && (
-              <>
-                {page.currentPage < page.lastPage - 3 && <span class="ellipsis">…</span>}
-                <a
-                  href={`/photos/${page.lastPage}`}
-                  class="page-number"
-                  aria-label={`Page ${page.lastPage}`}
-                >
-                  {page.lastPage}
                 </a>
-              </>
             )}
           </div>
 
