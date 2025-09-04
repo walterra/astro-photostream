@@ -160,6 +160,7 @@ const totalPages = page.lastPage;
 
   .page-header {
     text-align: center;
+    margin-top: 3rem;
     margin-bottom: 2rem;
   }
 
@@ -177,13 +178,20 @@ const totalPages = page.lastPage;
   }
 
   .map-wrapper {
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
+    padding: 0 12px;
   }
 
   .map-section {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .map-section img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
   }
 
   .map-caption {
@@ -194,17 +202,16 @@ const totalPages = page.lastPage;
   }
 
   .photos-section {
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
   }
 
   .pagination {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--aps-border, #e5e5e5);
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 0.5rem;
   }
 
   .pagination-info {
