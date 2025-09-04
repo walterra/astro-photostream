@@ -3,6 +3,7 @@ import path from 'path';
 import exifr from 'exifr';
 import sharp from 'sharp';
 import type { PhotoMetadata, IntegrationOptions } from '../types.js';
+import { photoValidation } from '../schema.js';
 
 // ============================================================================
 // TYPES
@@ -204,12 +205,10 @@ export abstract class LLMAnalyzer {
       title: filename.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
       description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ''}.`,
       altText: `Photograph: ${filename}`,
-      suggestedTags: [
+      suggestedTags: photoValidation.sanitizeTags([
         'photography',
-        ...(exifData?.dateTime
-          ? [exifData.dateTime.getFullYear().toString()]
-          : []),
-      ],
+        ...(exifData?.dateTime ? [`y${exifData.dateTime.getFullYear()}`] : []),
+      ]),
     };
   }
 
@@ -308,7 +307,7 @@ Generate JSON with these fields:
 - title: 30-60 chars, engaging and descriptive, SEO-friendly
 - description: 200-250 chars, engaging description
 - altText: Concise accessibility description
-- suggestedTags: Array of relevant tags (include year if determinable)
+- suggestedTags: Array of 3-5 relevant tags (single words, lowercase, no spaces)
 
 Focus on what makes this photo interesting or worth sharing. Avoid generic descriptions.`;
 
@@ -354,8 +353,8 @@ Focus on what makes this photo interesting or worth sharing. Avoid generic descr
           description: parsed.description || fallback.description,
           altText: parsed.altText || fallback.altText,
           suggestedTags: Array.isArray(parsed.suggestedTags)
-            ? parsed.suggestedTags
-            : fallback.suggestedTags,
+            ? photoValidation.sanitizeTags(parsed.suggestedTags)
+            : photoValidation.sanitizeTags(fallback.suggestedTags),
         };
 
         this.storeInMemory(analysis, exifData);
@@ -588,12 +587,12 @@ export class PhotoMetadataGenerator {
         title: filename.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
         description: `A photograph${exifData?.dateTime ? ` captured on ${exifData.dateTime.toLocaleDateString()}` : ''}.`,
         altText: `Photograph: ${filename}`,
-        suggestedTags: [
+        suggestedTags: photoValidation.sanitizeTags([
           'photography',
           ...(exifData?.dateTime
-            ? [exifData.dateTime.getFullYear().toString()]
+            ? [`y${exifData.dateTime.getFullYear()}`]
             : []),
-        ],
+        ]),
       };
     }
 
@@ -617,7 +616,11 @@ export class PhotoMetadataGenerator {
       lens: exifData.lens,
       settings: exifData.settings,
       location: exifData.location,
-      tags: llmAnalysis.suggestedTags,
+      tags: photoValidation.sanitizeTags([
+        ...llmAnalysis.suggestedTags,
+        // Add year tag based on photo date (matching reference implementation)
+        ...(publishDate ? [`y${publishDate.getFullYear()}`] : []),
+      ]),
       publishDate,
       draft: false,
     };
@@ -677,6 +680,6 @@ export async function generateAIMetadata(
   return {
     title: analysis.title,
     description: analysis.description,
-    tags: analysis.suggestedTags,
+    tags: photoValidation.sanitizeTags(analysis.suggestedTags),
   };
 }
