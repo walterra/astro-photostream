@@ -154,21 +154,11 @@ const pageDescription = isFirstPage
           }
         </p>
         
-        {photos.length > 0 && photosWithLocation.length > 0 && (
-          <div class="gallery-stats">
-            <span class="location-count">
-              {photosWithLocation.length} with locations on this page
-            </span>
-          </div>
-        )}
       </header>
       
       <!-- Location Map (if enabled and photos have location data) -->
       {config.gallery.enableMap && photosWithLocation.length > 0 && (
         <section class="map-section">
-          <h2 class="section-title">
-            Photo Locations (Page {currentPage})
-          </h2>
           <MultiMarkerMap 
             photos={photosWithLocation}
             zoom={2}
