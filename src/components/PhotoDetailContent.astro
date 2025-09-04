@@ -1,0 +1,451 @@
+---
+/**
+ * Reusable photo detail content component
+ * Extracts shared content logic from photo detail route files
+ */
+
+import PhotoCard from './PhotoCard.astro';
+import MapImage from './MapImage.astro';
+import type { PhotoMetadata } from '../types.js';
+
+export interface Props {
+  photo: any; // Collection entry
+  photoData: PhotoMetadata;
+  prevPhoto?: { slug: string; title: string; coverImage: string } | null;
+  nextPhoto?: { slug: string; title: string; coverImage: string } | null;
+  photoIndex: number;
+  totalPhotos: number;
+  relatedPhotos: PhotoMetadata[];
+  config: any;
+}
+
+const { photo, photoData, prevPhoto, nextPhoto, photoIndex, totalPhotos, relatedPhotos, config } = Astro.props;
+
+// Format publish date
+const publishDate = photoData.publishDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long', 
+  day: 'numeric'
+});
+
+// Format camera settings
+const cameraSettings = [
+  photoData.settings?.aperture && `f/${photoData.settings.aperture}`,
+  photoData.settings?.shutterSpeed && `${photoData.settings.shutterSpeed}s`,
+  photoData.settings?.iso && `ISO ${photoData.settings.iso}`,
+  photoData.settings?.focalLength && `${photoData.settings.focalLength}mm`
+].filter(Boolean);
+---
+
+<main class="photo-detail">
+  <!-- Photo Navigation -->
+  <nav class="photo-nav" aria-label="Photo navigation">
+    <div class="nav-container">
+      <div class="nav-info">
+        <span class="photo-counter">Photo {photoIndex} of {totalPhotos}</span>
+        <a href="/photos" class="back-link">← Back to Gallery</a>
+      </div>
+      
+      <div class="nav-controls">
+        {prevPhoto ? (
+          <a href={`/photos/${prevPhoto.slug}`} class="nav-photo prev" aria-label="Previous photo">
+            <span class="nav-label">← Previous</span>
+            <span class="nav-title">{prevPhoto.title}</span>
+          </a>
+        ) : (
+          <div class="nav-photo disabled">
+            <span class="nav-label">← Previous</span>
+          </div>
+        )}
+        
+        {nextPhoto ? (
+          <a href={`/photos/${nextPhoto.slug}`} class="nav-photo next" aria-label="Next photo">
+            <span class="nav-label">Next →</span>
+            <span class="nav-title">{nextPhoto.title}</span>
+          </a>
+        ) : (
+          <div class="nav-photo disabled">
+            <span class="nav-label">Next →</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Photo Display -->
+  <article class="photo-article">
+    <header class="photo-header">
+      <h1 class="photo-title">{photoData.title}</h1>
+      {photoData.description && (
+        <p class="photo-description">{photoData.description}</p>
+      )}
+      <time class="photo-date" datetime={photoData.publishDate.toISOString()}>
+        {publishDate}
+      </time>
+    </header>
+    
+    <!-- Main Photo -->
+    <div class="photo-display">
+      <PhotoCard 
+        photo={photoData}
+        loading="eager"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+        class="hero-photo"
+      />
+    </div>
+    
+    <!-- Photo Content -->
+    <div class="photo-content">
+      <div set:html={photo.body} />
+    </div>
+    
+    <!-- Metadata Section -->
+    <aside class="photo-metadata">
+      <h2 class="metadata-title">Photo Details</h2>
+      
+      <dl class="metadata-list">
+        <!-- Camera Information -->
+        {photoData.camera && (
+          <div class="metadata-item">
+            <dt>Camera</dt>
+            <dd>{photoData.camera}</dd>
+          </div>
+        )}
+        
+        {photoData.lens && (
+          <div class="metadata-item">
+            <dt>Lens</dt>
+            <dd>{photoData.lens}</dd>
+          </div>
+        )}
+        
+        {cameraSettings.length > 0 && (
+          <div class="metadata-item">
+            <dt>Settings</dt>
+            <dd>{cameraSettings.join(' • ')}</dd>
+          </div>
+        )}
+        
+        <!-- Location Information -->
+        {photoData.location?.name && (
+          <div class="metadata-item">
+            <dt>Location</dt>
+            <dd>
+              {photoData.location.name}
+              {photoData.location.latitude && photoData.location.longitude && (
+                <span class="coordinates">
+                  ({photoData.location.latitude.toFixed(4)}, {photoData.location.longitude.toFixed(4)})
+                </span>
+              )}
+            </dd>
+          </div>
+        )}
+        
+        <!-- Tags -->
+        {photoData.tags.length > 0 && (
+          <div class="metadata-item">
+            <dt>Tags</dt>
+            <dd class="tags-list">
+              {photoData.tags.map(tag => (
+                <a href={`/photos/tags/${tag}`} class="tag-link">#{tag}</a>
+              ))}
+            </dd>
+          </div>
+        )}
+      </dl>
+    </aside>
+    
+    <!-- Location Map -->
+    {photoData.location?.latitude && photoData.location?.longitude && (
+      <section class="location-section">
+        <h2 class="section-title">Where this photo was taken</h2>
+        <MapImage 
+          latitude={photoData.location.latitude}
+          longitude={photoData.location.longitude}
+          locationName={photoData.location.name}
+          width="100%"
+          height="300px"
+          zoom={12}
+          class="photo-location-map"
+        />
+      </section>
+    )}
+    
+    <!-- Related Photos -->
+    {relatedPhotos.length > 0 && (
+      <section class="related-photos">
+        <h2 class="section-title">Related Photos</h2>
+        <div class="related-grid">
+          {relatedPhotos.map(relatedPhoto => (
+            <a href={`/photos/${relatedPhoto.id}`} class="related-photo-link">
+              <PhotoCard 
+                photo={relatedPhoto}
+                loading="lazy"
+                sizes="(max-width: 768px) 50vw, 25vw"
+                class="related-photo"
+              />
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</main>
+
+<!-- Keyboard Navigation Handler -->
+<script>
+  document.addEventListener('keydown', (e) => {
+    if (e.target && (e.target as HTMLElement).tagName === 'INPUT') return;
+    
+    const prevLink = document.querySelector('.nav-photo.prev') as HTMLAnchorElement;
+    const nextLink = document.querySelector('.nav-photo.next') as HTMLAnchorElement;
+    
+    if (e.key === 'ArrowLeft' && prevLink && !prevLink.classList.contains('disabled')) {
+      prevLink.click();
+    } else if (e.key === 'ArrowRight' && nextLink && !nextLink.classList.contains('disabled')) {
+      nextLink.click();
+    }
+  });
+</script>
+
+<style>
+  .photo-detail {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .photo-nav {
+    sticky-top: 0;
+    background: white;
+    border-bottom: 1px solid var(--aps-border, #e5e5e5);
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    z-index: 10;
+  }
+
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .photo-counter {
+    font-size: 0.9rem;
+    color: var(--aps-text-secondary, #666);
+  }
+
+  .back-link {
+    color: var(--aps-link, #2563eb);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .nav-controls {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .nav-photo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem;
+    min-width: 120px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+
+  .nav-photo:not(.disabled):hover {
+    background: var(--aps-hover-bg, #f8fafc);
+  }
+
+  .nav-photo.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .nav-label {
+    font-size: 0.8rem;
+    color: var(--aps-text-secondary, #666);
+    margin-bottom: 0.25rem;
+  }
+
+  .nav-title {
+    font-size: 0.9rem;
+    color: var(--aps-link, #2563eb);
+    font-weight: 500;
+  }
+
+  .photo-article {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .photo-header {
+    text-align: center;
+  }
+
+  .photo-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--aps-text-primary, #1a1a1a);
+  }
+
+  .photo-description {
+    font-size: 1.125rem;
+    color: var(--aps-text-secondary, #666);
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+
+  .photo-date {
+    color: var(--aps-text-tertiary, #999);
+    font-size: 0.9rem;
+  }
+
+  .photo-display {
+    display: flex;
+    justify-content: center;
+  }
+
+  .photo-content {
+    prose: true;
+    line-height: 1.7;
+    color: var(--aps-text-primary, #1a1a1a);
+  }
+
+  .photo-metadata {
+    background: var(--aps-card-bg, #f8fafc);
+    border: 1px solid var(--aps-border, #e5e5e5);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .metadata-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--aps-text-primary, #1a1a1a);
+  }
+
+  .metadata-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .metadata-item dt {
+    font-weight: 600;
+    color: var(--aps-text-primary, #1a1a1a);
+    font-size: 0.9rem;
+  }
+
+  .metadata-item dd {
+    margin: 0;
+    color: var(--aps-text-secondary, #666);
+  }
+
+  .coordinates {
+    font-size: 0.8rem;
+    color: var(--aps-text-tertiary, #999);
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .tags-list {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag-link {
+    background: var(--aps-tag-bg, #dbeafe);
+    color: var(--aps-tag-text, #1e40af);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: background-color 0.2s;
+  }
+
+  .tag-link:hover {
+    background: var(--aps-tag-hover-bg, #bfdbfe);
+  }
+
+  .location-section,
+  .related-photos {
+    border-top: 1px solid var(--aps-border, #e5e5e5);
+    padding-top: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--aps-text-primary, #1a1a1a);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .related-photo-link {
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .nav-container {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .nav-controls {
+      justify-content: space-between;
+    }
+
+    .nav-photo {
+      min-width: auto;
+      flex: 1;
+    }
+
+    .photo-title {
+      font-size: 2rem;
+    }
+
+    .related-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .photo-nav {
+      background: var(--aps-bg-dark, #1a1a1a);
+      border-bottom-color: var(--aps-border-dark, #333);
+    }
+  }
+</style>

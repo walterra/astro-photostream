@@ -1,0 +1,46 @@
+---
+/**
+ * Reusable SEO head component
+ * Centralizes SEO metadata generation for route consolidation
+ */
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  ogImageUrl?: string;
+  jsonLd?: any;
+  siteName?: string;
+}
+
+const { title, description, canonical, ogImageUrl, jsonLd, siteName } = Astro.props;
+---
+
+<meta charset="utf-8" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="viewport" content="width=device-width" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Basic Meta Tags -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<!-- Open Graph -->
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonical} />
+{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+{siteName && <meta property="og:site_name" content={siteName} />}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+
+<!-- JSON-LD Structured Data -->
+{jsonLd && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+)}

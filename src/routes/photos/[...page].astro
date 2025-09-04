@@ -1,437 +1,61 @@
 ---
 /**
- * Photo gallery pagination with named parameters - new approach for better route resolution
+ * Photo gallery pagination - consolidated route using shared utilities
  * Handles URLs: /photos/1, /photos/2, /photos/3, etc.
- * Uses dynamic getStaticPaths to generate only valid page numbers
  */
-import { getCollection } from 'astro:content';
 import { config } from 'virtual:astro-photostream/config';
-import PhotoStream from '../../components/PhotoStream.astro';
-import MultiMarkerMap from '../../components/MultiMarkerMap.astro';
-import type { PhotoMetadata } from '../../types.js';
+import PhotoGalleryContent from '../../components/PhotoGalleryContent.astro';
+import SeoHead from '../../components/SeoHead.astro';
+import { createPhotoPagination, getPaginationMetadata } from '../../utils/pagination.js';
+import { calculateDateRange } from '../../utils/photo-data.js';
+import { generateGalleryPageSeo } from '../../utils/seo.js';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  // Get all photos from content collection
-  const allPhotos = await getCollection('photos', ({ data }) => {
-    return !data.draft;
-  });
-
-  // Sort photos by publish date (newest first)
-  const sortedPhotos = allPhotos
-    .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
-
-  // Convert to PhotoMetadata format for pagination
-  const photos: PhotoMetadata[] = sortedPhotos.map(photo => ({
-    id: photo.slug,
-    title: photo.data.title,
-    description: photo.data.description,
-    coverImage: photo.data.coverImage,
-    camera: photo.data.camera,
-    lens: photo.data.lens,
-    settings: photo.data.settings,
-    location: photo.data.location,
-    tags: photo.data.tags,
-    publishDate: new Date(photo.data.publishDate),
-    draft: photo.data.draft || false
-  }));
-
-  // Use Astro's built-in paginate function - handles /photos AND /photos/2 automatically
-  return paginate(photos, { 
-    pageSize: config.gallery.itemsPerPage,
-    props: {
-      totalPhotos: photos.length,
-      config
-    }
-  });
+  return await createPhotoPagination(paginate, config.gallery.itemsPerPage, config);
 };
 
 // Get paginated data from Astro's paginate function
-const { page, totalPhotos } = Astro.props as { page: any, totalPhotos: number };
-const photos = page.data;
-const currentPage = page.currentPage;
-const totalPages = page.lastPage;
+const { page, totalPhotos } = Astro.props;
+const { photos, currentPage, totalPages } = getPaginationMetadata(page);
 
-// Get photos with location data for map
-const photosWithLocation = photos.filter((photo: PhotoMetadata) => 
-  photo.location?.latitude && photo.location?.longitude
+// Calculate date range for SEO
+const dateRange = calculateDateRange(photos);
+
+// Generate SEO metadata
+const seoData = generateGalleryPageSeo(
+  currentPage,
+  totalPages,
+  totalPhotos,
+  dateRange,
+  config.seo,
+  Astro.url
 );
-
-// Calculate date range for this page
-const dates = photos.map((p: PhotoMetadata) => p.publishDate).sort((a: Date, b: Date) => b.getTime() - a.getTime());
-const newestDate = dates[0];
-const oldestDate = dates[dates.length - 1];
-const dateRange = newestDate && oldestDate && newestDate !== oldestDate
-  ? `${oldestDate.getFullYear()} - ${newestDate.getFullYear()}`
-  : newestDate?.getFullYear().toString() || '';
-
-// Page metadata
-const isFirstPage = currentPage === 1;
-const pageTitle = isFirstPage 
-  ? `Photo Gallery - ${config.seo.siteName || 'Photo Stream'}`
-  : `Photo Gallery - Page ${currentPage} - ${config.seo.siteName || 'Photo Stream'}`;
-const pageDescription = isFirstPage
-  ? `Browse through ${totalPhotos} photographs captured with love for photography and technology. ${dateRange ? `Photos from ${dateRange}.` : ''}`
-  : `Browse photographs - page ${currentPage} of ${totalPages}. ${dateRange ? `Photos from ${dateRange} on this page.` : ''}`;
 ---
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{pageTitle}</title>
-    <meta name="description" content={pageDescription} />
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={pageDescription} />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
-    {config.seo.generateOpenGraph && (
-      <meta property="og:image" content={`${Astro.url.origin}/og-image/photos/${currentPage}.png`} />
-    )}
-    {config.seo.siteName && <meta property="og:site_name" content={config.seo.siteName} />}
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={pageTitle} />
-    <meta name="twitter:description" content={pageDescription} />
-    {config.seo.generateOpenGraph && (
-      <meta name="twitter:image" content={`${Astro.url.origin}/og-image/photos/${currentPage}.png`} />
-    )}
-    {config.seo.twitterHandle && <meta name="twitter:creator" content={config.seo.twitterHandle} />}
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href={Astro.url} />
+    <SeoHead 
+      title={seoData.title}
+      description={seoData.description}
+      canonical={seoData.canonical}
+      ogImageUrl={seoData.ogImageUrl}
+      jsonLd={seoData.jsonLd}
+      siteName={config.seo.siteName}
+    />
     
     <!-- Pagination SEO -->
-    {prevUrl && <link rel="prev" href={prevUrl} />}
-    {nextUrl && <link rel="next" href={nextUrl} />}
-    
-    <!-- JSON-LD structured data -->
-    <script type="application/ld+json">
-      {
-        JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          "name": pageTitle,
-          "description": pageDescription,
-          "url": Astro.url.toString(),
-          "isPartOf": {
-            "@type": "ImageGallery",
-            "name": `Photo Gallery - ${config.seo.siteName || 'Photo Stream'}`,
-            "numberOfImages": totalPhotos
-          },
-          "image": photos.slice(0, 3).map((photo: PhotoMetadata) => ({
-            "@type": "ImageObject",
-            "url": photo.coverImage.src,
-            "description": photo.coverImage.alt,
-            "name": photo.title
-          }))
-        })
-      }
-    </script>
+    {page.url.prev && <link rel="prev" href={page.url.prev} />}
+    {page.url.next && <link rel="next" href={page.url.next} />}
   </head>
   
   <body>
-    <main class="photo-gallery-page">
-      {!isFirstPage && (
-        <nav class="page-nav">
-          <a href="/photos" class="nav-link">← Gallery Home</a>
-        </nav>
-      )}
-      
-      <header class="page-header">
-        <h1 class="page-title">
-          Photo Gallery
-        </h1>
-        <p class="page-description">
-          {isFirstPage 
-            ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
-            : `Page ${currentPage} of ${totalPages} • ${totalPhotos} total photos`
-          }
-        </p>
-        
-      </header>
-      
-      <!-- Location Map (if enabled and photos have location data) -->
-      {config.gallery.enableMap && photosWithLocation.length > 0 && (
-        <section class="map-section">
-          <MultiMarkerMap 
-            photos={photosWithLocation}
-            zoom={2}
-            class="photo-locations-map"
-          />
-        </section>
-      )}
-      
-      <!-- Photo Grid -->
-      <section class="photos-section">
-        <PhotoStream 
-          photos={photos}
-          itemsPerPage={config.gallery.itemsPerPage}
-          showPagination={false}
-          showMap={false}
-          class="main-photo-stream"
-        />
-      </section>
-      
-      <!-- Astro's Built-in Pagination -->
-      {page.lastPage > 1 && (
-        <nav class="pagination" aria-label="Photo gallery pagination">
-          <div class="pagination-info">
-            Showing {page.start + 1}–{page.end + 1} of {page.total} photos
-          </div>
-          
-          <div class="pagination-controls">
-            {page.url.prev && (
-              <a 
-                href={page.url.prev} 
-                class="pagination-link previous"
-                aria-label="Previous page"
-              >
-                ← Previous
-              </a>
-            )}
-            
-            <div class="page-numbers">
-              {/* First page */}
-              {page.currentPage > 3 && (
-                <>
-                  <a href="/photos" class="page-number" aria-label="Page 1">1</a>
-                  {page.currentPage > 4 && <span class="ellipsis">…</span>}
-                </>
-              )}
-              
-              {/* Current page range */}
-              {Array.from({ length: Math.min(5, page.lastPage) }, (_, i) => {
-                const pageNum = Math.max(1, Math.min(page.lastPage - 4, page.currentPage - 2)) + i;
-                if (pageNum > page.lastPage) return null;
-                
-                return pageNum === page.currentPage ? 
-                  <span class="page-number current" aria-current="page">
-                    {pageNum}
-                  </span>
-                : 
-                  <a 
-                    href={pageNum === 1 ? '/photos' : `/photos/${pageNum}`}
-                    class="page-number"
-                    aria-label={`Page ${pageNum}`}
-                  >
-                    {pageNum}
-                  </a>;
-              })}
-              
-              {/* Last page */}
-              {page.currentPage < page.lastPage - 2 && (
-                <>
-                  {page.currentPage < page.lastPage - 3 && <span class="ellipsis">…</span>}
-                  <a 
-                    href={`/photos/${page.lastPage}`} 
-                    class="page-number"
-                    aria-label={`Page ${page.lastPage}`}
-                  >
-                    {page.lastPage}
-                  </a>
-                </>
-              )}
-            </div>
-            
-            {page.url.next && (
-              <a 
-                href={page.url.next} 
-                class="pagination-link next"
-                aria-label="Next page"
-              >
-                Next →
-              </a>
-            )}
-          </div>
-        </nav>
-      )}
-    </main>
-    
-    <style>
-      /* Photo gallery styling */
-      .photo-gallery-page {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 1rem;
-      }
-      
-      .page-nav {
-        margin-bottom: 1rem;
-      }
-      
-      .nav-link {
-        display: inline-flex;
-        align-items: center;
-        color: #6b7280;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.2s;
-      }
-      
-      .nav-link:hover {
-        color: #374151;
-      }
-      
-      .page-header {
-        text-align: center;
-        margin-bottom: 3rem;
-      }
-      
-      .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        color: #1f2937;
-      }
-      
-      .page-description {
-        font-size: 1.125rem;
-        color: #6b7280;
-        margin-bottom: 1rem;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      
-      .gallery-stats {
-        font-size: 0.875rem;
-        color: #9ca3af;
-        margin-top: 1rem;
-      }
-      
-      .section-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        color: #1f2937;
-      }
-      
-      .map-section, .photos-section {
-        margin-bottom: 3rem;
-      }
-      
-      .pagination {
-        margin-top: 3rem;
-        padding-top: 2rem;
-        border-top: 1px solid #e5e7eb;
-      }
-      
-      .pagination-info {
-        text-align: center;
-        font-size: 0.875rem;
-        color: #6b7280;
-        margin-bottom: 2rem;
-      }
-      
-      .pagination-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-      }
-      
-      .pagination-link {
-        display: inline-block;
-        padding: 0.75rem 1rem;
-        background: #f3f4f6;
-        color: #374151;
-        text-decoration: none;
-        border-radius: 0.375rem;
-        font-weight: 500;
-        transition: all 0.2s;
-        min-width: 100px;
-        text-align: center;
-      }
-      
-      .pagination-link:hover {
-        background: #e5e7eb;
-        color: #1f2937;
-      }
-      
-      .page-numbers {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-      }
-      
-      .page-number {
-        display: inline-block;
-        padding: 0.5rem 0.75rem;
-        min-width: 2.5rem;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 0.375rem;
-        font-weight: 500;
-        transition: all 0.2s;
-      }
-      
-      .page-number:not(.current) {
-        color: #6b7280;
-        background: #f9fafb;
-      }
-      
-      .page-number:not(.current):hover {
-        color: #374151;
-        background: #f3f4f6;
-      }
-      
-      .page-number.current {
-        background: #3b82f6;
-        color: white;
-        cursor: default;
-      }
-      
-      .ellipsis {
-        color: #9ca3af;
-        padding: 0 0.25rem;
-      }
-      
-      /* Responsive design */
-      @media (max-width: 768px) {
-        .photo-gallery-page {
-          padding: 1rem;
-        }
-        
-        .page-title {
-          font-size: 2rem;
-        }
-        
-        .page-description {
-          font-size: 1rem;
-        }
-        
-        .pagination-controls {
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-        
-        .pagination-link {
-          min-width: auto;
-          width: 100%;
-        }
-        
-        .page-numbers {
-          order: -1;
-        }
-      }
-      
-      @media (max-width: 480px) {
-        .page-numbers {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-        
-        .page-number {
-          min-width: 2rem;
-          padding: 0.5rem;
-        }
-      }
-    </style>
+    <PhotoGalleryContent 
+      photos={photos}
+      page={page}
+      totalPhotos={totalPhotos}
+      config={config}
+      showMap={true}
+    />
   </body>
 </html>

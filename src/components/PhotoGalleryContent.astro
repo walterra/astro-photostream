@@ -1,0 +1,274 @@
+---
+/**
+ * Reusable photo gallery content component
+ * Extracts shared content logic from gallery route files
+ */
+
+import PhotoStream from './PhotoStream.astro';
+import MultiMarkerMap from './MultiMarkerMap.astro';
+import { getPhotosWithLocation, calculateDateRange } from '../utils/photo-data.js';
+import type { PhotoMetadata } from '../types.js';
+
+export interface Props {
+  photos: PhotoMetadata[];
+  page: any;
+  totalPhotos: number;
+  config: any;
+  showMap?: boolean;
+  showRelated?: boolean;
+}
+
+const { photos, page, totalPhotos, config, showMap = true, showRelated = false } = Astro.props;
+
+// Get photos with location data for map
+const photosWithLocation = getPhotosWithLocation(photos);
+
+// Calculate date range for this page
+const dateRange = calculateDateRange(photos);
+
+// Page metadata
+const isFirstPage = page.currentPage === 1;
+const currentPage = page.currentPage;
+const totalPages = page.lastPage;
+---
+
+<main class="photo-gallery">
+  <!-- Header -->
+  <header class="page-header">
+    <h1 class="page-title">
+      {isFirstPage ? 'Photo Gallery' : `Photo Gallery - Page ${currentPage}`}
+    </h1>
+    
+    <p class="page-description">
+      {isFirstPage 
+        ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
+        : `Page ${currentPage} of ${totalPages} • ${totalPhotos} total photos`
+      }
+    </p>
+  </header>
+  
+  <!-- Location Map (if enabled and photos have location data) -->
+  {showMap && config.gallery.enableMap && photosWithLocation.length > 0 && (
+    <section class="map-section">
+      <MultiMarkerMap 
+        photos={photosWithLocation}
+        zoom={2}
+        class="photo-locations-map"
+      />
+    </section>
+  )}
+  
+  <!-- Photo Grid -->
+  <section class="photos-section">
+    <PhotoStream 
+      photos={photos}
+      itemsPerPage={config.gallery.itemsPerPage}
+      showPagination={false}
+      showMap={false}
+      class="main-photo-stream"
+    />
+  </section>
+  
+  <!-- Astro's Built-in Pagination -->
+  {page.lastPage > 1 && (
+    <nav class="pagination" aria-label="Photo gallery pagination">
+      <div class="pagination-info">
+        Showing {page.start + 1}–{page.end + 1} of {page.total} photos
+      </div>
+      
+      <div class="pagination-controls">
+        {page.url.prev && (
+          <a 
+            href={page.url.prev} 
+            class="pagination-link previous"
+            aria-label="Previous page"
+          >
+            ← Previous
+          </a>
+        )}
+        
+        <div class="page-numbers">
+          {/* First page */}
+          {page.currentPage > 3 && (
+            <>
+              <a href="/photos" class="page-number" aria-label="Page 1">1</a>
+              {page.currentPage > 4 && <span class="ellipsis">…</span>}
+            </>
+          )}
+          
+          {/* Current page range */}
+          {Array.from({ length: Math.min(5, page.lastPage) }, (_, i) => {
+            const pageNum = Math.max(1, Math.min(page.lastPage - 4, page.currentPage - 2)) + i;
+            if (pageNum > page.lastPage) return null;
+            
+            return pageNum === page.currentPage ? 
+              <span class="page-number current" aria-current="page">
+                {pageNum}
+              </span>
+            : 
+              <a 
+                href={pageNum === 1 ? '/photos' : `/photos/${pageNum}`}
+                class="page-number"
+                aria-label={`Page ${pageNum}`}
+              >
+                {pageNum}
+              </a>;
+          })}
+          
+          {/* Last page */}
+          {page.currentPage < page.lastPage - 2 && (
+            <>
+              {page.currentPage < page.lastPage - 3 && <span class="ellipsis">…</span>}
+              <a 
+                href={`/photos/${page.lastPage}`} 
+                class="page-number"
+                aria-label={`Page ${page.lastPage}`}
+              >
+                {page.lastPage}
+              </a>
+            </>
+          )}
+        </div>
+        
+        {page.url.next && (
+          <a 
+            href={page.url.next} 
+            class="pagination-link next"
+            aria-label="Next page"
+          >
+            Next →
+          </a>
+        )}
+      </div>
+    </nav>
+  )}
+</main>
+
+<style>
+  .photo-gallery {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--aps-text-primary, #1a1a1a);
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--aps-text-secondary, #666);
+    margin: 0;
+  }
+
+  .map-section {
+    margin-bottom: 3rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .photos-section {
+    margin-bottom: 3rem;
+  }
+
+  .pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--aps-border, #e5e5e5);
+  }
+
+  .pagination-info {
+    color: var(--aps-text-secondary, #666);
+    font-size: 0.9rem;
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pagination-link {
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: var(--aps-link, #2563eb);
+    border: 1px solid var(--aps-border, #e5e5e5);
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .pagination-link:hover {
+    background: var(--aps-hover-bg, #f8fafc);
+    border-color: var(--aps-link, #2563eb);
+  }
+
+  .page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .page-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    text-decoration: none;
+    color: var(--aps-link, #2563eb);
+    border: 1px solid var(--aps-border, #e5e5e5);
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .page-number:hover {
+    background: var(--aps-hover-bg, #f8fafc);
+    border-color: var(--aps-link, #2563eb);
+  }
+
+  .page-number.current {
+    background: var(--aps-link, #2563eb);
+    color: white;
+    border-color: var(--aps-link, #2563eb);
+  }
+
+  .ellipsis {
+    padding: 0 0.5rem;
+    color: var(--aps-text-secondary, #666);
+  }
+
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: 2rem;
+    }
+    
+    .pagination-controls {
+      gap: 0.5rem;
+    }
+    
+    .page-numbers {
+      gap: 0.125rem;
+    }
+    
+    .page-number {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.875rem;
+    }
+  }
+</style>
