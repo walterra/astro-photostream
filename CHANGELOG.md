@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.5
+
+### Patch Changes
+
+- e74496c: refactor(components): consolidate route duplication for photo galleries
+- e74496c: fix: remove duplicate page numbers in pagination on first photo index page
+- e74496c: fix(components): remove redundant page info from gallery headers
+- e74496c: fix(cli): resolve GPS extraction and geocoding issues in photo metadata generator
+- e74496c: refactor(components): remove PhotoStream header and cleanup console logs
+- e74496c: fix(components): move map caption outside shadow container
+- e74496c: fix(components): resolve MultiMarkerMap static map rendering issues
+- e74496c: fix(cli): preserve nested directory structure in coverImage.src paths
+- e74496c: fix(components): improve static map generation with higher resolution and proper styling
+- e74496c: fix(utils): add tag sanitization to metadata generation
+- e74496c: improve(components): enhance MultiMarkerMap visual quality and consistency
+- e74496c: refactor(components): consolidate route duplication by extracting reusable components and utilities
+- e74496c: fix(components): remove redundant location headers and counts from gallery pages
+- e74496c: style(components): tighten spacing and padding for gallery components
+
 ## 0.3.4
 
 ### Patch Changes
