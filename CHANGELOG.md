@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.6
+
+### Patch Changes
+
+- 78cf422: fix(components): align MultiMarkerMap and PhotoStream horizontal padding
+- 78cf422: refactor(components): convert all components to use aps- CSS framework
+- 78cf422: refactor(components): add aps-content-container class for layout wrapper usage
+- 78cf422: style(components): tighten spacing and padding for gallery components
+
 ## 0.3.5
 
 ### Patch Changes
