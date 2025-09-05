@@ -229,38 +229,6 @@ export async function getCameraStats(): Promise<
 }
 
 /**
- * Get related photos based on tags
- */
-export function getRelatedPhotos(
-  currentPhoto: PhotoMetadata,
-  allPhotos: PhotoMetadata[],
-  limit = 4
-): PhotoMetadata[] {
-  // Calculate tag overlap scores
-  const scored = allPhotos
-    .filter(photo => photo.id !== currentPhoto.id)
-    .map(photo => {
-      const commonTags = photo.tags.filter(tag =>
-        currentPhoto.tags.includes(tag)
-      );
-      return {
-        photo,
-        score: commonTags.length,
-      };
-    })
-    .filter(item => item.score > 0)
-    .sort((a, b) => {
-      // Sort by score first, then by date
-      if (b.score !== a.score) {
-        return b.score - a.score;
-      }
-      return b.photo.publishDate.getTime() - a.photo.publishDate.getTime();
-    });
-
-  return scored.slice(0, limit).map(item => item.photo);
-}
-
-/**
  * Generate dynamic page description
  */
 export function generatePageDescription(

@@ -91,31 +91,6 @@ export function calculateDateRange(photos: PhotoMetadata[]): string {
 }
 
 /**
- * Get related photos by shared tags (excluding current photo)
- */
-export async function getRelatedPhotos(
-  currentPhotoSlug: string,
-  currentTags: string[],
-  limit: number = 4
-): Promise<PhotoMetadata[]> {
-  const allPhotos = await getPhotosCollection();
-
-  return allPhotos
-    .filter(
-      p =>
-        p.slug !== currentPhotoSlug &&
-        p.data.tags.some(tag => currentTags.includes(tag))
-    )
-    .sort(
-      (a, b) =>
-        new Date(b.data.publishDate).getTime() -
-        new Date(a.data.publishDate).getTime()
-    )
-    .slice(0, limit)
-    .map(convertToPhotoMetadata);
-}
-
-/**
  * Get related tags from photos (excluding current tag)
  */
 export function getRelatedTags(

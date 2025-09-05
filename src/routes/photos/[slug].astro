@@ -7,7 +7,7 @@ import { config } from 'virtual:astro-photostream/config';
 import PhotoDetailContent from '../../components/PhotoDetailContent.astro';
 import SeoHead from '../../components/SeoHead.astro';
 import { generatePhotoDetailPaths } from '../../utils/pagination.js';
-import { convertToPhotoMetadata, getRelatedPhotos } from '../../utils/photo-data.js';
+import { convertToPhotoMetadata } from '../../utils/photo-data.js';
 import { generatePhotoDetailSeo } from '../../utils/seo.js';
 import type { GetStaticPaths } from 'astro';
 
@@ -21,8 +21,6 @@ const { photo, prevPhoto, nextPhoto, photoIndex, totalPhotos } = Astro.props;
 // Convert to PhotoMetadata format
 const photoData = convertToPhotoMetadata(photo);
 
-// Get related photos using shared utility
-const relatedPhotos = await getRelatedPhotos(photo.slug, photoData.tags, 4);
 
 // Generate SEO metadata
 const seoData = generatePhotoDetailSeo(
@@ -59,7 +57,6 @@ const seoData = generatePhotoDetailSeo(
         nextPhoto={nextPhoto}
         photoIndex={photoIndex}
         totalPhotos={totalPhotos}
-        relatedPhotos={relatedPhotos}
         config={config}
       />
     </main>

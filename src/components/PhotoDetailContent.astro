@@ -18,11 +18,10 @@ export interface Props {
   nextPhoto?: { slug: string; title: string; coverImage: string } | null;
   photoIndex: number;
   totalPhotos: number;
-  relatedPhotos: PhotoMetadata[];
   config: any;
 }
 
-const { photo, photoData, prevPhoto, nextPhoto, photoIndex, totalPhotos, relatedPhotos, config } = Astro.props;
+const { photo, photoData, prevPhoto, nextPhoto, photoIndex, totalPhotos, config } = Astro.props;
 
 // Format publish date
 const publishDate = photoData.publishDate.toLocaleDateString('en-US', {
@@ -175,24 +174,6 @@ const cameraSettings = [
       </section>
     )}
     
-    <!-- Related Photos -->
-    {relatedPhotos.length > 0 && (
-      <section class="aps-border-t aps-mt-2xl" style="padding-top: 2rem;">
-        <h2 class="aps-text-2xl aps-font-semibold aps-mb-md aps-text-primary">Related Photos</h2>
-        <div class="aps-grid aps-gap-md aps-related-grid">
-          {relatedPhotos.map(relatedPhoto => (
-            <a href={`/photos/${relatedPhoto.id}`} class="aps-link" style="text-decoration: none;">
-              <PhotoCard 
-                photo={relatedPhoto}
-                loading="lazy"
-                sizes="(max-width: 768px) 50vw, 25vw"
-                class="related-photo"
-              />
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
   </article>
 </div>
 
@@ -218,10 +199,6 @@ const cameraSettings = [
     background-color: var(--aps-color-bg-muted);
   }
   
-  /* Related photos grid */
-  .aps-related-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
   
   /* Responsive behavior */
   @media (max-width: 768px) {
@@ -240,8 +217,5 @@ const cameraSettings = [
       flex: 1;
     }
     
-    .aps-related-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
 </style>
