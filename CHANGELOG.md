@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.7
+
+### Patch Changes
+
+- bd3814c: fix(components): remove double main tag nesting in layout wrapper mode
+- bef4190: fix(components): eliminate responsive grid dead zones at tablet breakpoints
+- 01353f4: refactor(components): remove Related Photos section from photo detail pages
+
 ## 0.3.6
 
 ### Patch Changes
