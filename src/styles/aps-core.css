@@ -477,10 +477,7 @@
   .aps-container {
     padding: var(--aps-space-lg);
   }
-}
-
-/* Large (1024px+) */
-@media (min-width: 1024px) {
+  
   .aps-grid-3col {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -488,6 +485,8 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* Large (1024px+) - No changes needed, 3col already handled at 768px */
 
 /* Extra Large (1280px+) */
 @media (min-width: 1280px) {
