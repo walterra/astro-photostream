@@ -75,14 +75,15 @@ const seoData = generateTagPageSeo(
   </head>
 
   <body>
-    <TagPageContent
-      photos={photos}
-      page={page}
-      tag={tag}
-      totalPhotos={totalPhotos}
-      relatedTags={relatedTags}
-      config={config}
-    />
-
+    <main class="aps-container">
+      <TagPageContent
+        photos={photos}
+        page={page}
+        tag={tag}
+        totalPhotos={totalPhotos}
+        relatedTags={relatedTags}
+        config={config}
+      />
+    </main>
   </body>
 </html>

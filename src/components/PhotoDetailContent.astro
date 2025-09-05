@@ -40,7 +40,8 @@ const cameraSettings = [
 ].filter(Boolean);
 ---
 
-<main class="aps-container">
+<!-- Photo Detail Content - Container-agnostic -->
+<div class="aps-content-container">
   <!-- Photo Navigation -->
   <nav class="aps-bg-primary aps-border-b aps-mb-2xl aps-p-md" style="position: sticky; top: 0; z-index: 10;" aria-label="Photo navigation">
     <div class="aps-flex aps-justify-between aps-items-center aps-gap-md aps-photo-nav-container">
@@ -193,7 +194,7 @@ const cameraSettings = [
       </section>
     )}
   </article>
-</main>
+</div>
 
 <!-- Keyboard Navigation Handler -->
 <script>

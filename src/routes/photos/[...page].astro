@@ -50,12 +50,14 @@ const seoData = generateGalleryPageSeo(
   </head>
   
   <body>
-    <PhotoGalleryContent 
-      photos={photos}
-      page={page}
-      totalPhotos={totalPhotos}
-      config={config}
-      showMap={true}
-    />
+    <main class="aps-container">
+      <PhotoGalleryContent 
+        photos={photos}
+        page={page}
+        totalPhotos={totalPhotos}
+        config={config}
+        showMap={true}
+      />
+    </main>
   </body>
 </html>

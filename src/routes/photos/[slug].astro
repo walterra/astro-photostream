@@ -51,15 +51,17 @@ const seoData = generatePhotoDetailSeo(
   </head>
   
   <body>
-    <PhotoDetailContent 
-      photo={photo}
-      photoData={photoData}
-      prevPhoto={prevPhoto}
-      nextPhoto={nextPhoto}
-      photoIndex={photoIndex}
-      totalPhotos={totalPhotos}
-      relatedPhotos={relatedPhotos}
-      config={config}
-    />
+    <main class="aps-container">
+      <PhotoDetailContent 
+        photo={photo}
+        photoData={photoData}
+        prevPhoto={prevPhoto}
+        nextPhoto={nextPhoto}
+        photoIndex={photoIndex}
+        totalPhotos={totalPhotos}
+        relatedPhotos={relatedPhotos}
+        config={config}
+      />
+    </main>
   </body>
 </html>
