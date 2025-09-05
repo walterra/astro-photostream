@@ -9,6 +9,9 @@ import MultiMarkerMap from './MultiMarkerMap.astro';
 import { getPhotosWithLocation, calculateDateRange } from '../utils/photo-data.js';
 import type { PhotoMetadata } from '../types.js';
 
+// Import consolidated CSS
+import '../styles/aps-core.css';
+
 export interface Props {
   photos: PhotoMetadata[];
   page: any;
@@ -32,28 +35,28 @@ const currentPage = page.currentPage;
 const totalPages = page.lastPage;
 ---
 
-<main class="tag-page">
+<main class="aps-container">
   <!-- Navigation -->
-  <nav class="page-nav">
-    <a href="/photos" class="nav-link">Gallery</a>
-    <span class="nav-separator">•</span>
+  <nav class="aps-flex aps-items-center aps-gap-sm aps-mb-2xl aps-text-sm">
+    <a href="/photos" class="aps-link">Gallery</a>
+    <span class="aps-text-muted">•</span>
     {!isFirstPage && (
       <>
-        <a href={`/photos/tags/${tag}`} class="nav-link">#{tag}</a>
-        <span class="nav-separator">•</span>
+        <a href={`/photos/tags/${tag}`} class="aps-link">#{tag}</a>
+        <span class="aps-text-muted">•</span>
       </>
     )}
-    <span class="current-page">
+    <span class="aps-text-secondary aps-font-medium">
       {isFirstPage ? `#${tag}` : `Page ${currentPage}`}
     </span>
   </nav>
 
-  <header class="page-header">
-    <div class="tag-badge">#{tag}</div>
-    <h1 class="page-title">
+  <header class="aps-text-center aps-mb-2xl">
+    <div class="aps-bg-accent aps-text-inverse aps-p-sm aps-rounded-xl aps-mb-lg" style="display: inline-block;">#{tag}</div>
+    <h1 class="aps-text-3xl aps-font-bold aps-mb-sm aps-text-primary">
       {isFirstPage ? `Photos tagged "${tag}"` : `"${tag}" Photos - Page ${currentPage}`}
     </h1>
-    <p class="page-description">
+    <p class="aps-text-xl aps-text-secondary aps-mb-lg">
       {isFirstPage
         ? `${totalPhotos} photograph${totalPhotos !== 1 ? 's' : ''} ${dateRange ? `from ${dateRange}` : ''}`
         : `Page ${currentPage} of ${totalPages} • ${totalPhotos} total photos with this tag`
@@ -61,8 +64,8 @@ const totalPages = page.lastPage;
     </p>
 
     {photos.length > 0 && photosWithLocation.length > 0 && (
-      <div class="gallery-stats">
-        <span class="location-count">
+      <div class="aps-flex aps-justify-center aps-gap-md">
+        <span class="aps-text-muted aps-text-sm">
           {photosWithLocation.length} with locations{!isFirstPage ? ' on this page' : ''}
         </span>
       </div>
@@ -70,32 +73,34 @@ const totalPages = page.lastPage;
   </header>
 
   {photos.length === 0 ? (
-    <div class="empty-tag">
-      <h2>No photos found</h2>
-      <p>No photos are tagged with "{tag}".</p>
-      <a href="/photos" class="back-link">← Browse all photos</a>
+    <div class="aps-text-center aps-p-3xl">
+      <h2 class="aps-text-2xl aps-text-primary aps-mb-md">No photos found</h2>
+      <p class="aps-text-secondary aps-mb-2xl">No photos are tagged with "{tag}".</p>
+      <a href="/photos" class="aps-link aps-font-medium">← Browse all photos</a>
     </div>
   ) : (
     <>
       <!-- Location Map (if enabled and photos have location data) -->
       {config.gallery.enableMap && photosWithLocation.length > 0 && (
-        <section class="map-section">
-          <h2 class="section-title">
+        <section class="aps-mb-2xl">
+          <h2 class="aps-text-2xl aps-font-semibold aps-mb-lg aps-text-primary aps-text-center">
             {isFirstPage
               ? `Where "${tag}" photos were taken`
               : `"${tag}" Photo Locations (Page ${currentPage})`
             }
           </h2>
-          <MultiMarkerMap
-            photos={photosWithLocation}
-            zoom={2}
-            class="tag-locations-map"
-          />
+          <div class="aps-rounded-xl aps-shadow-md" style="overflow: hidden;">
+            <MultiMarkerMap
+              photos={photosWithLocation}
+              zoom={2}
+              class="tag-locations-map"
+            />
+          </div>
         </section>
       )}
 
       <!-- Photo Grid -->
-      <section class="photos-section">
+      <section class="aps-mb-2xl">
         <PhotoStream
           photos={photos}
           itemsPerPage={config.gallery.itemsPerPage}
@@ -107,28 +112,28 @@ const totalPages = page.lastPage;
 
       <!-- Astro's Built-in Pagination -->
       {page.lastPage > 1 && (
-        <nav class="pagination" aria-label={`"${tag}" photos pagination`}>
-          <div class="pagination-info">
+        <nav class="aps-flex aps-flex-col aps-items-center aps-gap-md aps-mt-2xl aps-p-lg aps-border-t" aria-label={`"${tag}" photos pagination`}>
+          <div class="aps-text-secondary aps-text-sm">
             Showing {page.start + 1}–{page.end + 1} of {page.total} photos tagged "{tag}"
           </div>
           
-          <div class="pagination-controls">
+          <div class="aps-flex aps-items-center aps-gap-md aps-justify-center" style="flex-wrap: wrap;">
             {page.url.prev && (
               <a 
                 href={page.url.prev} 
-                class="pagination-link previous"
+                class="aps-button"
                 aria-label="Previous page"
               >
                 ← Previous
               </a>
             )}
             
-            <div class="page-numbers">
+            <div class="aps-flex aps-items-center aps-gap-xs">
               {/* First page */}
               {currentPage > 3 && (
                 <>
-                  <a href={`/photos/tags/${tag}`} class="page-number" aria-label="Page 1">1</a>
-                  {currentPage > 4 && <span class="ellipsis">…</span>}
+                  <a href={`/photos/tags/${tag}`} class="aps-page-number" aria-label="Page 1">1</a>
+                  {currentPage > 4 && <span class="aps-text-secondary aps-p-sm">…</span>}
                 </>
               )}
               
@@ -138,13 +143,13 @@ const totalPages = page.lastPage;
                 if (pageNum > totalPages) return null;
                 
                 return pageNum === currentPage ? 
-                  <span class="page-number current" aria-current="page">
+                  <span class="aps-page-number aps-page-number--current" aria-current="page">
                     {pageNum}
                   </span>
                 : 
                   <a 
                     href={pageNum === 1 ? `/photos/tags/${tag}` : `/photos/tags/${tag}/${pageNum}`}
-                    class="page-number"
+                    class="aps-page-number"
                     aria-label={`Page ${pageNum}`}
                   >
                     {pageNum}
@@ -154,10 +159,10 @@ const totalPages = page.lastPage;
               {/* Last page */}
               {currentPage < totalPages - 2 && (
                 <>
-                  {currentPage < totalPages - 3 && <span class="ellipsis">…</span>}
+                  {currentPage < totalPages - 3 && <span class="aps-text-secondary aps-p-sm">…</span>}
                   <a 
                     href={`/photos/tags/${tag}/${totalPages}`} 
-                    class="page-number"
+                    class="aps-page-number"
                     aria-label={`Page ${totalPages}`}
                   >
                     {totalPages}
@@ -169,7 +174,7 @@ const totalPages = page.lastPage;
             {page.url.next && (
               <a 
                 href={page.url.next} 
-                class="pagination-link next"
+                class="aps-button"
                 aria-label="Next page"
               >
                 Next →
@@ -181,11 +186,11 @@ const totalPages = page.lastPage;
 
       <!-- Related Tags -->
       {relatedTags.length > 0 && (
-        <section class="related-tags-section">
-          <h2 class="section-title">Related Tags</h2>
-          <div class="related-tags">
+        <section class="aps-mb-2xl">
+          <h2 class="aps-text-2xl aps-font-semibold aps-mb-lg aps-text-primary aps-text-center">Related Tags</h2>
+          <div class="aps-flex aps-gap-sm aps-justify-center" style="flex-wrap: wrap;">
             {relatedTags.map(relatedTag => (
-              <a href={`/photos/tags/${relatedTag}`} class="related-tag">
+              <a href={`/photos/tags/${relatedTag}`} class="aps-bg-muted aps-text-primary aps-p-sm aps-rounded-xl aps-link aps-text-sm aps-font-medium" style="text-decoration: none; transition: background-color 0.2s;">
                 #{relatedTag}
               </a>
             ))}
@@ -196,239 +201,3 @@ const totalPages = page.lastPage;
   )}
 </main>
 
-<style>
-  .tag-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .page-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-  }
-
-  .nav-link {
-    color: var(--aps-link, #2563eb);
-    text-decoration: none;
-  }
-
-  .nav-link:hover {
-    text-decoration: underline;
-  }
-
-  .nav-separator {
-    color: var(--aps-text-tertiary, #999);
-  }
-
-  .current-page {
-    color: var(--aps-text-secondary, #666);
-    font-weight: 500;
-  }
-
-  .page-header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .tag-badge {
-    display: inline-block;
-    background: var(--aps-tag-bg, #dbeafe);
-    color: var(--aps-tag-text, #1e40af);
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .page-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--aps-text-primary, #1a1a1a);
-  }
-
-  .page-description {
-    font-size: 1.125rem;
-    color: var(--aps-text-secondary, #666);
-    margin: 0 0 1rem 0;
-  }
-
-  .gallery-stats {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .location-count {
-    color: var(--aps-text-tertiary, #999);
-    font-size: 0.9rem;
-  }
-
-  .empty-tag {
-    text-align: center;
-    padding: 4rem 0;
-  }
-
-  .empty-tag h2 {
-    font-size: 1.5rem;
-    color: var(--aps-text-primary, #1a1a1a);
-    margin-bottom: 1rem;
-  }
-
-  .empty-tag p {
-    color: var(--aps-text-secondary, #666);
-    margin-bottom: 2rem;
-  }
-
-  .back-link {
-    color: var(--aps-link, #2563eb);
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .back-link:hover {
-    text-decoration: underline;
-  }
-
-  .map-section,
-  .related-tags-section {
-    margin-bottom: 3rem;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--aps-text-primary, #1a1a1a);
-    text-align: center;
-  }
-
-  .map-section {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  }
-
-  .photos-section {
-    margin-bottom: 3rem;
-  }
-
-  .pagination {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--aps-border, #e5e5e5);
-  }
-
-  .pagination-info {
-    color: var(--aps-text-secondary, #666);
-    font-size: 0.9rem;
-  }
-
-  .pagination-controls {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .pagination-link {
-    padding: 0.5rem 1rem;
-    text-decoration: none;
-    color: var(--aps-link, #2563eb);
-    border: 1px solid var(--aps-border, #e5e5e5);
-    border-radius: 6px;
-    transition: all 0.2s;
-  }
-
-  .pagination-link:hover {
-    background: var(--aps-hover-bg, #f8fafc);
-    border-color: var(--aps-link, #2563eb);
-  }
-
-  .page-numbers {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .page-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    text-decoration: none;
-    color: var(--aps-link, #2563eb);
-    border: 1px solid var(--aps-border, #e5e5e5);
-    border-radius: 6px;
-    transition: all 0.2s;
-  }
-
-  .page-number:hover {
-    background: var(--aps-hover-bg, #f8fafc);
-    border-color: var(--aps-link, #2563eb);
-  }
-
-  .page-number.current {
-    background: var(--aps-link, #2563eb);
-    color: white;
-    border-color: var(--aps-link, #2563eb);
-  }
-
-  .ellipsis {
-    padding: 0 0.5rem;
-    color: var(--aps-text-secondary, #666);
-  }
-
-  .related-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: center;
-  }
-
-  .related-tag {
-    background: var(--aps-tag-bg, #dbeafe);
-    color: var(--aps-tag-text, #1e40af);
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background-color 0.2s;
-  }
-
-  .related-tag:hover {
-    background: var(--aps-tag-hover-bg, #bfdbfe);
-  }
-
-  @media (max-width: 640px) {
-    .page-title {
-      font-size: 2rem;
-    }
-    
-    .pagination-controls {
-      gap: 0.5rem;
-    }
-    
-    .page-numbers {
-      gap: 0.125rem;
-    }
-    
-    .page-number {
-      width: 2rem;
-      height: 2rem;
-      font-size: 0.875rem;
-    }
-  }
-</style>

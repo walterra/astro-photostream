@@ -49,7 +49,7 @@ const totalPages = page.lastPage;
 
   <!-- Location Map (if enabled and photos have location data) -->
   {showMap && config.gallery.enableMap && photosWithLocation.length > 0 && (
-    <div class="aps-mb-lg aps-p-sm">
+    <div class="aps-mb-lg">
       <section class="aps-rounded-xl aps-shadow-md">
         <MultiMarkerMap
           photos={photosWithLocation}
@@ -72,7 +72,6 @@ const totalPages = page.lastPage;
       itemsPerPage={config.gallery.itemsPerPage}
       showPagination={false}
       showMap={false}
-      class="main-photo-stream"
     />
   </section>
 

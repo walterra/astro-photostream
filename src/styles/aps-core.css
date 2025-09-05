@@ -116,6 +116,12 @@
   padding: var(--aps-space-md);
 }
 
+.aps-content-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
 .aps-grid {
   display: grid;
   gap: var(--aps-space-md);
