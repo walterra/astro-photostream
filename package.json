@@ -98,7 +98,7 @@
     "gray-matter": "^4.0.3",
     "satori": "^0.16.2",
     "sharp": "^0.33.2",
-    "zod": "^3.22.4"
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
