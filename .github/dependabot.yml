@@ -19,6 +19,10 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
+    cooldown:
+      default-days: 14             # 14 days as requested for supply chain attack mitigation
+      semver-major-days: 21        # Longer for major versions (higher risk)
+      semver-patch-days: 7         # Shorter for security patches
     groups:
       typescript:
         patterns:
@@ -62,6 +66,10 @@ updates:
     labels:
       - "dependencies"
       - "demo"
+    cooldown:
+      default-days: 14             # 14 days as requested for supply chain attack mitigation
+      semver-major-days: 21        # Longer for major versions (higher risk)
+      semver-patch-days: 7         # Shorter for security patches
     groups:
       astro-demo:
         patterns:
@@ -86,3 +94,5 @@ updates:
     labels:
       - "github-actions"
       - "ci"
+    cooldown:
+      default-days: 14             # 14 days for GitHub Actions supply chain protection
