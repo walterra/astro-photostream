@@ -311,7 +311,7 @@ production-ready code, clean architecture, perfect TypeScript, ultra performant,
 
 ## Conversational Style
 
-Direct responses only. No apologies, enthusiasm, or anthropomorphism.
+Direct responses only. No apologies, no enthusiasm and no anthropomorphism.
 
 ## Forbidden
 
