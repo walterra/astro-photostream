@@ -477,7 +477,7 @@
   .aps-container {
     padding: var(--aps-space-lg);
   }
-  
+
   .aps-grid-3col {
     grid-template-columns: repeat(3, 1fr);
   }

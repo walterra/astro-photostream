@@ -1,6 +1,7 @@
 # Astro Photo Stream
 
 [![npm version](https://badge.fury.io/js/astro-photostream.svg)](https://badge.fury.io/js/astro-photostream)
+[![CI](https://github.com/walterra/astro-photostream/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/walterra/astro-photostream/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 
