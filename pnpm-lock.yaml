@@ -104,7 +104,7 @@ importers:
     dependencies:
       '@astrojs/tailwind':
         specifier: ^5.1.2
-        version: 5.1.5(astro@5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(tailwindcss@4.1.13)
+        version: 5.1.5(astro@5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(tailwindcss@4.1.14)
       astro:
         specifier: ^5.13.2
         version: 5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
@@ -113,7 +113,7 @@ importers:
         version: link:..
       tailwindcss:
         specifier: ^4.1.13
-        version: 4.1.13
+        version: 4.1.14
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.4
@@ -3592,8 +3592,8 @@ packages:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
 
-  tailwindcss@4.1.13:
-    resolution: {integrity: sha512-i+zidfmTqtwquj4hMEwdjshYYgMbOrPzb9a0M3ZgNa0JMoZeFC6bxZvO8yr8ozS6ix2SDz0+mvryPeBs2TFE+w==}
+  tailwindcss@4.1.14:
+    resolution: {integrity: sha512-b7pCxjGO98LnxVkKjaZSDeNuljC4ueKUddjENJOADtubtdo8llTaJy7HwBMeLNSSo2N5QIAgklslK1+Ir8r6CA==}
 
   term-size@2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
@@ -4266,13 +4266,13 @@ snapshots:
     dependencies:
       prismjs: 1.30.0
 
-  '@astrojs/tailwind@5.1.5(astro@5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(tailwindcss@4.1.13)':
+  '@astrojs/tailwind@5.1.5(astro@5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(tailwindcss@4.1.14)':
     dependencies:
       astro: 5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       autoprefixer: 10.4.21(postcss@8.5.6)
       postcss: 8.5.6
       postcss-load-config: 4.0.2(postcss@8.5.6)
-      tailwindcss: 4.1.13
+      tailwindcss: 4.1.14
     transitivePeerDependencies:
       - ts-node
 
@@ -8020,7 +8020,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  tailwindcss@4.1.13: {}
+  tailwindcss@4.1.14: {}
 
   term-size@2.2.1: {}
 
