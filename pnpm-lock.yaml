@@ -16,7 +16,7 @@ importers:
         version: 2.6.2
       astro-integration-kit:
         specifier: ^0.19.0
-        version: 0.19.0(astro@5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))
+        version: 0.19.1(astro@5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))
       dotenv:
         specifier: ^17.2.2
         version: 17.2.3
@@ -1653,8 +1653,8 @@ packages:
   assertion-error@1.1.0:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
 
-  astro-integration-kit@0.19.0:
-    resolution: {integrity: sha512-ftDrem91kJZoenhpJJfRtB29D/bmNglEp2oOXqF1uL5yODZauGIy3tDgIbec0UEMp6tNuky4tfWseUXpej5Dng==}
+  astro-integration-kit@0.19.1:
+    resolution: {integrity: sha512-0MORMlwJXM3d2RlYoFMKpdBTEOqFEZ7rY5TnQssLsUTfaZgF4XkNJW0mNsDiOdM9LgDn9Px2dZtz8NbuUW75nw==}
     peerDependencies:
       astro: ^4.14.0 || ^5.0.0
 
@@ -5652,7 +5652,7 @@ snapshots:
 
   assertion-error@1.1.0: {}
 
-  astro-integration-kit@0.19.0(astro@5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)):
+  astro-integration-kit@0.19.1(astro@5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)):
     dependencies:
       astro: 5.13.3(@types/node@24.5.2)(jiti@2.5.1)(rollup@4.47.1)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       pathe: 1.1.2
