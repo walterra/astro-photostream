@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.8
+
+### Patch Changes
+
+- 4468695: ci: add automated quality checks workflow with Node version matrix
+
 ## 0.3.7
 
 ### Patch Changes
