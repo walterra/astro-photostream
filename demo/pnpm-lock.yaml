@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@astrojs/tailwind':
         specifier: ^5.1.2
-        version: 5.1.5(astro@5.13.2(@types/node@24.7.1)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1))(tailwindcss@4.1.13)
+        version: 5.1.5(astro@5.13.2(@types/node@24.7.1)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1))(tailwindcss@4.1.18)
       astro:
         specifier: ^5.13.2
         version: 5.13.2(@types/node@24.7.1)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1)
@@ -18,8 +18,8 @@ importers:
         specifier: link:..
         version: link:..
       tailwindcss:
-        specifier: ^4.1.13
-        version: 4.1.13
+        specifier: ^4.1.18
+        version: 4.1.18
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.4
@@ -1463,8 +1463,8 @@ packages:
     resolution: {integrity: sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ==}
     engines: {node: '>=12'}
 
-  tailwindcss@4.1.13:
-    resolution: {integrity: sha512-i+zidfmTqtwquj4hMEwdjshYYgMbOrPzb9a0M3ZgNa0JMoZeFC6bxZvO8yr8ozS6ix2SDz0+mvryPeBs2TFE+w==}
+  tailwindcss@4.1.18:
+    resolution: {integrity: sha512-4+Z+0yiYyEtUVCScyfHCxOYP06L5Ne+JiHhY2IjR2KWMIWhJOYZKLSGZaP5HkZ8+bY0cxfzwDE5uOmzFXyIwxw==}
 
   tiny-inflate@1.0.3:
     resolution: {integrity: sha512-pkY1fj1cKHb2seWDy0B16HeWyczlJA9/WW3u3c4z/NiWDsO3DOU5D7nhTLE9CF0yXv/QZFY7sEJmj24dK+Rrqw==}
@@ -1953,13 +1953,13 @@ snapshots:
     dependencies:
       prismjs: 1.30.0
 
-  '@astrojs/tailwind@5.1.5(astro@5.13.2(@types/node@24.7.1)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1))(tailwindcss@4.1.13)':
+  '@astrojs/tailwind@5.1.5(astro@5.13.2(@types/node@24.7.1)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1))(tailwindcss@4.1.18)':
     dependencies:
       astro: 5.13.2(@types/node@24.7.1)(jiti@1.21.7)(rollup@4.47.1)(tsx@4.20.5)(typescript@5.9.2)(yaml@2.8.1)
       autoprefixer: 10.4.21(postcss@8.5.6)
       postcss: 8.5.6
       postcss-load-config: 4.0.2(postcss@8.5.6)
-      tailwindcss: 4.1.13
+      tailwindcss: 4.1.18
     transitivePeerDependencies:
       - ts-node
 
@@ -3624,7 +3624,7 @@ snapshots:
     dependencies:
       ansi-regex: 6.2.0
 
-  tailwindcss@4.1.13: {}
+  tailwindcss@4.1.18: {}
 
   tiny-inflate@1.0.3: {}
 
