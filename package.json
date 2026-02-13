@@ -114,7 +114,7 @@
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.34.0",
-    "globals": "^16.3.0",
+    "globals": "^17.0.0",
     "husky": "^9.0.0",
     "lint-staged": "^16.1.5",
     "prettier": "^3.2.4",
