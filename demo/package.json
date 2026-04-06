@@ -15,8 +15,8 @@
     "photo-metadata-generator": "node ../dist/scripts/photo-metadata-generator.js"
   },
   "dependencies": {
-    "@astrojs/tailwind": "^5.1.2",
-    "astro": "^5.13.2",
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^6.0.4",
     "astro-photostream": "link:..",
     "tailwindcss": "^4.1.13"
   },
